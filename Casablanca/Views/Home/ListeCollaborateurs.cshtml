@@ -1,0 +1,54 @@
+﻿@using Casablanca.Models
+
+@{
+    ViewBag.Title = "Collaborateurs";
+}
+
+@model  Collaborateurs
+
+<!-- Bootstrap Table Style -->
+@Styles.Render("//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/bootstrap-table.min.css")
+
+<h2>Collaborateurs</h2>
+
+<table id="table"
+       data-toggle="table"
+       data-search="true"
+       class="table">
+    @if (Model.collaborateurs.Count() == 0)
+    {
+        <tr>
+            <td colspan="10">Aucun collaborateur trouvé.</td>
+        </tr>
+    }
+    else
+    {
+        <thead>
+            <tr>
+                <th scope="col" data-field="prenom" data-sortable="true">Prénom</th>
+                <th scope="col" data-field="nom" data-sortable="true">Nom</th>
+                <th scope="col" data-field="service" data-sortable="true">Service</th>
+                <th scope="col" data-field="mission" data-sortable="true">Mission</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.collaborateurs)
+            {
+                <tr>
+                    <td>@item.firstName</td>
+                    <td>@item.lastName</td>
+                    <td>@item.service</td>
+                    <td>@item.mission</td>
+                </tr>
+            }
+        </tbody>
+    }
+</table>
+
+
+@section Scripts {
+    <!-- Bootstrap table -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.0/bootstrap-table.js"></script>
+}
+
+

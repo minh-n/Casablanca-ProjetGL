@@ -1,0 +1,85 @@
+﻿
+@{
+    /**/
+
+    ViewBag.Title = "Index";
+}
+
+@Styles.Render("~/Content/themes/base/jquery-ui.min.css")
+
+<h2>Récapitulatif des congés</h2>
+<div class="row">
+    <div class="col-lg-6">
+        <img src="http://www.lafermeduweb.net/images/billets/2012-11/calendrio-jquery-calendrier-design.jpg" />
+    </div>
+    <div class="col-lg-6">
+        <div class="jumbotron">
+            <b>Jours de congés restants : </b> 5
+            <br>
+            <b>Jours de congés en attente : </b> 9
+            <br>
+            <b>Jours de congés déjà pris : </b> 176
+            <br>
+        </div>
+        <button class="btn btn-primary" id="btnShowModal">Effectuer une demande de congés</button>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="loginModal"
+     data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    ×
+                </button>
+                <h4 class="modal-title">Demande de congé</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="DateDebut">Date début : </label>
+                        <!-- Date picker -->
+                        <input type="text" value="9/23/2009" style="width: 100px;" readonly="readonly" name="dateDebut" id="dateDebut" class="datepicker" />
+                    </div>
+                    <div class="form-group">
+                        <label for="DateFin">Date Fin : </label>
+                        <!-- Date picker -->
+                        <input type="text" value="9/23/2009" style="width: 100px;" readonly="readonly" name="dateFin" id="dateFin" class="datepicker" />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary button button4">Sign</button>
+                <button type="button" id="btnHideModal" class="btn btn-primary button button4">
+                    Hide
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <!-- JQuery UI pour le sélecteur de date -->
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+
+    <!-- Script pour activer le champ "datepicker" en tant que sélecteur de date -->
+    <script>
+        $(function () {
+            $(".datepicker").datepicker();
+        });
+    </script>
+
+    <!-- Script pour l'affichage de la fenêtre modale -->
+    <script>
+        $(document).ready(function () {
+            $("#btnShowModal").click(function () {
+                $("#loginModal").modal('show');
+            });
+
+            $("#btnHideModal").click(function () {
+                $("#loginModal").modal('hide');
+            });
+        });
+    </script>
+}

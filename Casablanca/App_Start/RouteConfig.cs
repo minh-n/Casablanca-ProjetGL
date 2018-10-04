@@ -13,6 +13,8 @@ namespace Casablanca
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
+            // Du plus bas au plus haut : du plus prioritaire au moins prioritaire
+
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
