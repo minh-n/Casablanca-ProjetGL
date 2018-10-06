@@ -1,16 +1,18 @@
-﻿
-@{
-    /**/
+﻿@using Casablanca.Models
 
+@{
     ViewBag.Title = "Index";
 }
 
+@model  LeaveList
+
 @Styles.Render("~/Content/themes/base/jquery-ui.min.css")
+@Styles.Render("~/Content/Calendar.css")
 
 <h2>Récapitulatif des congés</h2>
 <div class="row">
     <div class="col-lg-6">
-        <img src="http://www.lafermeduweb.net/images/billets/2012-11/calendrio-jquery-calendrier-design.jpg" />
+        <div id="calendar"></div>
     </div>
     <div class="col-lg-6">
         <div class="jumbotron">
@@ -62,6 +64,8 @@
 @section Scripts{
     <!-- JQuery UI pour le sélecteur de date -->
     <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <script src="~/Scripts/moment.js"></script>
+    <script src="~/Scripts/Congé/Calendar.js"></script>
 
     <!-- Script pour activer le champ "datepicker" en tant que sélecteur de date -->
     <script>
@@ -70,9 +74,10 @@
         });
     </script>
 
-    <!-- Script pour l'affichage de la fenêtre modale -->
+    <!-- Script pour l'affichage de la fenêtre modale et du calendrier -->
     <script>
         $(document).ready(function () {
+            // Implémentation de la logique des boutons de modale
             $("#btnShowModal").click(function () {
                 $("#loginModal").modal('show');
             });
@@ -80,6 +85,10 @@
             $("#btnHideModal").click(function () {
                 $("#loginModal").modal('hide');
             });
+
+            // Conversion des données de congés en javascript et création du calendrier
+            var data = @JavaScriptConverter.SerializeObject(Model.leaves);
+            var calendar = new Calendar("#calendar", data);
         });
     </script>
 }
