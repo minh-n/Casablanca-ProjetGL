@@ -34,14 +34,14 @@ namespace Casablanca.Controllers
             // var collaborateurs = GetCollaborateurs();
 
             // Créer un objet Collaborateurs
-            Collaborateurs model = new Collaborateurs();
+            CollaboratorList model = new CollaboratorList();
 
             // %% TEMPORARY : 
-            Collaborateur morgan = new Collaborateur("Morgan", "Feurte", "Informatique", "Carry");
-            Collaborateur jafar = new Collaborateur("Jafar", "Goncalves", "Informatique", "Support");
-            Collaborateur adrien = new Collaborateur("Adrien", "Lavillonnière", "Informatique", "Tank");
-            Collaborateur minh = new Collaborateur("Minh", "Nguyen", "Informatique", "DPS");
-            Collaborateur yao = new Collaborateur("Yao", "Shi", "Informatique", "Support");
+            Collaborator morgan = new Collaborator("Morgan", "Feurte", "Informatique", "Carry");
+            Collaborator jafar = new Collaborator("Jafar", "Goncalves", "Informatique", "Support");
+            Collaborator adrien = new Collaborator("Adrien", "Lavillonnière", "Informatique", "Tank");
+            Collaborator minh = new Collaborator("Minh", "Nguyen", "Informatique", "DPS");
+            Collaborator yao = new Collaborator("Yao", "Shi", "Informatique", "Support");
 
             model.collaborateurs.Add(morgan);
             model.collaborateurs.Add(jafar);

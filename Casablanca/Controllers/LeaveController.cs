@@ -7,7 +7,7 @@ using System.Web.Mvc;
 
 namespace Casablanca.Controllers
 {
-    public class CongéController : Controller
+    public class LeaveController : Controller
     {
         public ActionResult Index()
         {

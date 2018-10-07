@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Casablanca.Models
 {
-    public class Collaborateur
+    public class Collaborator
     {
         public string firstName { get; set; }
         public string lastName { get; set; }
@@ -14,7 +14,7 @@ namespace Casablanca.Models
 
         // TODO : Autres attributs ? Jour de congés restants par exemple
 
-        public Collaborateur(string firstName, string lastName, string service, string mission)
+        public Collaborator(string firstName, string lastName, string service, string mission)
         {
             this.firstName = firstName;
             this.lastName = lastName;
