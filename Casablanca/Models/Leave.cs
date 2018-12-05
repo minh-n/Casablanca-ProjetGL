@@ -13,6 +13,7 @@ namespace Casablanca.Models
 
     public class Leave
     {
+        public int id { get; set; }
         public string eventName;
         public string status;
         public string color;

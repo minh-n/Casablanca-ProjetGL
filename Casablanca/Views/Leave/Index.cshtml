@@ -4,7 +4,7 @@
     ViewBag.Title = "Index";
 }
 
-@model  LeaveList
+@model  List<Leave>
 
 @Styles.Render("~/Content/themes/base/jquery-ui.min.css")
 @Styles.Render("~/Content/Calendar.css")
@@ -87,7 +87,7 @@
             });
 
             // Conversion des données de congés en javascript et création du calendrier
-            var data = @JavaScriptConverter.SerializeObject(Model.leaves);
+            var data = @JavaScriptConverter.SerializeObject(Model);
             var calendar = new Calendar("#calendar", data);
         });
     </script>

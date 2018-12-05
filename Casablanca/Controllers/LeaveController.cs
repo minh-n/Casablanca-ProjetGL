@@ -15,7 +15,8 @@ namespace Casablanca.Controllers
             // var congés = GetCongés();
 
             // Créer un objet LeaveList
-            LeaveList model = new LeaveList();
+            //LeaveList model = new LeaveList();
+            List<Leave> model = new List<Leave>();
 
             // Récupérer les données de congés dans la base de données
             // %% TEMPORARY : 
@@ -26,12 +27,12 @@ namespace Casablanca.Controllers
             Leave pending2 = new Leave("Minh 24/10 -> 26/10", LeaveStatus.APPROVED, new DateTime(2018, 10, 25));
             Leave pending3 = new Leave("Minh 24/10 -> 26/10", LeaveStatus.APPROVED, new DateTime(2018, 10, 26));
 
-            model.leaves.Add(leave);
-            model.leaves.Add(leave2);
-            model.leaves.Add(leave3);
-            model.leaves.Add(pending);
-            model.leaves.Add(pending2);
-            model.leaves.Add(pending3);
+            model.Add(leave);
+            model.Add(leave2);
+            model.Add(leave3);
+            model.Add(pending);
+            model.Add(pending2);
+            model.Add(pending3);
             // %%
 
             return View(model);
@@ -39,11 +40,14 @@ namespace Casablanca.Controllers
 
         public ActionResult Traiter()
         {
+            // TODO : passer les demandes en attente
+
             // Récupérer les congés et demandes de congés dans la BD
             // var congés = GetCongés();
 
             // Créer un objet LeaveList
-            LeaveList model = new LeaveList();
+            //LeaveList model = new LeaveList();
+            List<Leave> model = new List<Leave>();
 
             // Récupérer les données de congés dans la base de données
             // %% TEMPORARY : 
@@ -54,13 +58,14 @@ namespace Casablanca.Controllers
             Leave pending2 = new Leave("Minh 24/10 -> 26/10", LeaveStatus.APPROVED, new DateTime(2018, 10, 25));
             Leave pending3 = new Leave("Minh 24/10 -> 26/10", LeaveStatus.APPROVED, new DateTime(2018, 10, 26));
 
-            model.leaves.Add(leave);
-            model.leaves.Add(leave2);
-            model.leaves.Add(leave3);
-            model.leaves.Add(pending);
-            model.leaves.Add(pending2);
-            model.leaves.Add(pending3);
+            model.Add(leave);
+            model.Add(leave2);
+            model.Add(leave3);
+            model.Add(pending);
+            model.Add(pending2);
+            model.Add(pending3);
             // %%
+
 
             return View(model);
         }

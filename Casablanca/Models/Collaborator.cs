@@ -7,6 +7,7 @@ namespace Casablanca.Models
 {
     public class Collaborator
     {
+        public int id { get; set; }
         public string firstName { get; set; }
         public string lastName { get; set; }
         public string service { get; set; }
@@ -20,6 +21,20 @@ namespace Casablanca.Models
             this.lastName = lastName;
             this.service = service;
             this.mission = mission;
+        }
+
+
+        public Collaborator(string firstName, string lastName)
+        {
+            this.firstName = firstName;
+            this.lastName = lastName;
+            this.service = "";
+            this.mission = "";
+        }
+
+        public Collaborator()
+        {
+
         }
     }
 }

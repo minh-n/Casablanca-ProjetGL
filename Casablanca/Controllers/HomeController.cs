@@ -34,7 +34,7 @@ namespace Casablanca.Controllers
             // var collaborateurs = GetCollaborateurs();
 
             // Créer un objet Collaborateurs
-            CollaboratorList model = new CollaboratorList();
+            List<Collaborator> model = new List<Collaborator>();
 
             // %% TEMPORARY : 
             Collaborator morgan = new Collaborator("Morgan", "Feurte", "Informatique", "Carry");
@@ -43,11 +43,11 @@ namespace Casablanca.Controllers
             Collaborator minh = new Collaborator("Minh", "Nguyen", "Informatique", "DPS");
             Collaborator yao = new Collaborator("Yao", "Shi", "Informatique", "Support");
 
-            model.collaborateurs.Add(morgan);
-            model.collaborateurs.Add(jafar);
-            model.collaborateurs.Add(adrien);
-            model.collaborateurs.Add(minh);
-            model.collaborateurs.Add(yao);
+            model.Add(morgan);
+            model.Add(jafar);
+            model.Add(adrien);
+            model.Add(minh);
+            model.Add(yao);
             // %%
 
             // Exemple de projections des résultats BD dans un Modèle

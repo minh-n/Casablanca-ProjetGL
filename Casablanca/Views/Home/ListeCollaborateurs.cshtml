@@ -4,7 +4,7 @@
     ViewBag.Title = "Collaborateurs";
 }
 
-@model  Collaborateurs
+@model  List<Collaborator>
 
 <!-- Bootstrap Table Style -->
 @Styles.Render("//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/bootstrap-table.min.css")
@@ -15,7 +15,7 @@
        data-toggle="table"
        data-search="true"
        class="table">
-    @if (Model.collaborateurs.Count() == 0)
+    @if (Model.Count() == 0)
     {
         <tr>
             <td colspan="10">Aucun collaborateur trouvé.</td>
@@ -32,7 +32,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model.collaborateurs)
+            @foreach (var item in Model)
             {
                 <tr>
                     <td>@item.firstName</td>
