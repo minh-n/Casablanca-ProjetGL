@@ -24,7 +24,8 @@ namespace Casablanca.Models
         }
 
 
-        public Collaborator(string firstName, string lastName)
+
+		public Collaborator(string firstName, string lastName)
         {
             this.FirstName = firstName;
             this.LastName = lastName;

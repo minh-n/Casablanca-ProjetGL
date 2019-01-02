@@ -37,14 +37,33 @@ namespace Casablanca.Controllers
             // Créer un objet Collaborateurs
             List<Collaborator> model = new List<Collaborator>();
 
-            // %% TEMPORARY : 
-            Collaborator morgan = new Collaborator("Morgan", "Feurte", "Informatique", "Carry");
-            Collaborator jafar = new Collaborator("Jafar", "Goncalves", "Informatique", "Support");
-            Collaborator adrien = new Collaborator("Adrien", "Lavillonnière", "Informatique", "Tank");
-            Collaborator minh = new Collaborator("Minh", "Nguyen", "Informatique", "DPS");
-            Collaborator yao = new Collaborator("Yao", "Shi", "Informatique", "Support");
+			// Missions
 
-            model.Add(morgan);
+			Mission mission1 = new Mission("Voyage vers Tipperary", 0, DateTime.Today, new DateTime(2019, 5, 1), MissionStatus.IN_PROGRESS);
+			Mission mission2 = new Mission("Voyage vers Agartha", 1, new DateTime(2019, 2, 9), new DateTime(2019, 3, 1), MissionStatus.PLANNED);
+			Mission mission3 = new Mission("Voyage vers l'au-delà", 2, new DateTime(2018, 12, 25), new DateTime(2018, 12, 26), MissionStatus.CANCELED);
+			Mission mission4 = new Mission("Voyage voyage", 3, new DateTime(2019, 2, 25), new DateTime(2019, 2, 26), MissionStatus.COMPLETED);
+			Mission mission5 = new Mission("Voyage vers Mars", 4, new DateTime(2019, 2, 6), new DateTime(2019, 3, 1), MissionStatus.PLANNED);
+			Mission mission6 = new Mission("Voyage vers le Mur", 5, new DateTime(2019, 1, 9), new DateTime(2019, 11, 1), MissionStatus.PLANNED);
+			Mission mission7 = new Mission("Voyage à Fuji-san", 6, new DateTime(2019, 1, 2), new DateTime(2019, 1, 4), MissionStatus.IN_PROGRESS);
+
+			// %% TEMPORARY : 
+			Collaborator morgan = new Collaborator("Morgan", "Feurte", "Informatique", mission7);
+            Collaborator jafar = new Collaborator("Jafar", "Goncalves", "Informatique", mission2);
+            Collaborator adrien = new Collaborator("Adrien", "Lavillonnière", "Informatique", mission1);
+            Collaborator minh = new Collaborator("Minh", "Nguyen", "Informatique", mission1);
+            Collaborator yao = new Collaborator("Yao", "Shi", "Informatique", mission1);
+
+			yao.MissionsList.Add(mission3);
+			yao.MissionsList.Add(mission4);
+
+			adrien.MissionsList.Add(mission2);
+			adrien.MissionsList.Add(mission3);
+			adrien.MissionsList.Add(mission4);
+			adrien.MissionsList.Add(mission5);
+			adrien.MissionsList.Add(mission6);
+
+			model.Add(morgan);
             model.Add(jafar);
             model.Add(adrien);
             model.Add(minh);

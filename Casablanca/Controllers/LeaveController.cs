@@ -20,9 +20,9 @@ namespace Casablanca.Controllers
 
             // Récupérer les données de congés dans la base de données
             // %% TEMPORARY : 
-            Leave leave = new Leave("Morgan 04/10 -> 06/10", LeaveStatus.PENDING, new DateTime(2018, 10, 04));
-            Leave leave2 = new Leave("Morgan 04/10 -> 06/10", LeaveStatus.PENDING, new DateTime(2018, 10, 05));
-            Leave leave3 = new Leave("Morgan 04/10 -> 06/10", LeaveStatus.PENDING, new DateTime(2018, 10, 06));
+            Leave leave = new Leave("Morgan 04/10 -> 06/10", LeaveStatus.PENDING_APPROVAL, new DateTime(2018, 10, 04));
+            Leave leave2 = new Leave("Morgan 04/10 -> 06/10", LeaveStatus.PENDING_APPROVAL, new DateTime(2018, 10, 05));
+            Leave leave3 = new Leave("Morgan 04/10 -> 06/10", LeaveStatus.PENDING_APPROVAL, new DateTime(2018, 10, 06));
             Leave pending = new Leave("Minh 24/10 -> 26/10", LeaveStatus.APPROVED, new DateTime(2018, 10, 24));
             Leave pending2 = new Leave("Minh 24/10 -> 26/10", LeaveStatus.APPROVED, new DateTime(2018, 10, 25));
             Leave pending3 = new Leave("Minh 24/10 -> 26/10", LeaveStatus.APPROVED, new DateTime(2018, 10, 26));
@@ -51,9 +51,9 @@ namespace Casablanca.Controllers
 
             // Récupérer les données de congés dans la base de données
             // %% TEMPORARY : 
-            Leave leave = new Leave("Morgan 04/10 -> 06/10", LeaveStatus.PENDING, new DateTime(2018, 10, 04));
-            Leave leave2 = new Leave("Morgan 04/10 -> 06/10", LeaveStatus.PENDING, new DateTime(2018, 10, 05));
-            Leave leave3 = new Leave("Morgan 04/10 -> 06/10", LeaveStatus.PENDING, new DateTime(2018, 10, 06));
+            Leave leave = new Leave("Morgan 04/10 -> 06/10", LeaveStatus.PENDING_APPROVAL, new DateTime(2018, 10, 04));
+            Leave leave2 = new Leave("Morgan 04/10 -> 06/10", LeaveStatus.PENDING_APPROVAL, new DateTime(2018, 10, 05));
+            Leave leave3 = new Leave("Morgan 04/10 -> 06/10", LeaveStatus.PENDING_APPROVAL, new DateTime(2018, 10, 06));
             Leave pending = new Leave("Minh 24/10 -> 26/10", LeaveStatus.APPROVED, new DateTime(2018, 10, 24));
             Leave pending2 = new Leave("Minh 24/10 -> 26/10", LeaveStatus.APPROVED, new DateTime(2018, 10, 25));
             Leave pending3 = new Leave("Minh 24/10 -> 26/10", LeaveStatus.APPROVED, new DateTime(2018, 10, 26));
