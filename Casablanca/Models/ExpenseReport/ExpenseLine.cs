@@ -5,9 +5,10 @@ using System.Web;
 
 namespace Casablanca.Models.ExpenseReport {
     public enum LineType {
-        APPROVED,
-        PENDING_APPROVAL,
-        REFUSED
+        RESTAURANT,
+        HOTEL,
+        TAXI,
+        OTHER
     }
 
     public class ExpenseLine {

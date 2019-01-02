@@ -14,6 +14,14 @@ namespace Casablanca.Models.Database
             db = new DatabaseContext();
         }
 
+        public void InitializeDatabase() {
+            CreateCollaborator("Morgan", "FEURTE");
+            CreateCollaborator("Minh", "NGUYEN");
+            CreateCollaborator("Adrien", "LAVILLONNIERE");
+            CreateCollaborator("Jeffrey", "GONCALVES");
+            CreateCollaborator("Yao", "SHI");
+        }
+
         public List<Collaborator> GetCollaborators()
         {
             return db.Collaborators.ToList();

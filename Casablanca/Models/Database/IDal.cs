@@ -8,8 +8,8 @@ namespace Casablanca.Models.Database
 {
     interface IDal : IDisposable
     {
+        // Collaborators
         List<Collaborator> GetCollaborators();
-
         void CreateCollaborator(string firstname, string lastname);
     }
 }

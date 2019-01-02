@@ -20,8 +20,8 @@ namespace Casablanca.Models.ExpenseReport {
         public int NbLines { get; set; }
         public ExpenseReportStatus Status { get; set; } // TODO : Enum statut ?
 
-        public Collaborator Collaborator { get; set; }
-        public List<ExpenseLine> ExpenseLines { get; set; }
+        public virtual Collaborator Collaborator { get; set; }
+        public virtual List<ExpenseLine> ExpenseLines { get; set; }
 
         public ExpenseReport() {
 
