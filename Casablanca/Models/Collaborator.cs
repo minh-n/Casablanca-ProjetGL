@@ -11,16 +11,16 @@ namespace Casablanca.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Service { get; set; }
-        public string Mission { get; set; } // TODO : Plusieurs missions par collaborateur ?
+        public List<Mission> MissionsList { get; set; }
 
         // TODO : Autres attributs ? Jour de congés restants par exemple
 
-        public Collaborator(string firstName, string lastName, string service, string mission)
+        public Collaborator(string firstName, string lastName, string service, Mission mission)
         {
             this.FirstName = firstName;
             this.LastName = lastName;
             this.Service = service;
-            this.Mission = mission;
+            this.MissionsList.Add(mission);
         }
 
 
@@ -29,7 +29,6 @@ namespace Casablanca.Models
             this.FirstName = firstName;
             this.LastName = lastName;
             this.Service = "";
-            this.Mission = "";
         }
 
         public Collaborator()

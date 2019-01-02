@@ -9,7 +9,7 @@ namespace Casablanca.Models
 	public enum MissionStatus
 	{
 		COMPLETED,
-		INPROGRESS,
+		IN_PROGRESS,
 		PLANNED,
 		CANCELED
 	}
@@ -35,7 +35,7 @@ namespace Casablanca.Models
 		{
 			MissionName = missionName;
 			StartDate = DateTime.Now;
-			Status = MissionStatus.INPROGRESS;
+			Status = MissionStatus.IN_PROGRESS;
 		}
 	}
 }
