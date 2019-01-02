@@ -1,0 +1,35 @@
+﻿
+@{
+	ViewBag.Title = "AddExpenseReport";
+}
+
+<h2>AddExpenseReport</h2>
+
+<div>
+	<h2 class="text-left">Effectuer une demande de notes de frais</h2>
+	<div class="table-responsive">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Type de frais</th>
+					<th>Description&nbsp;</th>
+					<th>Montant du frais</th>
+					<th>Mission associée</th>
+					<th>Date du frais</th>
+					<th>Justificatif</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td><select><optgroup label="Type de frais"><option value="12" selected="">Transport</option><option value="13">Restaurant</option><option value="14">Hotel</option></optgroup></select></td>
+					<td><input type="text"></td>
+					<td><input type="number"></td>
+					<td><select><optgroup label="Mission associée"><option value="12" selected="">This is item 1</option><option value="13">This is item 2</option><option value="14">This is item 3</option></optgroup></select></td>
+					<td><input type="date"></td>
+					<td><input type="file"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="btn-group" role="group"><button class="btn btn-success" type="button">Enregistrer les modifications</button><button class="btn btn-info" type="submit">Envoyer la note pour validation</button></div>
+</div>

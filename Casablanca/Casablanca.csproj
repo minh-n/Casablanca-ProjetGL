@@ -306,6 +306,7 @@
     <Content Include="Scripts\popper-utils.js.map" />
     <Content Include="Views\Home\CollaboratorView.cshtml" />
     <Content Include="Views\ExpenseReport\Index.cshtml" />
+    <Content Include="Views\ExpenseReport\AddExpenseReport.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
