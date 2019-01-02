@@ -12,5 +12,10 @@ namespace Casablanca.Controllers
         {
             return View();
         }
-    }
+
+		public ActionResult AddExpenseReport()
+		{
+			return View();
+		}
+	}
 }
