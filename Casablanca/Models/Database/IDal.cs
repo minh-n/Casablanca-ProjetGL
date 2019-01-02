@@ -10,6 +10,9 @@ namespace Casablanca.Models.Database
     {
         // Collaborators
         List<Collaborator> GetCollaborators();
-        void CreateCollaborator(string firstname, string lastname);
+        Collaborator GetCollaborator(int id);
+
+        // Missions 
+        Mission GetMission(int id);
     }
 }
