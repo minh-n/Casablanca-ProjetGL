@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -12,64 +13,55 @@ namespace Casablanca.Models {
     }
 
     public class Mission {
+        [Key]
         public int Id { get; set; }
-        public string MissionName { get; set; }
+        public string Name { get; set; }
 
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public MissionStatus Status { get; set; }
 
-		public List<Collaborator> CollList { get; set; }
+        public List<Collaborator> CollList { get; set; }
 
-		public Service Service { get; set; }
+        public Service Service { get; set; }
 
         public Mission() {
 
         }
 
-		public Mission(int id, string missionName, DateTime startDate, DateTime endDate, MissionStatus status, List<Collaborator> collList, Service service)
-		{
-			Id = id;
-			MissionName = missionName;
-			StartDate = startDate;
-			EndDate = endDate;
-			Status = status;
-			CollList = collList;
-			Service = service;
-		}
-
-		public Mission(string missionName, int id, DateTime startDate, DateTime endDate, MissionStatus status, Service service) : this(missionName) {
-            Id = id;
+        public Mission(string name, DateTime startDate, DateTime endDate, MissionStatus status, List<Collaborator> collList, Service service) {
+            Name = name;
             StartDate = startDate;
             EndDate = endDate;
             Status = status;
-			Service = service;
+            CollList = collList;
+            Service = service;
         }
 
-		public Mission(string missionName, int id, DateTime startDate, DateTime endDate, MissionStatus status) : this(missionName)
-		{
-			Id = id;
-			StartDate = startDate;
-			EndDate = endDate;
-			Status = status;
-		}
+        public Mission(string name, DateTime startDate, DateTime endDate, MissionStatus status, Service service) : this(name) {
+            StartDate = startDate;
+            EndDate = endDate;
+            Status = status;
+            Service = service;
+        }
 
-		public Mission(string missionName, Service service) {
-            MissionName = missionName;
+        public Mission(string name, DateTime startDate, DateTime endDate, MissionStatus status) : this(name) {
+            StartDate = startDate;
+            EndDate = endDate;
+            Status = status;
+        }
+
+        public Mission(string name, Service service) {
+            Name = name;
             StartDate = DateTime.Now;
             Status = MissionStatus.IN_PROGRESS;
-			Service = service;
+            Service = service;
         }
 
-		public Mission(string missionName)
-		{
-			MissionName = missionName;
-			StartDate = DateTime.Now;
-			Status = MissionStatus.IN_PROGRESS;
-
-		}
-
-
-		
-	}
+        public Mission(string name) {
+            Name = name;
+            StartDate = DateTime.Now;
+            Status = MissionStatus.IN_PROGRESS;
+        }
+    }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -11,23 +12,24 @@ namespace Casablanca.Models {
     }
 
     public class Leave {
-        public int id { get; set; }
-        public string eventName;
-        public string status;
-        public string color;
-        public DateTime eventTime;
+        [Key]
+        public int Id { get; set; }
+        public string EventName;
+        public string Status;
+        public string Color;
+        public DateTime EventTime;
 
         public Leave(string eventName, LeaveStatus status, DateTime eventTime) {
-            this.eventName = eventName;
-            this.eventTime = eventTime;
+            this.EventName = eventName;
+            this.EventTime = eventTime;
 
             if (status == LeaveStatus.APPROVED) {
-                this.color = "green";
-                this.status = "Congé accepté";
+                this.Color = "green";
+                this.Status = "Congé accepté";
             }
             else {
-                this.color = "orange";
-                this.status = "Demande de congé";
+                this.Color = "orange";
+                this.Status = "Demande de congé";
             }
         }
     }

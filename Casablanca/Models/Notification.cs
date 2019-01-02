@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -23,6 +24,8 @@ namespace Casablanca.Models
 
 	public class Notification
 	{
+        [Key]
+        public int Id { get; set; }
 		public NotificationType NotifType { get; set; }
 		public NotificationStatus NotifStatus { get; set; }
 		public string NotifContent { get; set; }
