@@ -20,8 +20,8 @@ namespace UnitTest_Casablanca
 
                 Assert.IsNotNull(collaborators);
                 Assert.AreEqual(1, collaborators.Count);
-                Assert.AreEqual("Minh", collaborators[0].firstName);
-                Assert.AreEqual("Nguyen", collaborators[0].lastName);
+                Assert.AreEqual("Minh", collaborators[0].FirstName);
+                Assert.AreEqual("Nguyen", collaborators[0].LastName);
             }
         }
     }
