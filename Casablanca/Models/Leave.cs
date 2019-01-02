@@ -3,34 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Casablanca.Models
-{
-    public enum LeaveStatus
-    {
+namespace Casablanca.Models {
+    public enum LeaveStatus {
         APPROVED,
-        PENDING
+        PENDING_APPROVAL,
+        REFUSED
     }
 
-    public class Leave
-    {
+    public class Leave {
         public int id { get; set; }
         public string eventName;
         public string status;
         public string color;
         public DateTime eventTime;
 
-        public Leave(string eventName, LeaveStatus status, DateTime eventTime)
-        {
+        public Leave(string eventName, LeaveStatus status, DateTime eventTime) {
             this.eventName = eventName;
             this.eventTime = eventTime;
 
-            if (status == LeaveStatus.APPROVED)
-            {
+            if (status == LeaveStatus.APPROVED) {
                 this.color = "green";
                 this.status = "Congé accepté";
             }
-            else
-            {
+            else {
                 this.color = "orange";
                 this.status = "Demande de congé";
             }
