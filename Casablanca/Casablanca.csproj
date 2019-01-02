@@ -180,6 +180,7 @@
     <Compile Include="Models\ExpenseReport\ExpenseReport.cs" />
     <Compile Include="Models\JavascriptConverter.cs" />
     <Compile Include="Models\Leave.cs" />
+    <Compile Include="Models\Service.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
