@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using Casablanca.Models.ExpenseReports;
+using System.Data.Entity;
 
 namespace Casablanca.Models
 {
@@ -7,5 +8,6 @@ namespace Casablanca.Models
         public DbSet<Collaborator> Collaborators { get; set; }
         public DbSet<Mission> Missions { get; set; }
         public DbSet<Leave> Leaves { get; set; }
+        public DbSet<ExpenseReport> ExpenseReports { get; set; }
     }
 }

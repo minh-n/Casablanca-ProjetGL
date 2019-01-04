@@ -24,13 +24,13 @@ namespace Casablanca.Models.Database
             db.Collaborators.Add(new Collaborator("Yao", "SHI", "Informatique"));
 
             // Create missions
-            db.Missions.Add(new Mission("Voyage vers Tipperary", 0, DateTime.Today, new DateTime(2019, 5, 1), MissionStatus.IN_PROGRESS, null));
-            db.Missions.Add(new Mission("Voyage vers Agartha", 1, new DateTime(2019, 2, 9), new DateTime(2019, 3, 1), MissionStatus.PLANNED, null));
-            db.Missions.Add(new Mission("Voyage vers l'au-delà", 2, new DateTime(2018, 12, 25), new DateTime(2018, 12, 26), MissionStatus.CANCELED, null));
-            db.Missions.Add(new Mission("Voyage voyage", 3, new DateTime(2019, 2, 25), new DateTime(2019, 2, 26), MissionStatus.COMPLETED, null));
-            db.Missions.Add(new Mission("Voyage vers Mars", 4, new DateTime(2019, 2, 6), new DateTime(2019, 3, 1), MissionStatus.PLANNED, null));
-            db.Missions.Add(new Mission("Voyage vers le Mur", 5, new DateTime(2019, 1, 9), new DateTime(2019, 11, 1), MissionStatus.PLANNED, null));
-            db.Missions.Add(new Mission("Voyage à Fuji-san", 6, new DateTime(2019, 1, 2), new DateTime(2019, 1, 4), MissionStatus.IN_PROGRESS, null));
+            db.Missions.Add(new Mission("Voyage vers Tipperary", DateTime.Today, new DateTime(2019, 5, 1), MissionStatus.IN_PROGRESS, null));
+            db.Missions.Add(new Mission("Voyage vers Agartha", new DateTime(2019, 2, 9), new DateTime(2019, 3, 1), MissionStatus.PLANNED, null));
+            db.Missions.Add(new Mission("Voyage vers l'au-delà", new DateTime(2018, 12, 25), new DateTime(2018, 12, 26), MissionStatus.CANCELED, null));
+            db.Missions.Add(new Mission("Voyage voyage", new DateTime(2019, 2, 25), new DateTime(2019, 2, 26), MissionStatus.COMPLETED, null));
+            db.Missions.Add(new Mission("Voyage vers Mars", new DateTime(2019, 2, 6), new DateTime(2019, 3, 1), MissionStatus.PLANNED, null));
+            db.Missions.Add(new Mission("Voyage vers le Mur", new DateTime(2019, 1, 9), new DateTime(2019, 11, 1), MissionStatus.PLANNED, null));
+            db.Missions.Add(new Mission("Voyage à Fuji-san", new DateTime(2019, 1, 2), new DateTime(2019, 1, 4), MissionStatus.IN_PROGRESS, null));
 
             db.SaveChanges();
 
@@ -42,6 +42,9 @@ namespace Casablanca.Models.Database
             GetCollaborator(1).Missions.Add(GetMission(7));
             GetCollaborator(1).Missions.Add(GetMission(4));
             GetCollaborator(4).Missions.Add(GetMission(5));
+
+            // Create some expense reports
+
 
             db.SaveChanges();
         }

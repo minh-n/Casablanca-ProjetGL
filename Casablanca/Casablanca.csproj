@@ -176,8 +176,8 @@
     <Compile Include="Models\Collaborator.cs" />
     <Compile Include="Models\Database\Dal.cs" />
     <Compile Include="Models\Database\IDal.cs" />
-    <Compile Include="Models\ExpenseReport\ExpenseLine.cs" />
-    <Compile Include="Models\ExpenseReport\ExpenseReport.cs" />
+    <Compile Include="Models\ExpenseReports\ExpenseLine.cs" />
+    <Compile Include="Models\ExpenseReports\ExpenseReport.cs" />
     <Compile Include="Models\JavascriptConverter.cs" />
     <Compile Include="Models\Leave.cs" />
     <Compile Include="Models\Service.cs" />

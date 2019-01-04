@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
-namespace Casablanca.Models.ExpenseReport {
+namespace Casablanca.Models.ExpenseReports {
     public enum LineType {
         RESTAURANT,
         HOTEL,

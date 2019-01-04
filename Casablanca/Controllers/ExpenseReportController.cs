@@ -21,7 +21,9 @@ namespace Casablanca.Controllers
 
         public ActionResult Index()
         {
-            return View();
+            List<Collaborator> model = dal.GetCollaborators();
+
+            return View(model);
         }
 
 		public ActionResult AddExpenseReport()
