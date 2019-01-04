@@ -16,5 +16,11 @@ namespace Casablanca.Models.Database {
 		// ExpenseReports
 		List<ExpenseReport> GetExpenseReports();
         ExpenseReport GetExpenseReport(int id);
-    }
+		Collaborator Login(string login, string password);
+
+		// Services
+		List<Service> GetServices();
+		Service GetService(int id);
+		void AddToService(int serviceId, int collId);
+	}
 }

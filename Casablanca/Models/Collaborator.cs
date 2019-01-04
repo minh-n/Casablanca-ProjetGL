@@ -6,36 +6,71 @@ using System.Web;
 
 namespace Casablanca.Models {
 
-    public class Collaborator {
+	public enum Roles
+	{
+		USER,
+		CHIEF,
+		ADMIN
+	}
+
+
+	public class Collaborator {
         [Key]
         public int Id { get; set;  }
+
+		[Required(ErrorMessage = "Le champ compte doit être rempli.")]
+		[Display(Name ="Compte")]
         public string Login { get; set; }
-        public string Password { get; set; }
+
+		[Required(ErrorMessage = "Le champ mot de passe doit être rempli.")]
+		[Display(Name = "Mot de passe")]
+		public string Password { get; set; }
+	
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string Service { get; set; }
+        public Service Service { get; set; }
         public virtual List<Mission> Missions { get; set; }
-
-
+		public Roles Role { get; set; }
+		
         // TODO : Autres attributs ? Jour de congés restants par exemple
 
-        public Collaborator(string firstName, string lastName, string service, Mission mission) {
-            this.FirstName = firstName;
+        public Collaborator(string firstName, string lastName, Mission mission) {
+			this.Login = "default";
+			this.Password = "default";
+			this.FirstName = firstName;
             this.LastName = lastName;
-            this.Service = service;
+            this.Service = null;
             this.Missions = new List<Mission>();
             this.Missions.Add(mission);
         }
 
-        public Collaborator(string firstName, string lastName, string service) {
-            this.FirstName = firstName;
+        public Collaborator(string firstName, string lastName) {
+			this.Login = "default";
+			this.Password = "default";
+			this.FirstName = firstName;
             this.LastName = lastName;
-            this.Service = service;
-            this.Missions = new List<Mission>();
+			this.Service = null;
+			this.Missions = new List<Mission>();
         }
 
-        public Collaborator() {
 
-        }
+		public Collaborator(string firstName, string lastName, string log, string pass)
+		{
+			this.Login = log;
+			this.Password = pass;
+			this.FirstName = firstName;
+			this.LastName = lastName;
+			this.Service = null;
+			this.Missions = new List<Mission>();
+		}
+
+		public Collaborator() {
+			this.Login = "";
+			this.Password = "";
+			this.FirstName = "";
+			this.LastName = "";
+			this.Service = null;
+			this.Missions = null;
+		}
     }
 }

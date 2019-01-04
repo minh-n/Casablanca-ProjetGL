@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Diagnostics;
 
 namespace Casablanca.Controllers
 {
@@ -44,7 +45,10 @@ namespace Casablanca.Controllers
             // Récupérer les collaborateurs dans la BD
             List<Collaborator> model = dal.GetCollaborators();
 
-            return View(model);
+			Debug.WriteLine("salut coll " + dal.GetCollaborator(1).Service.ServiceName);
+			Debug.WriteLine("salut coll " + dal.GetCollaborator(2).Service.ServiceName);
+
+			return View(model);
         }
 
         public ActionResult CollaboratorView(int id)

@@ -13,11 +13,12 @@ namespace Casablanca.Models {
         public List<Collaborator> CollList { get; set; }
         public Collaborator Chief { get; set; }
 
-        public Service(string serviceName, List<Collaborator> collList, Collaborator chief) {
+        public Service(string serviceName) {
             ServiceName = serviceName;
-            CollList = collList;
-            Chief = chief;
+            CollList = new List<Collaborator>();
+            Chief = null;
         }
+
 
         public Service() {
         }

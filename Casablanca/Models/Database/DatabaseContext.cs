@@ -9,5 +9,7 @@ namespace Casablanca.Models
         public DbSet<Mission> Missions { get; set; }
         public DbSet<Leave> Leaves { get; set; }
         public DbSet<ExpenseReport> ExpenseReports { get; set; }
-    }
+		public DbSet<Service> Services { get; set; }
+
+	}
 }
