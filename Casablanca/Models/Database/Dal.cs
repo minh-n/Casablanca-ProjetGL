@@ -45,8 +45,8 @@ namespace Casablanca.Models.Database
             GetCollaborator(4).Missions.Add(GetMission(5));
 
             // Create some expense reports
-            db.ExpenseReports.Add(new ExpenseReport(/*GetCollaborator(2),*/ Month.JANUARY, 2019));
-            db.ExpenseReports.Add(new ExpenseReport(/*GetCollaborator(2),*/ Month.DECEMBER, 2018));
+            db.ExpenseReports.Add(new ExpenseReport(GetCollaborator(2), Month.JANUARY, 2019));
+            db.ExpenseReports.Add(new ExpenseReport(GetCollaborator(2), Month.DECEMBER, 2018));
 
             db.SaveChanges();
 
@@ -71,6 +71,10 @@ namespace Casablanca.Models.Database
         // Missions
         public Mission GetMission(int id) {
             return db.Missions.Find(id);
+        }
+
+        public List<Mission> GetCollaboratorMissions(int collId) {
+            return GetCollaborator(collId).Missions;
         }
 
         // ExpenseReports
