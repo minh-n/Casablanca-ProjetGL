@@ -17,23 +17,25 @@
                 <th>Action</th>
             </tr>
         </thead>
-		<tbody>
-
-			@foreach (var item in Model)
-			{
-			<tr>
-				<td>@item.Month</td>
-				<td>@item.TotalCost</td>
-				<td>@item.NbLines</td>
-				<td>@item.Status</td>
-				<td>"Un bouton ici"</td>
-
-
-			</tr>
-			}
-
-
-		</tbody>
+        <tbody>
+            @foreach (var item in Model) {
+                <tr>
+                    <td>@item.Month @item.Year</td>
+                    <td>@item.TotalCost</td>
+                    <td>@item.NbLines</td>
+                    <td>
+                        @switch (item.Status) {
+                            case ExpenseReportStatus.UNSENT: <text>Non envoyée</text>break;
+                            case ExpenseReportStatus.REFUSED: <text>Refusée</text>break;
+                            case ExpenseReportStatus.APPROVED: <text>Approuvée</text>break;
+                            case ExpenseReportStatus.PENDING_APPROVAL_1: <text>En attente de première validation</text>break;
+                            case ExpenseReportStatus.PENDING_APPROVAL_2: <text>En attente de seconde validation</text>break;
+                        }
+                    </td>
+                    <td>"Un bouton ici"</td>
+                </tr>
+            }
+        </tbody>
     </table>
 </div>
 

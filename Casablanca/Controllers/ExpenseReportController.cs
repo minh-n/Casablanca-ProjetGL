@@ -23,11 +23,9 @@ namespace Casablanca.Controllers
 
         public ActionResult Index()
         {
-            //List<ExpenseReport> model = dal.GetExpenseReports();
+            List<ExpenseReport> model = dal.GetExpenseReports();
 
-            //return View(model);
-			return View();
-
+            return View(model);
 		}
 
 		public ActionResult AddExpenseReport()

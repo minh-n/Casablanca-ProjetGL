@@ -27,27 +27,34 @@ namespace Casablanca.Models.ExpenseReports {
         public int NbLines { get; set; }
         public ExpenseReportStatus Status { get; set; } // TODO : Enum statut ?
 
-        public virtual Collaborator Collaborator { get; set; }
+        //public virtual Collaborator Collaborator { get; set; }
         public virtual List<ExpenseLine> ExpenseLines { get; set; }
 
         public ExpenseReport() {
 
         }
 
-        public ExpenseReport(Month month, int year) {
+        public ExpenseReport(/*Collaborator coll, */Month month, int year) {
             this.Month = month;
             this.Year = year;
             this.TotalCost = 0;
             this.NbLines = 0;
             this.Status = ExpenseReportStatus.UNSENT;
+            //this.Collaborator = coll;
+            this.ExpenseLines = new List<ExpenseLine>();
         }
 
         public void AddLine(ExpenseLine el) {
             this.ExpenseLines.Add(el);
+            this.NbLines++;
+            this.TotalCost += el.Cost;
         }
 
         public void RemoveLine(ExpenseLine el) {
-            this.ExpenseLines.Remove(el);
+            if(this.ExpenseLines.Remove(el)) {
+                this.NbLines--;
+                this.TotalCost -= el.Cost;
+            }
         }
     }
 }

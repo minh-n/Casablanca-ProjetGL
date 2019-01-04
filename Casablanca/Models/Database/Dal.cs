@@ -45,11 +45,13 @@ namespace Casablanca.Models.Database
             GetCollaborator(4).Missions.Add(GetMission(5));
 
             // Create some expense reports
-            db.ExpenseReports.Add(new ExpenseReport(Month.JANUARY, 2019));
-            db.ExpenseReports.Add(new ExpenseReport(Month.DECEMBER, 2018));
+            db.ExpenseReports.Add(new ExpenseReport(/*GetCollaborator(2),*/ Month.JANUARY, 2019));
+            db.ExpenseReports.Add(new ExpenseReport(/*GetCollaborator(2),*/ Month.DECEMBER, 2018));
 
-            ExpenseLine el1 = new ExpenseLine(GetMission(1), LineType.HOTEL, "Trump tower", 1000.0f, new DateTime(), "trumptower.pdf");
-            ExpenseLine el2 = new ExpenseLine(GetMission(1), LineType.HOTEL, "Trump tower", 1000.0f, new DateTime(), "trumptower.pdf");
+            db.SaveChanges();
+
+            ExpenseLine el1 = new ExpenseLine(GetMission(1), LineType.HOTEL, "Trump tower", 1000.0f, new DateTime(2019, 3, 4), "trumptower.pdf");
+            ExpenseLine el2 = new ExpenseLine(GetMission(1), LineType.RESTAURANT, "Trump tower restaurant", 8000.0f, new DateTime(2019, 1, 2), "trumptower.pdf");
             GetExpenseReport(1).AddLine(el1);
             GetExpenseReport(1).AddLine(el2);
 
