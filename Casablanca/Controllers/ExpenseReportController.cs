@@ -1,5 +1,7 @@
 ﻿using Casablanca.Models.Database;
 using Casablanca.Models.ExpenseReports;
+using Casablanca.Models.ViewModel;
+
 
 using System;
 using System.Collections.Generic;
@@ -24,13 +26,16 @@ namespace Casablanca.Controllers
         public ActionResult Index()
         {
             List<ExpenseReport> model = dal.GetExpenseReports();
-
             return View(model);
 		}
 
-		public ActionResult AddExpenseReport()
+		public ActionResult AddExpenseReport(int id)
 		{
-			return View();
+			ExpenseReport er = dal.GetExpenseReport(id);
+
+			AddExpenseLineVM model = new AddExpenseLineVM(er, dal.GetCollaboratorMissions(er.Collaborator.Id));
+
+			return View(model);
 		}
 	}
 }

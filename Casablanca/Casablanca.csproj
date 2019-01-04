@@ -194,6 +194,7 @@
     <Compile Include="Models\JavascriptConverter.cs" />
     <Compile Include="Models\Leaves\Leave.cs" />
     <Compile Include="Models\Service.cs" />
+    <Compile Include="Models\ViewModel\AddExpenseLineVM.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,9 +1,11 @@
-﻿
+﻿@using Casablanca.Models.ViewModel;
+@using Casablanca.Models.ExpenseReports;
+
 @{
 	ViewBag.Title = "Ajouter des lignes de frais";
 }
 
-<h2>Ajouter des lignes de frais</h2>
+@model AddExpenseLineVM
 
 <div>
 	<h2 class="text-left">Effectuer une demande de notes de frais</h2>
@@ -20,14 +22,81 @@
 				</tr>
 			</thead>
 			<tbody>
+				@foreach (var item in Model.ExpenseReport.ExpenseLines)
+				{
 				<tr>
-					<td><select><optgroup label="Type de frais"><option value="12" selected="">Transport</option><option value="13">Restaurant</option><option value="14">Hotel</option></optgroup></select></td>
-					<td><input type="text"></td>
-					<td><input type="number"></td>
-					<td><select><optgroup label="Mission associée"><option value="12" selected="">This is item 1</option><option value="13">This is item 2</option><option value="14">This is item 3</option></optgroup></select></td>
-					<td><input type="date"></td>
-					<td><input type="file"></td>
+
+					<!--Type de frais-->
+					<td>
+						<select>
+							<optgroup label="Type de frais">
+								@foreach (LineType type in LineType.GetValues(typeof(LineType)))
+								{
+									if (type == item.Type)
+									{
+										<option value="@type" selected>@type</option>
+									}
+									else
+									{
+										<option value="@type">@type</option>
+									}
+								}
+
+							</optgroup>
+						</select>
+					</td>
+
+
+
+					<!--Description du frais-->
+					<td><input value="@item.Description" type="text"></td>
+
+
+					<!--Montant-->
+					<td><input value="@item.Cost" type="number"></td>
+
+
+					<!--Mission associee-->
+					<td>
+						<select>
+							<optgroup label="Mission associée">
+								@foreach (var item2 in Model.CollaboratorMissions)
+								{
+									if (item.Mission.Id == item2.Id)
+									{
+										<option value="@item2.Id" selected>@item2.Name</option>
+									}
+									else
+									{
+										<option value="@item2.Id">@item2.Name</option>
+									}
+								}
+							</optgroup>
+						</select>
+					</td>
+
+
+					<!--Date de la ligne de frais-->
+					<td>
+						@Html.TextBoxFor(model => item, new { @type = "date", @class = "form-control datepicker", @Value = item.Date.ToString("yyyy-MM-dd") })
+						<!-- ligne 5 copiée d'ici : https://gist.github.com/badcommandorfilename/118012102de8e7201e079e519ee9d135
+		Ne pas toucher, magie noire-->
+					</td>
+
+
+					<!--justificatif-->
+					<td><input value="@item.Justificatory" type="file"></td>
+					<!-- https://stackoverflow.com/questions/304617/html-helper-for-input-type-file
+
+						https://weblog.west-wind.com/posts/2012/Mar/06/Using-the-HTML5-input-typefile-multiplemultiple-Tag-in-ASPNET
+						
+						-->
 				</tr>
+				}
+
+
+
+
 			</tbody>
 		</table>
 	</div>
