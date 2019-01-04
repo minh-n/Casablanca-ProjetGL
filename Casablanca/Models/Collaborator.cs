@@ -18,8 +18,8 @@ namespace Casablanca.Models {
         [Key]
         public int Id { get; set;  }
 
-		[Required(ErrorMessage = "Le champ compte doit être rempli.")]
-		[Display(Name ="Compte")]
+		[Required(ErrorMessage = "Le champ nom de compte doit être rempli.")]
+		[Display(Name ="Nom de compte")]
         public string Login { get; set; }
 
 		[Required(ErrorMessage = "Le champ mot de passe doit être rempli.")]
@@ -28,7 +28,7 @@ namespace Casablanca.Models {
 	
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public Service Service { get; set; }
+        public virtual Service Service { get; set; }
         public virtual List<Mission> Missions { get; set; }
 		public Roles Role { get; set; }
 		

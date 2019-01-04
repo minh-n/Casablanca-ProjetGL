@@ -25,6 +25,9 @@ namespace Casablanca.Controllers
 
         public ActionResult Index() // TODO : get collID
         {
+            if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+                return Redirect("/Home/Index");
+
             ExpenseReport er = dal.GetExpenseReport(1);
             AddExpenseLineVM linesVM = new AddExpenseLineVM(er, dal.GetCollaboratorMissions(er.Collaborator.Id));
             List<ExpenseReport> reports = dal.GetExpenseReports();
@@ -36,7 +39,10 @@ namespace Casablanca.Controllers
 
 		public ActionResult AddExpenseReport(int id)
 		{
-			ExpenseReport er = dal.GetExpenseReport(id);
+            if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+                return Redirect("/Home/Index");
+
+            ExpenseReport er = dal.GetExpenseReport(id);
 
 			AddExpenseLineVM model = new AddExpenseLineVM(er, dal.GetCollaboratorMissions(er.Collaborator.Id));
 

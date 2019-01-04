@@ -11,6 +11,9 @@ namespace Casablanca.Controllers
     {
         public ActionResult Index()
         {
+            if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+                return Redirect("/Home/Index");
+
             // Récupérer les congés et demandes de congés dans la BD
             // var congés = GetCongés();
 
@@ -40,6 +43,9 @@ namespace Casablanca.Controllers
 
         public ActionResult Traiter()
         {
+            if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+                return Redirect("/Home/Index");
+
             // TODO : passer les demandes en attente
 
             // Récupérer les congés et demandes de congés dans la BD

@@ -313,7 +313,7 @@
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Home\ListeCollaborateurs.cshtml" />
+    <Content Include="Views\Home\CollaboratorList.cshtml" />
     <Content Include="Views\Leave\Index.cshtml" />
     <Content Include="Views\Leave\Traiter.cshtml" />
     <Content Include="Scripts\umd\popper.min.js.map" />
