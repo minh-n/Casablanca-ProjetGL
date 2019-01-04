@@ -22,5 +22,8 @@ namespace Casablanca.Models.Database {
 		List<Service> GetServices();
 		Service GetService(int id);
 		void AddToService(int serviceId, int collId);
+
+		// Admin
+		void SetCollaboratorAccount(int collId, string login, string pass);
 	}
 }

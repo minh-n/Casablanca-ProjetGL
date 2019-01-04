@@ -36,11 +36,11 @@ namespace Casablanca.Models.Database
                 new Service("Matériaux")
             };
 
-            // Create collaborators
-            Collaborators = new List<Collaborator> {
-                new Collaborator("Morgan", "FEURTE", "salutMorgan", EncodeMD5("test")),
-                new Collaborator("Minh", "NGUYEN", "greetings", EncodeMD5("test1")),
-                new Collaborator("Adrien", "LAVILLONNIERE"),
+			// Create collaborators
+			Collaborators = new List<Collaborator> {
+				new Collaborator("Morgan", "FEURTE"),
+				new Collaborator("Minh", "NGUYEN"),
+				new Collaborator("Adrien", "LAVILLONNIERE", "Dadri", EncodeMD5("test")),
                 new Collaborator("Jeffrey", "GONCALVES"),
                 new Collaborator("Yao", "SHI"),
                 new Collaborator("Arthur", "BINELLI"),
@@ -82,7 +82,9 @@ namespace Casablanca.Models.Database
             Collaborators[1].Missions.Add(Missions[4]);
             Collaborators[4].Missions.Add(Missions[5]);
 
-            ////////////////////////////////////////////////
+            /*
+			 * Adding every lists to the database
+			 */
             foreach (Service s in Services) {
                 Db.Services.Add(s);
             }
@@ -100,15 +102,17 @@ namespace Casablanca.Models.Database
             // Create some expense reports TODO DO AS LIST
             Db.ExpenseReports.Add(new ExpenseReport(GetCollaborator(2), Month.JANUARY, 2019));
             Db.ExpenseReports.Add(new ExpenseReport(GetCollaborator(2), Month.DECEMBER, 2018));
+			Db.ExpenseReports.Add(new ExpenseReport(GetCollaborator(1), Month.DECEMBER, 2018));
+			Db.ExpenseReports.Add(new ExpenseReport(GetCollaborator(3), Month.NOVEMBER, 2018));
 
-            Db.SaveChanges();
+			Db.SaveChanges();
 
-            ExpenseLine el1 = new ExpenseLine(GetMission(1), LineType.HOTEL, "Trump tower", 1000.0f, new DateTime(2019, 3, 4), "trumptower.pdf");
-            ExpenseLine el2 = new ExpenseLine(GetMission(1), LineType.RESTAURANT, "Trump tower restaurant", 8000.0f, new DateTime(2019, 1, 2), "trumptower.pdf");
+            ExpenseLine el1 = new ExpenseLine(GetMission(1), LineType.HOTEL, "Trump Tower", 1000.0f, new DateTime(2019, 3, 4), "trumptower.pdf");
+            ExpenseLine el2 = new ExpenseLine(GetMission(1), LineType.RESTAURANT, "Trump Tower restaurant", 8000.0f, new DateTime(2019, 1, 2), "trumptower.pdf");
             GetExpenseReport(1).AddLine(el1);
             GetExpenseReport(1).AddLine(el2);
 
-            Db.SaveChanges();
+			Db.SaveChanges();
         }
 
         // Collaborators
@@ -171,6 +175,19 @@ namespace Casablanca.Models.Database
             Collaborators[collId].Service = Services[serviceId];
         }
 		
+		// Admin
+		public void SetCollaboratorAccount(int collId, string login, string pass)
+		{
+			GetCollaborator(collId).Login = login;
+			GetCollaborator(collId).Password = EncodeMD5(pass);
+
+			Db.SaveChanges(); //Very important to save
+		}
+
+
+
+
+
 		public void Dispose()
         {
             Db.Dispose();

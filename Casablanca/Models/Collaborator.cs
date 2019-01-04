@@ -20,11 +20,11 @@ namespace Casablanca.Models {
 
 		[Required(ErrorMessage = "Le champ nom de compte doit être rempli.")]
 		[Display(Name ="Nom de compte")]
-        public string Login { get; set; }
+        public virtual string Login { get; set; }
 
 		[Required(ErrorMessage = "Le champ mot de passe doit être rempli.")]
 		[Display(Name = "Mot de passe")]
-		public string Password { get; set; }
+		public virtual string Password { get; set; }
 	
         public string FirstName { get; set; }
         public string LastName { get; set; }

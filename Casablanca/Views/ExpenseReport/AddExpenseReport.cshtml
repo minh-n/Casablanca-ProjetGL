@@ -44,10 +44,8 @@
                         <!--Description du frais-->
                         <td><input value="@item.Description" type="text"></td>
 
-
                         <!--Montant-->
                         <td><input value="@item.Cost" type="number"></td>
-
 
                         <!--Mission associee-->
                         <td>
@@ -65,14 +63,12 @@
                             </select>
                         </td>
 
-
                         <!--Date de la ligne de frais-->
                         <td>
                             @Html.TextBoxFor(model => item, new { @type = "date", @class = "form-control datepicker", @Value = item.Date.ToString("yyyy-MM-dd") })
                             <!-- ligne 5 copiée d'ici : https://gist.github.com/badcommandorfilename/118012102de8e7201e079e519ee9d135
                             Ne pas toucher, magie noire-->
                         </td>
-
 
                         <!--justificatif-->
                         <td><input value="@item.Justificatory" type="file"></td>
