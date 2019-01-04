@@ -1,7 +1,9 @@
-﻿
+﻿@using Casablanca.Models.ExpenseReports;
 @{
     ViewBag.Title = "Mes frais";
 }
+
+@model List<ExpenseReport>
 
 <h2 class="text-left">Notes de frais</h2>
 <div class="table-responsive">
@@ -15,23 +17,23 @@
                 <th>Action</th>
             </tr>
         </thead>
-        <tbody>
-            ]
-            <tr>
-                <td>Cell 1</td>
-                <td>Cell 2</td>
-                <td>Cell 3</td>
-                <td>Cell 4</td>
-                <td>Cell 5</td>
-            </tr>
-            <tr>
-                <td>Cell 3</td>
-                <td>Cell 4</td>
-                <td>Cell 3</td>
-                <td>Cell 4</td>
-                <td>Cell 5</td>
-            </tr>
-        </tbody>
+		<tbody>
+
+			@foreach (var item in Model)
+			{
+			<tr>
+				<td>@item.Month</td>
+				<td>@item.TotalCost</td>
+				<td>@item.NbLines</td>
+				<td>@item.Status</td>
+				<td>"Un bouton ici"</td>
+
+
+			</tr>
+			}
+
+
+		</tbody>
     </table>
 </div>
 
