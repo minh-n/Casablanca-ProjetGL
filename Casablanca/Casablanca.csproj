@@ -195,6 +195,7 @@
     <Compile Include="Models\Leaves\Leave.cs" />
     <Compile Include="Models\Service.cs" />
     <Compile Include="Models\ViewModel\AddExpenseLineVM.cs" />
+    <Compile Include="Models\ViewModel\AddExpenseReportVM.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

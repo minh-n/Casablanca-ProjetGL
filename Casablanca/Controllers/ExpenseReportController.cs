@@ -23,9 +23,14 @@ namespace Casablanca.Controllers
             this.dal = dal;
         }
 
-        public ActionResult Index()
+        public ActionResult Index() // TODO : get collID
         {
-            List<ExpenseReport> model = dal.GetExpenseReports();
+            ExpenseReport er = dal.GetExpenseReport(1);
+            AddExpenseLineVM linesVM = new AddExpenseLineVM(er, dal.GetCollaboratorMissions(er.Collaborator.Id));
+            List<ExpenseReport> reports = dal.GetExpenseReports();
+
+            AddExpenseReportVM model = new AddExpenseReportVM(linesVM, reports);
+
             return View(model);
 		}
 

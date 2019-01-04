@@ -1,9 +1,11 @@
 ﻿@using Casablanca.Models.ExpenseReports;
+@using Casablanca.Models.ViewModel;
+
 @{
     ViewBag.Title = "Mes frais";
 }
 
-@model List<ExpenseReport>
+@model AddExpenseReportVM
 
 <h2 class="text-left">Notes de frais</h2>
 <div class="table-responsive">
@@ -18,7 +20,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model) {
+            @foreach (var item in Model.ExpenseReports) {
                 <tr>
                     <td>@item.Month @item.Year</td>
                     <td>@item.TotalCost</td>
@@ -60,7 +62,7 @@
             </div>
             <div class="modal-body">
                 <form>
-                    <h4>Hello</h4>
+                    @Html.Partial("~/Views/ExpenseReport/AddExpenseReport.cshtml", Model.modalVM)
                 </form>
             </div>
             <div class="modal-footer">
