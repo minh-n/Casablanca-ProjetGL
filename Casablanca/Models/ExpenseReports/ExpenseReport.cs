@@ -13,11 +13,16 @@ namespace Casablanca.Models.ExpenseReports {
         REFUSED
     }
 
+    public enum Month {
+        JANUARY, FEBRUARY, MARCH, APRIL, MAY, JUNE, JULY, AUGUST, SEPTEMBER, OCTOBER, NOVEMBER, DECEMBER 
+    }
+
     public class ExpenseReport {
        
         [Key]
         public int Id { get; set; }
-        public string Month { get; set; }
+        public Month Month { get; set; }
+        public int Year { get; set; }
         public float TotalCost { get; set; }
         public int NbLines { get; set; }
         public ExpenseReportStatus Status { get; set; } // TODO : Enum statut ?
@@ -29,18 +34,19 @@ namespace Casablanca.Models.ExpenseReports {
 
         }
 
-        public ExpenseReport(string month) {
+        public ExpenseReport(Month month, int year) {
             this.Month = month;
+            this.Year = year;
             this.TotalCost = 0;
             this.NbLines = 0;
             this.Status = ExpenseReportStatus.UNSENT;
         }
 
-        public void addLine(ExpenseLine el) {
+        public void AddLine(ExpenseLine el) {
             this.ExpenseLines.Add(el);
         }
 
-        public void removeLine(ExpenseLine el) {
+        public void RemoveLine(ExpenseLine el) {
             this.ExpenseLines.Remove(el);
         }
     }

@@ -16,7 +16,7 @@ namespace Casablanca.Models.ExpenseReports {
 
         [Key]
         public int Id { get; set; }
-        public string Mission { get; set; } // TODO : Mission
+        public Mission Mission { get; set; }
         public LineType Type { get; set; }
         public string Description { get; set; }
         public float Cost { get; set; }
@@ -27,7 +27,7 @@ namespace Casablanca.Models.ExpenseReports {
 
         }
 
-        public ExpenseLine(string mission, LineType type, string description, float cost, DateTime date, string justificatory) {
+        public ExpenseLine(Mission mission, LineType type, string description, float cost, DateTime date, string justificatory) {
             this.Mission = mission;
             this.Type = type;
             this.Description = description;

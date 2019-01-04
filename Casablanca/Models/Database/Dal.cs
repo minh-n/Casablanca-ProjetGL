@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Data.Entity;
+using Casablanca.Models.ExpenseReports;
 
 namespace Casablanca.Models.Database
 {
@@ -44,7 +45,13 @@ namespace Casablanca.Models.Database
             GetCollaborator(4).Missions.Add(GetMission(5));
 
             // Create some expense reports
+            db.ExpenseReports.Add(new ExpenseReport(Month.JANUARY, 2019));
+            db.ExpenseReports.Add(new ExpenseReport(Month.DECEMBER, 2018));
 
+            ExpenseLine el1 = new ExpenseLine(GetMission(1), LineType.HOTEL, "Trump tower", 1000.0f, new DateTime(), "trumptower.pdf");
+            ExpenseLine el2 = new ExpenseLine(GetMission(1), LineType.HOTEL, "Trump tower", 1000.0f, new DateTime(), "trumptower.pdf");
+            GetExpenseReport(1).AddLine(el1);
+            GetExpenseReport(1).AddLine(el2);
 
             db.SaveChanges();
         }
@@ -62,6 +69,15 @@ namespace Casablanca.Models.Database
         // Missions
         public Mission GetMission(int id) {
             return db.Missions.Find(id);
+        }
+
+        // ExpenseReports
+        public List<ExpenseReport> GetExpenseReports() {
+            return db.ExpenseReports.ToList();
+        }
+
+        public ExpenseReport GetExpenseReport(int id) {
+            return db.ExpenseReports.Find(id);
         }
 
         public void Dispose()

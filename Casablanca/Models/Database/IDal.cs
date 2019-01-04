@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Casablanca.Models.ExpenseReports;
 
-namespace Casablanca.Models.Database
-{
+namespace Casablanca.Models.Database {
     interface IDal : IDisposable
     {
         // Collaborators
@@ -14,5 +11,9 @@ namespace Casablanca.Models.Database
 
         // Missions 
         Mission GetMission(int id);
+
+        // ExpenseReports
+        List<ExpenseReport> GetExpenseReports();
+        ExpenseReport GetExpenseReport(int id);
     }
 }
