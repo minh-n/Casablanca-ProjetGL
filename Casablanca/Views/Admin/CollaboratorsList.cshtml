@@ -11,89 +11,57 @@
 
 <h2>Admin/Liste des Collaborateurs</h2>
 
-<div class="container">
-
-	<div id="table" class="table-editable" data-toggle="table"
-	   data-search="true">
-		<span class="table-add glyphicon glyphicon-plus"></span>
-		<table class="table">
+<table id="table"
+	   data-toggle="table"
+	   data-search="true"
+	   class="table">
+	@if (Model.Count() == 0)
+	{
+		<tr>
+			<td colspan="10">Aucun collaborateur trouvé.</td>
+		</tr>
+	}
+	else
+	{
+		<thead>
 			<tr>
-				<th>Name</th>
-				<th>Value</th>
-				<th></th>
-				<th></th>
+				<th scope="col" data-field="select" data-sortable="true">Sélectionner ?</th>
+
+				<th scope="col" data-field="prenom" data-sortable="true">Prénom</th>
+				<th scope="col" data-field="nom" data-sortable="true">Nom</th>
+				<th scope="col" data-field="service" data-sortable="true">Service</th>
+				<th scope="col" data-field="mission" data-sortable="true">Mission</th>
+
 			</tr>
-			<tr>
-				<td contenteditable="true">Stir Fry</td>
-				<td contenteditable="true">stir-fry</td>
-				<td>
-					<span class="table-remove glyphicon glyphicon-remove"></span>
-				</td>
-			</tr>
-			<!-- This is our clonable table line -->
-			<tr class="hide">
-				<td contenteditable="true">Untitled</td>
-				<td contenteditable="true">undefined</td>
-				<td>
-					<span class="table-remove glyphicon glyphicon-remove"></span>
-				</td>
-			</tr>
-		</table>
-	</div>
+		</thead>
+		<tbody>
+			@foreach (var item in Model)
+			{
+				<tr>
+					<td>Insérer checkbox ici ici ?</td>
+					<td>@item.FirstName</td>
+					<td>@item.LastName</td>
+					<td>@item.Service.ServiceName</td>
+					<td>
+						@if (item.Missions.Count != 0)
+						{
 
-	<button id="export-btn" class="btn btn-primary">Export Data</button>
-	<p id="export"></p>
-</div>
+							foreach (var mission in item.Missions)
+							{
+								@mission.Name <text> ,</text>
+							}
+
+						}
+						else
+						{
+							<text>Aucune mission</text>
+						}
+					</td>
+				</tr>
+			}
+		</tbody>
+	}
+</table>
 
 
 
-
-@section Scripts {
-
-	<script>
-
-		var $TABLE = $('#table');
-		var $BTN = $('#export-btn');
-		var $EXPORT = $('#export');
-
-		$('.table-add').click(function () {
-			var $clone = $TABLE.find('tr.hide').clone(true).removeClass('hide table-line');
-			$TABLE.find('table').append($clone);
-		});
-
-		$('.table-remove').click(function () {
-			$(this).parents('tr').detach();
-		});
-
-		// A few jQuery helpers for exporting only
-		jQuery.fn.pop = [].pop;
-		jQuery.fn.shift = [].shift;
-
-		$BTN.click(function () {
-			var $rows = $TABLE.find('tr:not(:hidden)');
-			var headers = [];
-			var data = [];
-
-			// Get the headers (add special header logic here)
-			$($rows.shift()).find('th:not(:empty)').each(function () {
-				headers.push($(this).text().toLowerCase());
-			});
-
-			// Turn all existing rows into a loopable array
-			$rows.each(function () {
-				var $td = $(this).find('td');
-				var h = {};
-
-				// Use the headers from earlier to name our hash keys
-				headers.forEach(function (header, i) {
-					h[header] = $td.eq(i).text();
-				});
-
-				data.push(h);
-			});
-
-			// Output the result
-			$EXPORT.text(JSON.stringify(data));
-		});
-	</script>
-}

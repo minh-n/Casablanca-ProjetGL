@@ -1,11 +1,27 @@
-﻿@{
+﻿@using Casablanca.Models
+
+@{
     ViewBag.Title = "Casablanca";
 }
 
+@model Collaborator
+
 <div class="jumbotron">
-    <h1>Bienvenue !</h1>
-    <p class="lead">Casablanca est l'intranet préféré des utilisateurs Pops17-18 !</p>
-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">En apprendre plus &raquo;</a></p>
+
+	@{
+		if(@HttpContext.Current.User.Identity.IsAuthenticated != false)
+		{
+			<h2>Bienvenue @Model.FirstName @Model.LastName !</h2>
+		}
+		else
+		{
+		<h2>Bienvenue sur Pops1819. Veuillez vous connecter !</h2>
+		}
+	}
+
+
+	<p class="lead">Cette page sera le futur tableau de bord. On aura accès au Collaborator ici</p>
+	<p><a href="https://asp.net" class="btn btn-primary btn-lg">En apprendre plus &raquo;</a></p>
 </div>
 
 <div class="row">

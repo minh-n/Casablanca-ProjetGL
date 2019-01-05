@@ -334,6 +334,10 @@
     <Content Include="Views\Admin\Index.cshtml" />
     <Content Include="Views\Admin\ServicesList.cshtml" />
     <Content Include="Views\Admin\CollaboratorsList.cshtml" />
+    <Content Include="Views\Management\Index.cshtml" />
+    <Content Include="Views\Management\ERProcessing.cshtml" />
+    <Content Include="Views\Management\LeaveProcessing.cshtml" />
+    <Content Include="Views\Home\UserProfile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

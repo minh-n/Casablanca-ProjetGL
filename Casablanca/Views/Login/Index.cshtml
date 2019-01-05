@@ -4,21 +4,24 @@
 	ViewBag.Title = "Connexion";
 }
 
-<h2>Authentification</h2>
 
-@using (Html.BeginForm())
-{
-	<div>
-		@Html.LabelFor(m => m.Login)
-		@Html.TextBoxFor(m => m.Login)
-	</div>
-	<div>
-		@Html.LabelFor(m => m.Password)
-		@Html.PasswordFor(m => m.Password)
-	</div>
+<div align="center">
+	<h2>Connexion</h2>
+	@using (Html.BeginForm())
+	{
+		<div style="padding:10px">
+			<div> @Html.LabelFor(m => m.Login) </div>
+			<div> @Html.TextBoxFor(m => m.Login) </div>
+		</div>
+		<div style="padding:10px">
+			<div>@Html.LabelFor(m => m.Password)</div>
+			<div>@Html.PasswordFor(m => m.Password)</div>
+		</div>
 
-	<input type="submit" value="Se connecter" />
+		<div style="padding:10px">
+			<input type="submit" value="Se connecter" />
+		</div>
 
-	@Html.ValidationSummary("");
-
-}
+		@Html.ValidationSummary("");
+	}
+</div>

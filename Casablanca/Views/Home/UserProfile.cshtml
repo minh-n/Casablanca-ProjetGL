@@ -1,0 +1,51 @@
+﻿@using Casablanca.Models
+
+@{
+	ViewBag.Title = "Profile";
+}
+
+
+@model Collaborator
+<div class="container">
+
+	<div class="row">
+
+		<div class="col-sm-5">
+			<h1>Profil de l'utilisateur </h1>
+
+			<div style="padding:10px">
+				<h3>Informations de base</h3>
+				<div> Prénom : @Model.FirstName </div>
+				<div> Nom : @Model.LastName</div>
+				<div> Service : @Model.Service.ServiceName</div>
+
+				<div> Rôle : @Model.Role</div> <!--if role == USER alors afficher collaborateur etc-->
+
+			</div>
+
+
+			<div style="padding:10px">
+				<h3>Notes de frais</h3>
+				<div></div>
+			</div>
+
+			<div style="padding:10px">
+				<h3>Demandes de congé</h3>
+				<div></div>
+			</div>
+
+
+		</div>
+
+
+		<div class="col-sm-5">
+			<div style="padding:10px">
+				<h3>Missions</h3>
+				<div></div>
+			</div>
+		</div>
+
+	</div>
+
+
+</div>

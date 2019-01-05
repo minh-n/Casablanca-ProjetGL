@@ -12,21 +12,24 @@ namespace Casablanca.Controllers
     public class HomeController : Controller
     {
         private IDal dal;
+        public HomeController() : this(new Dal()) {}
+        private HomeController(IDal dal) {this.dal = dal;}
 
-        public HomeController() : this(new Dal()) {
-
-        }
-
-        private HomeController(IDal dal) {
-            this.dal = dal;
-        }
-
-        public ActionResult Index()
+		public ActionResult Index()
         {
-            return View();
+			int collId;
+			int.TryParse(System.Web.HttpContext.Current.User.Identity.Name, out collId);
+			return View(dal.GetCollaborator(collId));
         }
 
-        public ActionResult About()
+		public ActionResult UserProfile()
+		{
+			int collId;
+			int.TryParse(System.Web.HttpContext.Current.User.Identity.Name, out collId);
+			return View(dal.GetCollaborator(collId));
+		}
+
+		public ActionResult About()
         {
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                 return Redirect("/Home/Index");
