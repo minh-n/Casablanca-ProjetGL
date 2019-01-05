@@ -16,7 +16,10 @@ namespace Casablanca.Models.ExpenseReports {
 
         [Key]
         public int Id { get; set; }
-        public Mission Mission { get; set; }
+
+        public virtual Mission Mission { get; set; }
+		public virtual Collaborator ChiefValidator { get; set; }
+
         public LineType Type { get; set; }
         public string Description { get; set; }
         public float Cost { get; set; }
@@ -27,7 +30,18 @@ namespace Casablanca.Models.ExpenseReports {
 
         }
 
-        public ExpenseLine(Mission mission, LineType type, string description, float cost, DateTime date, string justificatory) {
+		public ExpenseLine(Mission mission, LineType type, Collaborator chiefValidator, string description, float cost, DateTime date, string justificatory)
+		{
+			Mission = mission;
+			ChiefValidator = chiefValidator;
+			Type = type;
+			Description = description;
+			Cost = cost;
+			Date = date;
+			Justificatory = justificatory;
+		}
+
+		public ExpenseLine(Mission mission, LineType type, string description, float cost, DateTime date, string justificatory) {
             this.Mission = mission;
             this.Type = type;
             this.Description = description;

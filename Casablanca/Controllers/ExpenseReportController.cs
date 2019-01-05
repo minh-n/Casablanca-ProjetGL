@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Diagnostics;
 
 namespace Casablanca.Controllers
 {
@@ -54,5 +55,66 @@ namespace Casablanca.Controllers
 
 			return View(model);
 		}
+
+
+		public ActionResult ProcessCDS()
+		{
+			return View();
+		}
+
+		public ActionResult ProcessCompta(int ERId)
+		{
+			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+				return Redirect("/Home/Index");
+			Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+			//not in management OR is RH = cannot see
+			if ((HelperModel.CheckManagement(coll) == false) || HelperModel.CheckRH(coll))
+				return Redirect("/Home/Index");
+
+			ExpenseReport model = dal.GetExpenseReport(ERId);
+			return View(model);
+		}
+
+
+
+		/*
+		 * display the ER list management needs to process
+		 */
+		public ActionResult ProcessList()
+		{
+			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+				return Redirect("/Home/Index");
+
+			Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+
+			//not in management OR isRH = cannot see
+			if ((HelperModel.CheckManagement(coll) == false) || HelperModel.CheckRH(coll))
+				return Redirect("/Home/Index");
+		
+			List<ExpenseReport> reports = dal.GetExpenseReports();
+			List<ExpenseReport> model = new List<ExpenseReport>();
+
+			foreach (ExpenseReport e in reports)
+			{
+				if (HelperModel.CheckCompta(coll))
+				{
+					if(e.Status == ExpenseReportStatus.PENDING_APPROVAL_2)
+						model.Add(e);
+				}
+				else if (HelperModel.CheckCDS(coll))
+				{
+					if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_1)
+					{
+						ExpenseReport temp = new ExpenseReport(e.Collaborator, e.Month, e.Year);
+						//todo foreach e.expenseline voir si le cds est bien notre coll
+					}
+
+					//TODO : get que les trucs en relation avec coll
+				}
+			}
+			
+			return View(model);
+		}
+		
 	}
 }

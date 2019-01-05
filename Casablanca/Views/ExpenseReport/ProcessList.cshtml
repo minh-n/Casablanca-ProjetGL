@@ -1,0 +1,51 @@
+﻿@using Casablanca.Models
+@using Casablanca.Models.ExpenseReports;
+@using Casablanca.Models.ViewModel;
+
+@{
+	ViewBag.Title = "ProcessList";
+}
+
+@model List<ExpenseReport>
+
+<h2 class="text-left">Notes de frais à traiter</h2>
+<div class="table-responsive">
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Collaborateur</th>
+				<th>Mois</th>
+				<th>Montant Total</th>
+				<th>Nombre de frais</th>
+				<th>Statut</th>
+				<th>Traiter</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (ExpenseReport item in Model)
+			{
+				<tr>
+					<td>@item.Collaborator.FirstName @item.Collaborator.LastName</td>
+					<td>@item.Month @item.Year</td>
+					<td>@item.TotalCost</td>
+					<td>@item.NbLines</td>
+					<td>
+						@switch (item.Status)
+						{
+							case ExpenseReportStatus.UNSENT:<text>ERREUR : Non envoyée</text>break;
+						case ExpenseReportStatus.REFUSED: <text>Refusée</text>break;
+					case ExpenseReportStatus.APPROVED: <text>Approuvée</text>break;
+				case ExpenseReportStatus.PENDING_APPROVAL_1: <text>En attente de première validation</text>break;
+			case ExpenseReportStatus.PENDING_APPROVAL_2: <text>En attente de seconde validation</text>break;
+	}
+					</td>
+
+					<!--traiter-->
+					<td>
+						@Html.ActionLink("Traiter", "ProcessCompta", "ExpenseReport", new { ERId = item.Id }, null)
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+</div>

@@ -185,6 +185,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Database\DatabaseInitialization.cs" />
+    <Compile Include="Models\HelperModel.cs" />
     <Compile Include="Models\Notification.cs" />
     <Compile Include="Models\Mission.cs" />
     <Compile Include="Models\Database\DatabaseContext.cs" />
@@ -198,6 +199,7 @@
     <Compile Include="Models\Service.cs" />
     <Compile Include="Models\ViewModel\AddExpenseLineVM.cs" />
     <Compile Include="Models\ViewModel\AddExpenseReportVM.cs" />
+    <Compile Include="Models\ViewModel\ProcessReportVM.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -316,7 +318,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Home\CollaboratorList.cshtml" />
     <Content Include="Views\Leave\Index.cshtml" />
-    <Content Include="Views\Leave\Traiter.cshtml" />
+    <Content Include="Views\Leave\Process.cshtml" />
     <Content Include="Scripts\umd\popper.min.js.map" />
     <Content Include="Scripts\umd\popper.js.map" />
     <Content Include="Scripts\umd\popper-utils.min.js.map" />
@@ -334,13 +336,14 @@
     <Content Include="Views\Admin\Index.cshtml" />
     <Content Include="Views\Admin\ServicesList.cshtml" />
     <Content Include="Views\Admin\CollaboratorsList.cshtml" />
-    <Content Include="Views\Management\Index.cshtml" />
-    <Content Include="Views\Management\ERProcessing.cshtml" />
-    <Content Include="Views\Management\LeaveProcessing.cshtml" />
     <Content Include="Views\Home\UserProfile.cshtml" />
+    <Content Include="Views\ExpenseReport\ProcessCDS.cshtml" />
+    <Content Include="Views\ExpenseReport\ProcessCompta.cshtml" />
+    <Content Include="Views\ExpenseReport\ProcessList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\ProcessReportVM\" />
     <Folder Include="Views\SelectCollViewModel\" />
   </ItemGroup>
   <ItemGroup>

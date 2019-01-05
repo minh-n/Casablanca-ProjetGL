@@ -1,0 +1,40 @@
+﻿@using Casablanca.Models.ExpenseReports
+@{
+	ViewBag.Title = "ProcessCompta";
+}
+
+@model ExpenseReport
+
+<h2 class="text-left">Note de frais du collaborateur @Model.Collaborator.FirstName  @Model.Collaborator.LastName</h2>
+
+<div class="table-responsive">
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Type de frais</th>
+				<th>Description</th>
+				<th>Montant</th>
+				<th>Mission associée</th>
+				<th>Date</th>
+				<th>Justificatif</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (ExpenseLine line in Model.ExpenseLines)
+			{
+				
+				<tr>
+					<td>@line.Type</td>
+					<td>@line.Description</td>
+					<td>@line.Cost</td>
+					<td>@line.Mission.Name</td> <!--???-->
+					<td>@line.Date</td>
+					<td>@line.Justificatory</td>
+					<td>Valider ou ??</td>
+
+				</tr>
+			}
+		</tbody>
+	</table>
+</div>

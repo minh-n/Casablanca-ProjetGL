@@ -13,7 +13,6 @@ namespace Casablanca.Controllers
 {
     public class AdminController : Controller
     {
-
 		private IDal dal;
 		public AdminController() : this(new Dal()){}
 		private AdminController(IDal dal){this.dal = dal;}
@@ -38,24 +37,23 @@ namespace Casablanca.Controllers
 
 		//POST : account register
 		[HttpPost]
-		public ActionResult CreateAccount(Collaborator model)//TODO : get collId
+		public ActionResult CreateAccount(Collaborator model /*, int collId*/)
 		{
 			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
 				return Redirect("/Home/Index");
 
-			//TODO change this
+			//TODO bug
 			int collId = 1;
 
 			if (ModelState.IsValid)
 			{
 				dal.SetCollaboratorAccount(collId, model.Login, model.Password);
-				FormsAuthentication.SetAuthCookie(collId.ToString(), false);
+				//???FormsAuthentication.SetAuthCookie(collId.ToString(), false);
 				return Redirect("/Admin/Index"); 
 			}
 			return View(model);
 		}
 
-		
 		public ActionResult ServicesList()
 		{
 			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
@@ -65,7 +63,6 @@ namespace Casablanca.Controllers
 			return View(model);
 		}
 
-		
 		// Coll List
 		public ActionResult CollaboratorsList()
 		{

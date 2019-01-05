@@ -10,6 +10,7 @@ namespace Casablanca.Controllers
 {
     public class LeaveController : Controller
     {
+
         public ActionResult Index()
         {
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
@@ -42,7 +43,16 @@ namespace Casablanca.Controllers
             return View(model);
         }
 
-        public ActionResult Traiter()
+
+
+
+
+
+
+
+
+		//TODO
+        public ActionResult Process()
         {
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                 return Redirect("/Home/Index");
@@ -76,5 +86,17 @@ namespace Casablanca.Controllers
 
             return View(model);
         }
+
+
+
+
+
+
+
+
+
+
+
+
     }
 }

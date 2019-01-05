@@ -25,13 +25,12 @@ namespace Casablanca.Models.ExpenseReports {
         public int Year { get; set; }
         public float TotalCost { get; set; }
         public int NbLines { get; set; }
-        public ExpenseReportStatus Status { get; set; } // TODO : Enum statut ?
+        public ExpenseReportStatus Status { get; set; }
 
         public virtual Collaborator Collaborator { get; set; }
         public virtual List<ExpenseLine> ExpenseLines { get; set; }
 
         public ExpenseReport() {
-
         }
 
         public ExpenseReport(Collaborator coll, Month month, int year) {
@@ -46,7 +45,20 @@ namespace Casablanca.Models.ExpenseReports {
             coll.ExpenseReports.Add(this);
         }
 
-        public void AddLine(ExpenseLine el) {
+		public ExpenseReport(Collaborator coll, Month month, int year, ExpenseReportStatus stat)
+		{
+			this.Month = month;
+			this.Year = year;
+			this.TotalCost = 0;
+			this.NbLines = 0;
+			this.Status = stat;
+			this.ExpenseLines = new List<ExpenseLine>();
+			this.Collaborator = coll;
+
+			coll.ExpenseReports.Add(this);
+		}
+
+		public void AddLine(ExpenseLine el) {
             this.ExpenseLines.Add(el);
             this.NbLines++;
             this.TotalCost += el.Cost;
