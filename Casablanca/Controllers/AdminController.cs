@@ -15,29 +15,21 @@ namespace Casablanca.Controllers
     {
 
 		private IDal dal;
-
-		public AdminController() : this(new Dal())
-		{
-		}
-
-		private AdminController(IDal dal)
-		{
-			this.dal = dal;
-		}
+		public AdminController() : this(new Dal()){}
+		private AdminController(IDal dal){this.dal = dal;}
 
 		// GET: Admin
 		public ActionResult Index()
         {
 			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
 				return Redirect("/Home/Index");
-
 			//TODO check if user roleis Admin
 			//Collaborator model = new Collaborator();
 			return View(/*model*/);
 		}
 
 		// Get: account creation
-		public ActionResult AdminCreateAccount()
+		public ActionResult CreateAccount()
 		{
 			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
 				return Redirect("/Home/Index");
@@ -46,7 +38,7 @@ namespace Casablanca.Controllers
 
 		//POST : account register
 		[HttpPost]
-		public ActionResult AdminCreateAccount(Collaborator model)//TODO : get collId
+		public ActionResult CreateAccount(Collaborator model)//TODO : get collId
 		{
 			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
 				return Redirect("/Home/Index");
@@ -56,13 +48,35 @@ namespace Casablanca.Controllers
 
 			if (ModelState.IsValid)
 			{
-
 				dal.SetCollaboratorAccount(collId, model.Login, model.Password);
 				FormsAuthentication.SetAuthCookie(collId.ToString(), false);
 				return Redirect("/Admin/Index"); 
 			}
 			return View(model);
 		}
+
+		
+		public ActionResult ServicesList()
+		{
+			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+				return Redirect("/Home/Index");
+			//TODO check if user roleis Admin
+			List<Service> model = dal.GetServices();
+			return View(model);
+		}
+
+		
+		// Coll List
+		public ActionResult CollaboratorsList()
+		{
+			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+				return Redirect("/Home/Index");
+
+			List<Collaborator> model = dal.GetCollaborators();
+	
+			return View(model);
+		}
+		
 
 	}
 }

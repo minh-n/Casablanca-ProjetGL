@@ -2,85 +2,241 @@
 @using Casablanca.Models.ExpenseReports;
 
 @{
-    ViewBag.Title = "Ajouter des lignes de frais";
+	ViewBag.Title = "Ajouter des lignes de frais";
 }
 
 @model AddExpenseLineVM
 
-<div>
-    <h2 class="text-left">Effectuer une demande de notes de frais</h2>
-    <div class="table-responsive">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Type de frais</th>
-                    <th>Description&nbsp;</th>
-                    <th>Montant du frais</th>
-                    <th>Mission associée</th>
-                    <th>Date du frais</th>
-                    <th>Justificatif</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.ExpenseReport.ExpenseLines) {
-                    <tr>
-                        <!--Type de frais-->
-                        <td>
-                            <select>
-                                <optgroup label="Type de frais">
-                                    @foreach (LineType type in LineType.GetValues(typeof(LineType))) {
-                                        if (type == item.Type) {
-                                            <option value="@type" selected>@type</option>
-                                        }
-                                        else {
-                                            <option value="@type">@type</option>
-                                        }
-                                    }
+<div class="container">
+	<h2 class="text-left">Effectuer une demande de notes de frais </h2>
 
-                                </optgroup>
-                            </select>
-                        </td>
+	<!-- le plus pour ajouter une ligne-->
+	<span class="table-add glyphicon glyphicon-plus"></span>
 
-                        <!--Description du frais-->
-                        <td><input value="@item.Description" type="text"></td>
+	<div id="table" class="table-editable" data-toggle="table" data-search="true">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Type de frais</th>
+					<th>Description&nbsp;</th>
+					<th>Montant du frais</th>
+					<th>Mission associée</th>
+					<th>Date du frais</th>
+					<th>Justificatif</th>
+					<th>Supprimer</th>
 
-                        <!--Montant-->
-                        <td><input value="@item.Cost" type="number"></td>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in Model.ExpenseReport.ExpenseLines)
+				{
+				<tr>
+					<!--Type de frais-->
+					<td>
+						<select>
+							<optgroup label="Type de frais">
+								@foreach (LineType type in LineType.GetValues(typeof(LineType)))
+								{
+									if (type == item.Type)
+									{
+										<option value="@type" selected>@type</option>
+									}
+									else
+									{
+										<option value="@type">@type</option>
+									}
+								}
 
-                        <!--Mission associee-->
-                        <td>
-                            <select>
-                                <optgroup label="Mission associée">
-                                    @foreach (var item2 in Model.CollaboratorMissions) {
-                                        if (item.Mission.Id == item2.Id) {
-                                            <option value="@item2.Id" selected>@item2.Name</option>
-                                        }
-                                        else {
-                                            <option value="@item2.Id">@item2.Name</option>
-                                        }
-                                    }
-                                </optgroup>
-                            </select>
-                        </td>
+							</optgroup>
+						</select>
+					</td>
 
-                        <!--Date de la ligne de frais-->
-                        <td>
-                            @Html.TextBoxFor(model => item, new { @type = "date", @class = "form-control datepicker", @Value = item.Date.ToString("yyyy-MM-dd") })
-                            <!-- ligne 5 copiée d'ici : https://gist.github.com/badcommandorfilename/118012102de8e7201e079e519ee9d135
-                            Ne pas toucher, magie noire-->
-                        </td>
+					<!--Description du frais-->
+					<td><input value="@item.Description" type="text"> </td>
 
-                        <!--justificatif-->
-                        <td><input value="@item.Justificatory" type="file"></td>
-                        <!-- https://stackoverflow.com/questions/304617/html-helper-for-input-type-file
+					<!--Montant-->
+					<td><input value="@item.Cost" type="number"></td>
 
-                            https://weblog.west-wind.com/posts/2012/Mar/06/Using-the-HTML5-input-typefile-multiplemultiple-Tag-in-ASPNET
 
-                            -->
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-    @*<div class="btn-group" role="group"><button class="btn btn-success" type="button">Enregistrer les modifications</button><button class="btn btn-info" type="submit">Envoyer la note pour validation</button></div>*@
+
+					<!--Mission associee-->
+					<td>
+						<select>
+							<optgroup label="Mission associée">
+
+								@foreach (var item2 in Model.CollaboratorMissions)
+								{
+									if (item.Mission.Id == item2.Id)
+									{
+										<option value="@item2.Id" selected>@item2.Name</option>
+									}
+									else
+									{
+										<option value="@item2.Id">@item2.Name</option>
+									}
+								}
+
+							</optgroup>
+
+						</select>
+					</td>
+
+					<!--Date de la ligne de frais-->
+					<td>
+						@Html.TextBoxFor(model => item, new { @type = "date", @class = "form-control datepicker", @Value = item.Date.ToString("yyyy-MM-dd") })
+						<!-- ligne 5 copiée d'ici : https://gist.github.com/badcommandorfilename/118012102de8e7201e079e519ee9d135
+		Ne pas toucher, magie noire-->
+					</td>
+
+					<!--justificatif-->
+					<td><input value="@item.Justificatory" type="file"></td>
+
+					<!--supprimer-->
+					<td>
+						<span class="table-remove glyphicon glyphicon-remove"></span>
+					</td>
+				</tr>
+				}
+			</tbody>
+
+			<!-- This is our clonable table line -->
+			<tr class="hide">
+				<td>
+					<select>
+						<optgroup label="Type de frais">
+							@foreach (LineType type in LineType.GetValues(typeof(LineType)))
+							{
+								<option value="@type">@type</option>
+							}
+						</optgroup>
+					</select>
+				</td>
+				<td><input type="text"></td>
+				<td><input type="number"></td>
+				<td>
+					<select>
+						<optgroup label="Mission associée">
+							if(Model.CollaboratorMissions.Count > 0)
+							{
+							@foreach (var item2 in Model.CollaboratorMissions)
+							{
+								<option value="@item2.Id">@item2.Name</option>
+							}
+							}
+							else
+							{
+							<option value="1">Pas de mission.</option>
+
+							}
+
+						</optgroup>
+					</select>
+				</td>
+				<td><input type="date" class="form-control datepicker"></td>
+				<td><input type="file"></td>
+				<td>
+					<span class="table-remove glyphicon glyphicon-remove"></span>
+				</td>
+			</tr>
+
+
+
+
+		</table>
+	</div>
+
+	<button id="save-btn" class="btn btn-primary">Sauvegarder la note de frais</button>
+	<button id="send-btn" class="btn btn-primary">Envoyer la note de frais</button>
+
+	<p id="export"></p>
+
+	@*<div class="btn-group" role="group"><button class="btn btn-success" type="button">Enregistrer les modifications</button><button class="btn btn-info" type="submit">Envoyer la note pour validation</button></div>*@
 </div>
+
+
+
+
+
+
+@section Scripts {
+
+	<script>
+
+		var $TABLE = $('#table');
+		var $BTN = $('#save-btn');
+		var $BTNSEND = $('#send-btn');
+
+		var $EXPORT = $('#export');
+
+		$('.table-add').click(function () {
+			var $clone = $TABLE.find('tr.hide').clone(true).removeClass('hide table-line');
+			$TABLE.find('table').append($clone);
+		});
+
+		$('.table-remove').click(function () {
+			$(this).parents('tr').detach();
+		});
+
+		// A few jQuery helpers for exporting only
+		jQuery.fn.pop = [].pop;
+		jQuery.fn.shift = [].shift;
+
+		
+		// SAVE button
+		$BTN.click(function () {
+			var $rows = $TABLE.find('tr:not(:hidden)');
+			var headers = [];
+			var data = [];
+
+			// Get the headers (add special header logic here)
+			$($rows.shift()).find('th:not(:empty)').each(function () {
+				headers.push($(this).text().toLowerCase());
+			});
+
+			// Turn all existing rows into a loopable array
+			$rows.each(function () {
+				var $td = $(this).find('td');
+				var h = {};
+
+				// Use the headers from earlier to name our hash keys
+				headers.forEach(function (header, i) {
+					h[header] = $td.eq(i).text();
+				});
+
+				data.push(h);
+			});
+
+			// Output the result
+			$EXPORT.text(JSON.stringify(data));
+		});
+
+
+		// SEND button
+		$BTNSEND.click(function () {
+			var $rows = $TABLE.find('tr:not(:hidden)');
+			var headers = [];
+			var data = [];
+
+			// Get the headers (add special header logic here)
+			$($rows.shift()).find('th:not(:empty)').each(function () {
+				headers.push($(this).text().toLowerCase());
+			});
+
+			// Turn all existing rows into a loopable array
+			$rows.each(function () {
+				var $td = $(this).find('td');
+				var h = {};
+
+				// Use the headers from earlier to name our hash keys
+				headers.forEach(function (header, i) {
+					h[header] = $td.eq(i).text();
+				});
+
+				data.push(h);
+			});
+
+			// Output the result
+			$EXPORT.text(JSON.stringify(data));
+		});
+	</script>
+}

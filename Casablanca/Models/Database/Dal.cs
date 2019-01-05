@@ -73,19 +73,20 @@ namespace Casablanca.Models.Database
                 new Mission("Voyage à Fuji-san", new DateTime(2019, 1, 2), new DateTime(2019, 1, 4), MissionStatus.IN_PROGRESS, null)
             };
 
-            // Assign missions to collaborators
-            Collaborators[2].Missions.Add(Missions[1]);
-            Collaborators[2].Missions.Add(Missions[2]);
-            Collaborators[2].Missions.Add(Missions[3]);
-            Collaborators[3].Missions.Add(Missions[6]);
-            Collaborators[1].Missions.Add(Missions[0]);
-            Collaborators[1].Missions.Add(Missions[4]);
-            Collaborators[4].Missions.Add(Missions[5]);
+			// Assign missions to collaborators
 
-            /*
+			Collaborators[1].Missions.Add(Missions[0]);
+			Collaborators[1].Missions.Add(Missions[1]);
+			Collaborators[1].Missions.Add(Missions[2]);
+			Collaborators[1].Missions.Add(Missions[3]);
+			Collaborators[1].Missions.Add(Missions[5]);
+			
+			
+
+			/*
 			 * Adding every lists to the database
 			 */
-            foreach (Service s in Services) {
+			foreach (Service s in Services) {
                 Db.Services.Add(s);
             }
 
@@ -99,18 +100,33 @@ namespace Casablanca.Models.Database
 
             Db.SaveChanges();
 
-            // Create some expense reports TODO DO AS LIST
-            Db.ExpenseReports.Add(new ExpenseReport(GetCollaborator(2), Month.JANUARY, 2019));
-            Db.ExpenseReports.Add(new ExpenseReport(GetCollaborator(2), Month.DECEMBER, 2018));
-			Db.ExpenseReports.Add(new ExpenseReport(GetCollaborator(1), Month.DECEMBER, 2018));
+			// Create some expense reports TODO DO AS LIST
+			//Db.ExpenseReports.Add(new ExpenseReport(GetCollaborator(5), Month.DECEMBER, 2018));
+			//Db.ExpenseReports.Add(new ExpenseReport(GetCollaborator(5), Month.JANUARY, 2019));
+            //Db.ExpenseReports.Add(new ExpenseReport(GetCollaborator(5), Month.DECEMBER, 2018));
+
+			//TODO bizarre : j'ajoute les expense au coll3, alors que c'est le coll 1 qui a des missions. 
+			// et ça marche. Par contre si j'enlevais une mission au coll1, alors y a nullpointer.
+
+			Db.ExpenseReports.Add(new ExpenseReport(GetCollaborator(3), Month.DECEMBER, 2018));
+			Db.ExpenseReports.Add(new ExpenseReport(GetCollaborator(3), Month.JANUARY, 2019));
+			Db.ExpenseReports.Add(new ExpenseReport(GetCollaborator(3), Month.FEBRUARY, 2018));
 			Db.ExpenseReports.Add(new ExpenseReport(GetCollaborator(3), Month.NOVEMBER, 2018));
+
+			//Db.ExpenseReports.Add(new ExpenseReport(GetCollaborator(4), Month.FEBRUARY, 2019));
+			//Db.ExpenseReports.Add(new ExpenseReport(GetCollaborator(5), Month.JANUARY, 2018));
 
 			Db.SaveChanges();
 
             ExpenseLine el1 = new ExpenseLine(GetMission(1), LineType.HOTEL, "Trump Tower", 1000.0f, new DateTime(2019, 3, 4), "trumptower.pdf");
-            ExpenseLine el2 = new ExpenseLine(GetMission(1), LineType.RESTAURANT, "Trump Tower restaurant", 8000.0f, new DateTime(2019, 1, 2), "trumptower.pdf");
-            GetExpenseReport(1).AddLine(el1);
-            GetExpenseReport(1).AddLine(el2);
+            ExpenseLine el2 = new ExpenseLine(GetMission(2), LineType.RESTAURANT, "Trump Tower restaurant", 8000.0f, new DateTime(2019, 1, 2), "trumptower.pdf");
+			ExpenseLine e21 = new ExpenseLine(GetMission(3), LineType.TAXI, "Trump Taxi", 15.98f, new DateTime(2019, 3, 4), "trumptower.pdf");
+			ExpenseLine e31 = new ExpenseLine(GetMission(5), LineType.RESTAURANT, "Trump Tower restaurant", 80010.0f, new DateTime(2019, 1, 2), "trumptower.pdf");
+
+			GetExpenseReport(2).AddLine(el1);
+            GetExpenseReport(2).AddLine(el2);
+			GetExpenseReport(2).AddLine(e21);
+			GetExpenseReport(2).AddLine(e31);
 
 			Db.SaveChanges();
         }

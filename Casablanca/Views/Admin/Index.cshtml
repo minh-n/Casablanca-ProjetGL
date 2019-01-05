@@ -5,4 +5,18 @@
 
 <h2>Index</h2>
 
-@Html.ActionLink("Créer un compte pour l'user 1 (minh ?)", "AdminCreateAccount", "Admin")
+<div>
+	@Html.ActionLink("Créer un compte pour l'user 1 (minh ?)",
+"CreateAccount", "Admin")
+</div>
+
+<div>
+	@Html.ActionLink("Visualiser la liste des services",
+	"ServicesList", "Admin")
+</div>
+
+<div>
+	@Html.ActionLink("Visualiser la liste des collaborateurs" +
+		" avec des actions ADMIN", "CollaboratorsList", "Admin")
+</div>
+
