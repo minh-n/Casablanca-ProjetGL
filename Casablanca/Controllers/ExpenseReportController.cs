@@ -1,6 +1,7 @@
 ﻿using Casablanca.Models.Database;
 using Casablanca.Models.ExpenseReports;
 using Casablanca.Models.ViewModel;
+using Casablanca.Models;
 
 
 using System;
@@ -28,23 +29,28 @@ namespace Casablanca.Controllers
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                 return Redirect("/Home/Index");
 
+            // Who are we 
+            Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+            List<ExpenseReport> reports = coll.ExpenseReports;
+
             ExpenseReport er = dal.GetExpenseReport(1);
-            AddExpenseLineVM linesVM = new AddExpenseLineVM(er, dal.GetCollaboratorMissions(er.Collaborator.Id));
-            List<ExpenseReport> reports = dal.GetExpenseReports();
+            AddExpenseLineVM linesVM = new AddExpenseLineVM(er, dal.GetCollaboratorMissions(coll.Id));
 
             AddExpenseReportVM model = new AddExpenseReportVM(linesVM, reports);
 
             return View(model);
 		}
 
-		public ActionResult AddExpenseReport(int id)
+		public ActionResult AddExpenseReport(int id = 2)
 		{
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                 return Redirect("/Home/Index");
 
-            ExpenseReport er = dal.GetExpenseReport(id);
+            // Who are we 
+            Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
 
-			AddExpenseLineVM model = new AddExpenseLineVM(er, dal.GetCollaboratorMissions(er.Collaborator.Id));
+            ExpenseReport er = dal.GetExpenseReport(id);
+			AddExpenseLineVM model = new AddExpenseLineVM(er, dal.GetCollaboratorMissions(coll.Id));
 
 			return View(model);
 		}

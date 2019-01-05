@@ -40,8 +40,10 @@ namespace Casablanca.Models.ExpenseReports {
             this.TotalCost = 0;
             this.NbLines = 0;
             this.Status = ExpenseReportStatus.UNSENT;
-            this.Collaborator = coll;
             this.ExpenseLines = new List<ExpenseLine>();
+            this.Collaborator = coll;
+
+            coll.ExpenseReports.Add(this);
         }
 
         public void AddLine(ExpenseLine el) {

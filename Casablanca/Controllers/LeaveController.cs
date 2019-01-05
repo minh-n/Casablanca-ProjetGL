@@ -1,6 +1,7 @@
 ﻿using Casablanca.Models;
 using System;
 using System.Collections.Generic;
+using Casablanca.Models.Leaves;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;

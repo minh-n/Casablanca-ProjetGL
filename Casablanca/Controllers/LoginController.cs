@@ -49,7 +49,6 @@ namespace Casablanca.Controllers {
             return Redirect("/Home/Index");
         }
 
-
         /*
          * 
          * TODO : Admin controller ptet

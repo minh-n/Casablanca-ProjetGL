@@ -1,4 +1,5 @@
 ﻿using Casablanca.Models.ExpenseReports;
+using Casablanca.Models.Leaves;
 using System.Data.Entity;
 
 namespace Casablanca.Models

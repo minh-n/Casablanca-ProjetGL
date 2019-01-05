@@ -34,14 +34,19 @@
                 <tr>
                     <td>@item.FirstName</td>
                     <td>@item.LastName</td>
-                    <td>@item.Service.ServiceName</td>
+                    @if (item.Service != null) {
+                        <td>@item.Service.ServiceName</td>
+                    }
+                    else {
+                        <td>Aucun service</td>
+                    }
                     <td>
                         @if (item.Missions.Count != 0) {
-                        
+
                             foreach (var mission in item.Missions) {
                                 @mission.Name <text> ,</text>
                             }
-                        
+
                         }
                         else {
                             <text>Aucune mission</text>

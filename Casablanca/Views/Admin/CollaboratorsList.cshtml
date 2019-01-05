@@ -1,7 +1,7 @@
 ﻿@using Casablanca.Models
 
 @{
-	ViewBag.Title = "Admin - List Collaborators";
+    ViewBag.Title = "Admin - List Collaborators";
 }
 
 @model  List<Collaborator>
@@ -11,57 +11,69 @@
 
 <h2>Admin/Liste des Collaborateurs</h2>
 
-<table id="table"
-	   data-toggle="table"
-	   data-search="true"
-	   class="table">
-	@if (Model.Count() == 0)
-	{
-		<tr>
-			<td colspan="10">Aucun collaborateur trouvé.</td>
-		</tr>
-	}
-	else
-	{
-		<thead>
-			<tr>
-				<th scope="col" data-field="select" data-sortable="true">Sélectionner ?</th>
+<table id="coll_list"
+       data-toggle="table"
+       data-search="true"
+       class="table">
+    @if (Model.Count() == 0) {
+        <tr>
+            <td colspan="10">Aucun collaborateur trouvé.</td>
+        </tr>
+    }
+    else {
+        <thead>
+            <tr>
+                <th scope="col" data-field="select" data-sortable="true">Sélectionner ?</th>
 
-				<th scope="col" data-field="prenom" data-sortable="true">Prénom</th>
-				<th scope="col" data-field="nom" data-sortable="true">Nom</th>
-				<th scope="col" data-field="service" data-sortable="true">Service</th>
-				<th scope="col" data-field="mission" data-sortable="true">Mission</th>
+                <th scope="col" data-field="prenom" data-sortable="true">Prénom</th>
+                <th scope="col" data-field="nom" data-sortable="true">Nom</th>
+                <th scope="col" data-field="service" data-sortable="true">Service</th>
+                <th scope="col" data-field="mission" data-sortable="true">Mission</th>
 
-			</tr>
-		</thead>
-		<tbody>
-			@foreach (var item in Model)
-			{
-				<tr>
-					<td>Insérer checkbox ici ici ?</td>
-					<td>@item.FirstName</td>
-					<td>@item.LastName</td>
-					<td>@item.Service.ServiceName</td>
-					<td>
-						@if (item.Missions.Count != 0)
-						{
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model) {
+                <tr>
+                    <td>Insérer checkbox ici ici ?</td>
+                    <td>@item.FirstName</td>
+                    <td>@item.LastName</td>
+                    @if (item.Service != null) {
+                        <td>@item.Service.ServiceName</td>
+                    }
+                    else {
+                        <td>Aucun service</td>
+                    }
 
-							foreach (var mission in item.Missions)
-							{
-								@mission.Name <text> ,</text>
-							}
+                    <td>
+                        @if (item.Missions.Count != 0) {
 
-						}
-						else
-						{
-							<text>Aucune mission</text>
-						}
-					</td>
-				</tr>
-			}
-		</tbody>
-	}
+                            foreach (var mission in item.Missions) {
+                                @mission.Name <text> ,</text>
+                            }
+
+                        }
+                        else {
+                            <text>Aucune mission</text>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    }
 </table>
 
+<!--- SCRIPTS --->
+@section Scripts {
+    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var table = $('#coll_list').DataTable();
 
-
+            $('#coll_list tbody').on('click', 'tr', function () {
+                $(this).toggleClass('selected');
+                console.log("HE");
+            });
+        });
+    </script>
+}

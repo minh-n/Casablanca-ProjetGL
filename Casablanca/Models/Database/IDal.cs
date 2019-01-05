@@ -8,6 +8,8 @@ namespace Casablanca.Models.Database {
         // Collaborators
         List<Collaborator> GetCollaborators();
         Collaborator GetCollaborator(int id);
+        Collaborator GetCollaborator(string idString);
+        Collaborator GetCollaborator(string firstname, string lastname);
 
         // Missions 
         Mission GetMission(int id);
