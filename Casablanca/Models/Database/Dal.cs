@@ -42,13 +42,13 @@ namespace Casablanca.Models.Database
                 new Collaborator("Morgan", "FEURTE", "morgan", EncodeMD5("f")),
                 new Collaborator("Minh", "NGUYEN", "cds", EncodeMD5("cds")),
                 new Collaborator("Adrien", "LAVILLONNIERE", "a", EncodeMD5("t")),
-                new Collaborator("Jeffrey", "GONCALVES"),
+                new Collaborator("Jeffrey", "GONCALVES", "j", EncodeMD5("g")),
                 new Collaborator("Yao", "SHI", "cpt", EncodeMD5("cpt")),
-                new Collaborator("Arthur", "BINELLI"),
+                new Collaborator("Arthur", "BINELLI", "ar", EncodeMD5("b")),
                 new Collaborator("Thibal", "WITCZAK", "rh", EncodeMD5("rh")),
-                new Collaborator("Floriab", "LE PALLEC"),
-                new Collaborator("Oubar", "MAYAKI"),
-                new Collaborator("Nathon", "BONNARD")
+                new Collaborator("Floriab", "LE PALLEC", "f", EncodeMD5("l")),
+                new Collaborator("Oubar", "MAYAKI", "o", EncodeMD5("m")),
+                new Collaborator("Nathon", "BONNARD", "n", EncodeMD5("b"))
             };
 
             // Add coll to services
@@ -117,7 +117,7 @@ namespace Casablanca.Models.Database
             // et ça marche. Par contre si j'enlevais une mission au coll1, alors y a nullpointer.
             ExpenseReports = new List<ExpenseReport>() {
                 new ExpenseReport(GetCollaborator("Arthur", "BINELLI"), Month.DECEMBER, 2018, ExpenseReportStatus.PENDING_APPROVAL_2),
-				new ExpenseReport(GetCollaborator("Floriab", "LE PALLEc"), Month.DECEMBER, 2018, ExpenseReportStatus.PENDING_APPROVAL_1),
+				new ExpenseReport(GetCollaborator("Floriab", "LE PALLEC"), Month.DECEMBER, 2018, ExpenseReportStatus.PENDING_APPROVAL_1),
 				new ExpenseReport(GetCollaborator("Oubar", "MAYAKI"), Month.JANUARY, 2019, ExpenseReportStatus.UNSENT),
                 new ExpenseReport(GetCollaborator("Jeffrey", "GONCALVES"), Month.FEBRUARY, 2018, ExpenseReportStatus.PENDING_APPROVAL_2),
                 new ExpenseReport(GetCollaborator("Jeffrey", "GONCALVES"), Month.NOVEMBER, 2018, ExpenseReportStatus.APPROVED)
@@ -172,6 +172,11 @@ namespace Casablanca.Models.Database
             return Db.Collaborators.SingleOrDefault(c => c.FirstName == firstname && c.LastName == lastname);
         }
 
+        public void CreateCollaborator(string firstname, string lastname, string login, string password) {
+            Db.Collaborators.Add(new Collaborator(firstname, lastname, login, password));
+            Db.SaveChanges();
+        }
+
         // Missions
         public Mission GetMission(int id) {
             return Db.Missions.SingleOrDefault(m => m.Id == id);
@@ -196,12 +201,6 @@ namespace Casablanca.Models.Database
 			string passEncoded = EncodeMD5(pass);
 			return Db.Collaborators.FirstOrDefault(u => u.Login == name && u.Password == passEncoded);
 		}
-
-		private string EncodeMD5(string pass)
-        {
-            string passSalt = "ChevalDeMetal" + pass + "Casablanca";
-            return BitConverter.ToString(new MD5CryptoServiceProvider().ComputeHash(ASCIIEncoding.Default.GetBytes(passSalt)));
-        }
 
 		// Services
 		public List<Service> GetServices()
@@ -231,11 +230,13 @@ namespace Casablanca.Models.Database
 			Db.SaveChanges(); //Very important to save
 		}
 
+        // Helper
+        public string EncodeMD5(string pass) {
+            string passSalt = "ChevalDeMetal" + pass + "Casablanca";
+            return BitConverter.ToString(new MD5CryptoServiceProvider().ComputeHash(ASCIIEncoding.Default.GetBytes(passSalt)));
+        }
 
-
-
-
-		public void Dispose()
+        public void Dispose()
         {
             Db.Dispose();
         }

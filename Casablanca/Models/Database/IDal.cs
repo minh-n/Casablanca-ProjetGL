@@ -10,6 +10,7 @@ namespace Casablanca.Models.Database {
         Collaborator GetCollaborator(int id);
         Collaborator GetCollaborator(string idString);
         Collaborator GetCollaborator(string firstname, string lastname);
+        void CreateCollaborator(string firstname, string lastname, string login, string password);
 
         // Missions 
         Mission GetMission(int id);
@@ -27,5 +28,8 @@ namespace Casablanca.Models.Database {
 
 		// Admin
 		void SetCollaboratorAccount(int collId, string login, string pass);
-	}
+
+        // Helper
+        string EncodeMD5(string password);
+    }
 }

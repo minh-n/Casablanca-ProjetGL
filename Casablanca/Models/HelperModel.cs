@@ -24,7 +24,9 @@ namespace Casablanca.Models
 
 		public static bool CheckCompta(Collaborator coll)
 		{
-			return coll.Service.ServiceName.Contains("Compta") ? true : false;
+            if(coll.Service != null)
+			    return coll.Service.ServiceName.Contains("Compta") ? true : false;
+            return false;
 		}
 
 		public static bool CheckCDSRH(Collaborator coll)
@@ -34,8 +36,10 @@ namespace Casablanca.Models
 
 		public static bool CheckRH(Collaborator coll)
 		{
-			return coll.Service.ServiceName.Contains("RH") ? true : false;
-		}
+            if (coll.Service != null)
+                return coll.Service.ServiceName.Contains("RH") ? true : false;
+            return false;
+        }
 
 		public static bool CheckPDG(Collaborator coll)
 		{
@@ -44,7 +48,9 @@ namespace Casablanca.Models
 
 		public static bool CheckDirection(Collaborator coll)
 		{
-			return coll.Service.ServiceName.Contains("Direction") ? true : false;
+            if (coll.Service != null)
+                return coll.Service.ServiceName.Contains("Direction") ? true : false;
+            return false;
 		}
 
 		public static bool CheckCDS(Collaborator coll)

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
+using Casablanca.Models.Database;
 using Casablanca.Models.ExpenseReports;
 
 namespace Casablanca.Models {
@@ -44,6 +46,7 @@ namespace Casablanca.Models {
             this.Missions = new List<Mission>();
             this.Missions.Add(mission);
             this.ExpenseReports = new List<ExpenseReport>();
+            this.Role = Roles.USER;
         }
 
         public Collaborator(string firstName, string lastName) {
@@ -54,6 +57,7 @@ namespace Casablanca.Models {
             this.Service = null;
             this.Missions = new List<Mission>();
             this.ExpenseReports = new List<ExpenseReport>();
+            this.Role = Roles.USER;
         }
 
 
@@ -65,6 +69,7 @@ namespace Casablanca.Models {
             this.Service = null;
             this.Missions = new List<Mission>();
             this.ExpenseReports = new List<ExpenseReport>();
+            this.Role = Roles.USER;
         }
 
         public Collaborator() {
@@ -75,6 +80,7 @@ namespace Casablanca.Models {
             this.Service = null;
             this.Missions = null;
             this.ExpenseReports = null;
+            this.Role = Roles.USER;
         }
     }
 }

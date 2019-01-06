@@ -66,9 +66,10 @@ namespace Casablanca.Controllers
 		{
 			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
 				return Redirect("/Home/Index");
+
 			Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
-			//not in management OR is RH = cannot see
-			if ((HelperModel.CheckManagement(coll) == false) || HelperModel.CheckRH(coll))
+			// in compta or cannot see
+			if (!HelperModel.CheckCompta(coll))
 				return Redirect("/Home/Index");
 
 			ExpenseReport model = dal.GetExpenseReport(ERId);
@@ -105,7 +106,7 @@ namespace Casablanca.Controllers
 				{
 					if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_1)
 					{
-						ExpenseReport temp = new ExpenseReport(e.Collaborator, e.Month, e.Year);
+						
 						//todo foreach e.expenseline voir si le cds est bien notre coll
 					}
 

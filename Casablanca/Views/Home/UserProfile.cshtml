@@ -17,9 +17,14 @@
 				<h3>Informations de base</h3>
 				<div> Prénom : @Model.FirstName </div>
 				<div> Nom : @Model.LastName</div>
-				<div> Service : @Model.Service.ServiceName</div>
+                @if(Model.Service != null) {
+                    <div> Service : @Model.Service.ServiceName</div>
+                }
+                else {
+                    <div> Service : Pas de service</div>
+                }
 
-				<div> Rôle : @Model.Role</div> <!--if role == USER alors afficher collaborateur etc-->
+				<div> Rôle : @Model.Role</div> <!-- TODO : if role == USER alors afficher collaborateur etc-->
 
 			</div>
 

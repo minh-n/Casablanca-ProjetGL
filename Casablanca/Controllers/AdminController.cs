@@ -3,9 +3,11 @@ using Casablanca.Models.Database;
 using Casablanca.Models.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
 using System.Web;
+using System.Web.Helpers;
 using System.Web.Mvc;
 using System.Web.Security;
 
@@ -32,7 +34,13 @@ namespace Casablanca.Controllers
 		{
 			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
 				return Redirect("/Home/Index");
-			return View();
+
+            // Check admin privilege
+            Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+            if (!HelperModel.CheckAdmin(coll))
+                return Redirect("/Home/Index");
+
+            return View();
 		}
 
 		//POST : account register
@@ -42,15 +50,20 @@ namespace Casablanca.Controllers
 			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
 				return Redirect("/Home/Index");
 
-			//TODO bug
-			int collId = 1;
+            // Check admin privilege
+            Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+            if (!HelperModel.CheckAdmin(coll))
+                return Redirect("/Home/Index");
 
-			if (ModelState.IsValid)
+            // Validation
+            if (ModelState.IsValid && ValidationLogin(model))
 			{
-				dal.SetCollaboratorAccount(collId, model.Login, model.Password);
-				//???FormsAuthentication.SetAuthCookie(collId.ToString(), false);
+                dal.CreateCollaborator(model.FirstName, model.LastName, model.Login, dal.EncodeMD5(model.Password));
 				return Redirect("/Admin/Index"); 
 			}
+            else {
+                ModelState.AddModelError("", "Le champ nom de compte doit être unique !");
+            }
 			return View(model);
 		}
 
@@ -74,6 +87,16 @@ namespace Casablanca.Controllers
 			return View(model);
 		}
 		
+        private bool ValidationLogin(Collaborator unique_coll) {
+            string unique_field = unique_coll.Login;
+            List<Collaborator> colls = dal.GetCollaborators();
 
+            foreach (Collaborator c in colls) {
+                if (c.Login == unique_field) {
+                    return false;
+                }
+            }
+            return true;
+        }
 	}
 }
