@@ -343,8 +343,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\ProcessReportVM\" />
-    <Folder Include="Views\SelectCollViewModel\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

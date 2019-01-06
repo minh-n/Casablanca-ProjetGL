@@ -70,30 +70,16 @@ namespace Casablanca.Models.Database
 
 			// Create missions
 			Missions = new List<Mission> {
-                new Mission("Voyage vers Tipperary", DateTime.Today, new DateTime(2019, 5, 1), MissionStatus.IN_PROGRESS, Services[0]),
-                new Mission("Voyage vers Agartha", new DateTime(2019, 2, 9), new DateTime(2019, 3, 1), MissionStatus.PLANNED, Services[0]),
-                new Mission("Voyage vers l'au-delà", new DateTime(2018, 12, 25), new DateTime(2018, 12, 26), MissionStatus.CANCELED, Services[1]),
-                new Mission("Voyage voyage", new DateTime(2019, 2, 25), new DateTime(2019, 2, 26), MissionStatus.COMPLETED, Services[0]),
-                new Mission("Voyage vers Mars", new DateTime(2019, 2, 6), new DateTime(2019, 3, 1), MissionStatus.PLANNED, Services[0]),
-                new Mission("Voyage vers le Mur", new DateTime(2019, 1, 9), new DateTime(2019, 11, 1), MissionStatus.PLANNED, Services[0]),
-                new Mission("Voyage à Fuji-san", new DateTime(2019, 1, 2), new DateTime(2019, 1, 4), MissionStatus.IN_PROGRESS, Services[0])
+                new Mission("Mission A", DateTime.Today, new DateTime(2019, 5, 1), MissionStatus.IN_PROGRESS, Services[0]),
+                new Mission("Mission B", new DateTime(2019, 2, 9), new DateTime(2019, 3, 1), MissionStatus.PLANNED, Services[0]),
+                new Mission("Mission C", new DateTime(2018, 12, 25), new DateTime(2018, 12, 26), MissionStatus.CANCELED, Services[1]),
+                new Mission("Mission D", new DateTime(2019, 2, 25), new DateTime(2019, 2, 26), MissionStatus.COMPLETED, Services[0]),
+                new Mission("Mission E", new DateTime(2019, 2, 6), new DateTime(2019, 3, 1), MissionStatus.PLANNED, Services[0]),
+                new Mission("Mission F", new DateTime(2019, 1, 9), new DateTime(2019, 11, 1), MissionStatus.PLANNED, Services[0]),
+                new Mission("Mission G", new DateTime(2019, 1, 2), new DateTime(2019, 1, 4), MissionStatus.IN_PROGRESS, Services[0])
             };
 
-            // Assign missions to collaborators
-
-            Collaborators[1].Missions.Add(Missions[0]);
-            Collaborators[1].Missions.Add(Missions[1]);
-            Collaborators[1].Missions.Add(Missions[2]);
-            Collaborators[1].Missions.Add(Missions[3]);
-            Collaborators[1].Missions.Add(Missions[5]);
-
-			//Adrien is coll2, Adrien gets all the missions because he is admin
-			Collaborators[2].Missions = Missions;
-
-			//a enlever, ca c'est pour voir
-			Collaborators[3].Missions = Missions;
-			Collaborators[4].Missions = Missions;
-
+            
 
 			/*
 			 * Adding every lists to the database
@@ -109,6 +95,18 @@ namespace Casablanca.Models.Database
             foreach (Mission m in Missions) {
                 Db.Missions.Add(m);
             }
+
+            Db.SaveChanges();
+
+
+            // Assign missions to collaborators
+            GetCollaborator("Arthur", "BINELLI").Missions.Add(GetMission("Mission A"));
+            GetCollaborator("Arthur", "BINELLI").Missions.Add(GetMission("Mission B"));
+            GetCollaborator("Arthur", "BINELLI").Missions.Add(GetMission("Mission C"));
+            GetCollaborator("Arthur", "BINELLI").Missions.Add(GetMission("Mission E"));
+
+            //Adrien is coll2, Adrien gets all the missions because he is admin
+            GetCollaborator("Adrien", "LAVILLONNIERE").Missions = Missions;
 
             Db.SaveChanges();
 
@@ -129,10 +127,10 @@ namespace Casablanca.Models.Database
 			Db.SaveChanges();
 
             ExpenseLines = new List<ExpenseLine>() {
-                new ExpenseLine(GetMission(1), LineType.HOTEL, GetCollaborator("Minh", "NGUYEN"), "Trump Tower", 1000.0f, new DateTime(2019, 3, 4), "trumptower.pdf"),
-                new ExpenseLine(GetMission(2), LineType.RESTAURANT, GetCollaborator("Jeffrey", "GONCALVES"), "Trump Tower restaurant", 8000.0f, new DateTime(2019, 1, 2), "trumptower.pdf"),
-                new ExpenseLine(GetMission(3), LineType.TAXI, GetCollaborator("Jeffrey", "GONCALVES"), "Trump Taxi", 15.98f, new DateTime(2019, 3, 4), "trumptower.pdf"),
-                new ExpenseLine(GetMission(5), LineType.OTHER, GetCollaborator("Jeffrey", "GONCALVES"), "Trump Other", 80010.0f, new DateTime(2019, 1, 2), "russia.pdf")
+                new ExpenseLine(GetMission("Mission A"), LineType.HOTEL, GetCollaborator("Minh", "NGUYEN"), "Trump Tower", 1000.0f, new DateTime(2019, 3, 4), "trumptower.pdf"),
+                new ExpenseLine(GetMission("Mission B"), LineType.RESTAURANT, GetCollaborator("Jeffrey", "GONCALVES"), "Trump Tower restaurant", 8000.0f, new DateTime(2019, 1, 2), "trumptower.pdf"),
+                new ExpenseLine(GetMission("Mission C"), LineType.TAXI, GetCollaborator("Jeffrey", "GONCALVES"), "Trump Taxi", 15.98f, new DateTime(2019, 3, 4), "trumptower.pdf"),
+                new ExpenseLine(GetMission("Mission E"), LineType.OTHER, GetCollaborator("Jeffrey", "GONCALVES"), "Trump Other", 80010.0f, new DateTime(2019, 1, 2), "russia.pdf")
             };
 
 			//lignes du frais 1 (arthur)
@@ -182,8 +180,8 @@ namespace Casablanca.Models.Database
             return Db.Missions.SingleOrDefault(m => m.Id == id);
         }
 
-        public List<Mission> GetCollaboratorMissions(int collId) {
-            return GetCollaborator(collId).Missions;
+        public Mission GetMission(string name) {
+            return Db.Missions.SingleOrDefault(m => m.Name == name);
         }
 
         // ExpenseReports
@@ -193,6 +191,11 @@ namespace Casablanca.Models.Database
 
 		public ExpenseReport GetExpenseReport(int id) {
             return Db.ExpenseReports.SingleOrDefault(e => e.Id == id);
+        }
+
+        public void CreateExpenseReport(Collaborator coll, Month month, int year) {
+            Db.ExpenseReports.Add(new ExpenseReport(coll, month, year));
+            Db.SaveChanges();
         }
 
 		// Login

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace Casablanca.Controllers
 {
@@ -35,14 +36,14 @@ namespace Casablanca.Controllers
             List<ExpenseReport> reports = coll.ExpenseReports;
 
             ExpenseReport er = dal.GetExpenseReport(1);
-            AddExpenseLineVM linesVM = new AddExpenseLineVM(er, dal.GetCollaboratorMissions(coll.Id));
+            AddExpenseLineVM linesVM = new AddExpenseLineVM(er, coll.Missions);
 
             AddExpenseReportVM model = new AddExpenseReportVM(linesVM, reports);
 
             return View(model);
 		}
 
-		public ActionResult AddExpenseReport(int id = 2)
+		public ActionResult AddExpenseReport(int id = 3)
 		{
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                 return Redirect("/Home/Index");
@@ -51,7 +52,7 @@ namespace Casablanca.Controllers
             Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
 
             ExpenseReport er = dal.GetExpenseReport(id);
-			AddExpenseLineVM model = new AddExpenseLineVM(er, dal.GetCollaboratorMissions(coll.Id));
+			AddExpenseLineVM model = new AddExpenseLineVM(er, coll.Missions);
 
 			return View(model);
 		}
@@ -117,5 +118,56 @@ namespace Casablanca.Controllers
 			return View(model);
 		}
 		
+        [HttpPost]
+        public ActionResult CreateExpenseReport() {
+            if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+                return Redirect("/Home/Index");
+
+            Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+
+            // admin cannot have ER
+            if (HelperModel.CheckAdmin(coll))
+                return Redirect("/Home/Index");
+
+            string month = Request.Form["monthName"].ToString();
+
+            // Compute year
+            int year = DateTime.Now.Year;
+            if (month != DateTime.Now.ToString("MMMM") && month == new CultureInfo("en-US").DateTimeFormat.GetMonthName(12))
+                year = DateTime.Now.Year - 1;
+
+            // Compute month
+            Enum.TryParse(month, out Month m);
+    
+            // Create the ER
+            dal.CreateExpenseReport(coll, m, year);
+
+            return Redirect("/ExpenseReport/Index");
+        }
+
+        public ActionResult UpdateExpenseReport(AddExpenseLineVM model) {
+            if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+                return Redirect("/Home/Index");
+
+            Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+
+            // admin cannot have ER
+            if (HelperModel.CheckAdmin(coll))
+                return Redirect("/Home/Index");
+
+            Debug.WriteLine(model.ExpenseReport.ExpenseLines[0].Description);
+            Debug.WriteLine(model.ExpenseReport.ExpenseLines[0].Type);
+
+            return Redirect("/ExpenseReport/Index");
+        }
+
+        public ActionResult VUUE() {
+            dd d = new dd();
+            return View(d);
+        }
+
+        public ActionResult TEST(dd d) {
+            return View(d);
+        }
 	}
 }

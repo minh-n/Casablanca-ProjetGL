@@ -13,5 +13,10 @@ namespace Casablanca.Models.ViewModel {
             ExpenseReport = expenseReport;
             CollaboratorMissions = collaboratorMissions;
         }
+
+        public AddExpenseLineVM() {
+            ExpenseReport = null;
+            CollaboratorMissions = new List<Mission>();
+        }
     }
 }

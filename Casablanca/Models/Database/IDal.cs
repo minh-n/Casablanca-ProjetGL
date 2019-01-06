@@ -14,15 +14,15 @@ namespace Casablanca.Models.Database {
 
         // Missions 
         Mission GetMission(int id);
-		List<Mission> GetCollaboratorMissions(int collId);
 
 		// ExpenseReports
 		List<ExpenseReport> GetExpenseReports();
         ExpenseReport GetExpenseReport(int id);
 		Collaborator Login(string login, string password);
+        void CreateExpenseReport(Collaborator coll, Month month, int year);
 
-		// Services
-		List<Service> GetServices();
+        // Services
+        List<Service> GetServices();
 		Service GetService(int id);
 		void AddToService(int serviceId, int collId);
 

@@ -13,139 +13,146 @@
     <!-- le plus pour ajouter une ligne-->
     <span class="table-add glyphicon glyphicon-plus"></span>
 
-    <div id="table" class="table-editable" data-toggle="table" data-search="true">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Type de frais</th>
-                    <th>Description&nbsp;</th>
-                    <th>Montant du frais</th>
-                    <th>Mission associée</th>
-                    <th>Date du frais</th>
-                    <th>Justificatif</th>
-                    <th>Supprimer</th>
-
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.ExpenseReport.ExpenseLines) {
+    @using (Html.BeginForm("UpdateExpenseReport", "ExpenseReport", FormMethod.Post)) {
+        <div id="table" class="table-editable" data-toggle="table" data-search="true">
+            <table class="table">
+                <thead>
                     <tr>
-                        <!--Type de frais-->
-                        <td>
-                            <select>
-                                <optgroup label="Type de frais">
-                                    @foreach (LineType type in LineType.GetValues(typeof(LineType))) {
-                                        if (type == item.Type) {
-                                            <option value="@type" selected>@type</option>
-                                        }
-                                        else {
-                                            <option value="@type">@type</option>
-                                        }
-                                    }
+                        <th>Type de frais</th>
+                        <th>Description&nbsp;</th>
+                        <th>Montant du frais</th>
+                        <th>Mission associée</th>
+                        <th>Date du frais</th>
+                        <th>Justificatif</th>
+                        <th>Supprimer</th>
 
-                                </optgroup>
-                            </select>
-                        </td>
-
-                        <!--Description du frais-->
-                        <td><input value="@item.Description" type="text"> </td>
-
-                        <!--Montant-->
-                        <td><input value="@item.Cost" type="number"></td>
-
-
-
-                        <!--Mission associee-->
-                        <td>
-                            <select>
-                                <optgroup label="Mission associée">
-                                    @if (Model.CollaboratorMissions.Count == 0) {
-                                        <option value="-1">Aucune mission</option>
-                                    }
-                                    else {
-                                        foreach (var item2 in Model.CollaboratorMissions) {
-                                            if (item.Mission.Id == item2.Id) {
-                                                <option value="@item2.Id" selected>@item2.Name</option>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for(int i = 0; i < Model.ExpenseReport.ExpenseLines.Count; i++) { 
+                        <tr>
+                            <!--Type de frais-->
+                            <td>
+                                <select asp-for="Model.ExpenseReport.ExpenseLines[i].Type">
+                                    <optgroup label="Type de frais">
+                                        @foreach (LineType type in LineType.GetValues(typeof(LineType))) {
+                                            if (type == Model.ExpenseReport.ExpenseLines[i].Type) {
+                                                <option value="@type" selected>@type</option>
                                             }
                                             else {
-                                                <option value="@item2.Id">@item2.Name</option>
+                                                <option value="@type">@type</option>
                                             }
                                         }
+                                    </optgroup>
+                                </select>
+                            </td>
+
+                            <!--Description du frais-->
+                            <td>
+                                @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Description)
+                            </td>
+
+                            <!--Montant-->
+                            @{
+                                System.Globalization.CultureInfo customCulture = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
+                                customCulture.NumberFormat.NumberDecimalSeparator = ".";
+
+                                System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
+                            }
+                            <td><input value="@Model.ExpenseReport.ExpenseLines[i].Cost" type="number" step="0.01" min=0 asp-for="Model.ExpenseReport.ExpenseLines[i].Cost"></td>
+
+
+
+                            <!--Mission associee-->
+
+                            <td>
+                                <select asp-for="Model.ExpenseReport.ExpenseLines[i].Mission">
+                                    <optgroup label="Mission associée">
+                                        @if (Model.CollaboratorMissions.Count == 0) {
+                                            <option value="-1">Aucune mission</option>
+                                        }
+                                        else {
+                                            foreach (var item2 in Model.CollaboratorMissions) {
+                                                if (Model.ExpenseReport.ExpenseLines[i].Mission.Id == item2.Id) {
+                                                    <option value="@item2.Id" selected>@item2.Name</option>
+                                                }
+                                                else {
+                                                    <option value="@item2.Id">@item2.Name</option>
+                                                }
+                                            }
+                                        }
+
+                                    </optgroup>
+
+                                </select>
+                            </td>
+
+                            <!--Date de la ligne de frais-->
+                            <td>
+                                @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Date, new { @type = "date", @class = "form-control datepicker", @Value = Model.ExpenseReport.ExpenseLines[i].Date.ToString("yyyy-MM-dd") })
+                                <!-- ligne 5 copiée d'ici : https://gist.github.com/badcommandorfilename/118012102de8e7201e079e519ee9d135
+                                Ne pas toucher, magie noire-->
+                            </td>
+
+                            <!--justificatif-->
+                            <td><input value="@Model.ExpenseReport.ExpenseLines[i].Justificatory" type="file" id="Justificatory" name="Justificatory"></td>
+
+                            <!--supprimer-->
+                            <td>
+                                <span class="table-remove glyphicon glyphicon-remove"></span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+                <!-- This is our clonable table line --> @*TODO : asp-for dans ce qui suit*@
+                <tr class="hide">
+                    <td>
+                        <select>
+                            <optgroup label="Type de frais">
+                                @foreach (LineType type in LineType.GetValues(typeof(LineType))) {
+                                    <option value="@type">@type</option>
+                                }
+                            </optgroup>
+                        </select>
+                    </td>
+                    <td><input type="text"></td>
+                    <td><input type="number" step="0.01" min=0></td>
+                    <td>
+                        <select>
+                            <optgroup label="Mission associée">
+                                @if (Model.CollaboratorMissions.Count > 0) {
+                                    foreach (var item2 in Model.CollaboratorMissions) {
+                                        <option value="@item2.Id">@item2.Name</option>
                                     }
+                                }
+                                else {
+                                    <option value="1">Pas de mission.</option>
+                                }
 
-                                </optgroup>
-
-                            </select>
-                        </td>
-
-                        <!--Date de la ligne de frais-->
-                        <td>
-                            @Html.TextBoxFor(model => item, new { @type = "date", @class = "form-control datepicker", @Value = item.Date.ToString("yyyy-MM-dd") })
-                            <!-- ligne 5 copiée d'ici : https://gist.github.com/badcommandorfilename/118012102de8e7201e079e519ee9d135
-                            Ne pas toucher, magie noire-->
-                        </td>
-
-                        <!--justificatif-->
-                        <td><input value="@item.Justificatory" type="file"></td>
-
-                        <!--supprimer-->
-                        <td>
-                            <span class="table-remove glyphicon glyphicon-remove"></span>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-
-            <!-- This is our clonable table line -->
-            <tr class="hide">
-                <td>
-                    <select>
-                        <optgroup label="Type de frais">
-                            @foreach (LineType type in LineType.GetValues(typeof(LineType))) {
-                                <option value="@type">@type</option>
-                            }
-                        </optgroup>
-                    </select>
-                </td>
-                <td><input type="text"></td>
-                <td><input type="number"></td>
-                <td>
-                    <select>
-                        <optgroup label="Mission associée">
-                            if(Model.CollaboratorMissions.Count > 0)
-                            {
-                            @foreach (var item2 in Model.CollaboratorMissions) {
-                                <option value="@item2.Id">@item2.Name</option>
-                            }
-                            }
-                            else
-                            {
-                            <option value="1">Pas de mission.</option>
-
-                            }
-
-                        </optgroup>
-                    </select>
-                </td>
-                <td><input type="date" class="form-control datepicker"></td>
-                <td><input type="file"></td>
-                <td>
-                    <span class="table-remove glyphicon glyphicon-remove"></span>
-                </td>
-            </tr>
+                            </optgroup>
+                        </select>
+                    </td>
+                    <td><input type="date" class="form-control datepicker"></td>
+                    <td><input type="file"></td>
+                    <td>
+                        <span class="table-remove glyphicon glyphicon-remove"></span>
+                    </td>
+                </tr>
 
 
 
 
-        </table>
-    </div>
+            </table>
+        </div>
 
-    <button id="save-btn" class="btn btn-primary">Sauvegarder la note de frais</button>
-    <button id="send-btn" class="btn btn-primary">Envoyer la note de frais</button>
+        <button id="save-btn" type="submit" class="btn btn-primary">Sauvegarder la note de frais</button>
+        <button id="send-btn" type="submit" class="btn btn-primary">Envoyer la note de frais</button>
+
+        @Html.ValidationSummary("");
+    }
 
     <p id="export"></p>
-
-    @*<div class="btn-group" role="group"><button class="btn btn-success" type="button">Enregistrer les modifications</button><button class="btn btn-info" type="submit">Envoyer la note pour validation</button></div>*@
 </div>
 
 
