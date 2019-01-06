@@ -36,7 +36,7 @@ namespace Casablanca.Controllers
             List<ExpenseReport> reports = coll.ExpenseReports;
 
             ExpenseReport er = dal.GetExpenseReport(1);
-            AddExpenseLineVM linesVM = new AddExpenseLineVM(er, coll.Missions);
+            AddExpenseLineVM linesVM = new AddExpenseLineVM { ExpenseReport = er, CollaboratorMissions = GetMissionsList(coll) };
 
             AddExpenseReportVM model = new AddExpenseReportVM(linesVM, reports);
 
@@ -52,11 +52,10 @@ namespace Casablanca.Controllers
             Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
 
             ExpenseReport er = dal.GetExpenseReport(id);
-			AddExpenseLineVM model = new AddExpenseLineVM(er, coll.Missions);
+			AddExpenseLineVM model = new AddExpenseLineVM {ExpenseReport = er, CollaboratorMissions = GetMissionsList(coll) };
 
 			return View(model);
 		}
-
 
 		public ActionResult ProcessCDS()
 		{
@@ -76,8 +75,6 @@ namespace Casablanca.Controllers
 			ExpenseReport model = dal.GetExpenseReport(ERId);
 			return View(model);
 		}
-
-
 
 		/*
 		 * display the ER list management needs to process
@@ -145,29 +142,94 @@ namespace Casablanca.Controllers
             return Redirect("/ExpenseReport/Index");
         }
 
-        public ActionResult UpdateExpenseReport(AddExpenseLineVM model) {
+		//---------------------------------------------------------------------------------
+		//---------------------------------------------------------------------------------
+		//----------------------Update Expense Report--------------------------------------
+		//---------------------------------------------------------------------------------
+		
+
+		//Get
+		public ActionResult UpdateExpenseReport()
+		{
+			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+				return Redirect("/Home/Index");
+			Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+			// admin cannot have ER
+			if (HelperModel.CheckAdmin(coll))
+				return Redirect("/Home/Index");
+
+			return View(new AddExpenseLineVM { CollaboratorMissions = GetMissionsList(coll)});
+		}
+
+
+		//Post
+		[HttpPost]
+		public ActionResult UpdateExpenseReport(AddExpenseLineVM model) {
+
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                 return Redirect("/Home/Index");
-
             Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
-
             // admin cannot have ER
             if (HelperModel.CheckAdmin(coll))
                 return Redirect("/Home/Index");
 
-            Debug.WriteLine(model.ExpenseReport.ExpenseLines[0].Description);
-            Debug.WriteLine(model.ExpenseReport.ExpenseLines[0].Type);
+			if (!ModelState.IsValid)
+			{
+				model.CollaboratorMissions = GetMissionsList(coll);
+				return View(model);
+			}
 
-            return Redirect("/ExpenseReport/Index");
+			//Debug.WriteLine("Id de la mission = " + model.SelectedMission);
+
+			model.ExpenseReport.ExpenseLines[0].Mission = dal.GetMission(model.ExpenseReport.ExpenseLines[0].Mission.Id);
+			Debug.WriteLine("ty de la mission = " + model.ExpenseReport.ExpenseLines[1].Type);
+
+
+			return Redirect("/ExpenseReport/Index");
         }
 
-        public ActionResult VUUE() {
-            dd d = new dd();
-            return View(d);
-        }
+		//Tuto magique qui m'a sauvé sur ce coup-ci
+		//https://stackoverflow.com/questions/48170338/dropdownlist-selected-value-is-set-to-null-in-the-model-on-post-action
+		//Merci dey.shin !
+		private static IEnumerable<SelectListItem> GetMissionsList(Collaborator coll)
+		{
+			var missions = new List<SelectListItem>();
+			foreach (var s in coll.Missions.ToList())
+			{
+				var miss = new SelectListItem { Value = s.Id.ToString(), Text = s.Name};
+				missions.Add(miss);
+			}
+			return missions;
+		}
 
-        public ActionResult TEST(dd d) {
-            return View(d);
-        }
+
+
+		
+
+		//public ActionResult UpdateExpenseReport(AddExpenseLineVM model)
+		//{
+		//	if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+		//		return Redirect("/Home/Index");
+
+		//	Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+
+		//	// admin cannot have ER
+		//	if (HelperModel.CheckAdmin(coll))
+		//		return Redirect("/Home/Index");
+
+		//	Debug.WriteLine(model.ExpenseReport.ExpenseLines[0].Description);
+		//	Debug.WriteLine(model.ExpenseReport.ExpenseLines[0].Type);
+
+		//	return Redirect("/ExpenseReport/Index");
+		//}
+
+		//public ActionResult VUUE() {
+		//    dd d = new dd();
+		//    return View(d);
+		//}
+
+		//public ActionResult TEST(dd d) {
+		//    return View(d);
+		//}
 	}
 }

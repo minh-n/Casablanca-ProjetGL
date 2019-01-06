@@ -75,7 +75,7 @@ current_month
         @Html.DropDownList("monthName", months.Select(month => new SelectListItem {
                                                                    Text = DateTime.ParseExact(month, "MMMM", new CultureInfo("en-US")).ToString("MMMM").ToUpper(),
                                                                    Value = month
-                                                               }))
+                                                               }	))
 
         @Html.ValidationSummary("");
     }

@@ -2,157 +2,179 @@
 @using Casablanca.Models.ExpenseReports;
 
 @{
-    ViewBag.Title = "Ajouter des lignes de frais";
+	ViewBag.Title = "Ajouter des lignes de frais";
 }
 
 @model AddExpenseLineVM
 
 <div class="container">
-    <h2 class="text-left">Effectuer une demande de notes de frais </h2>
+	<h2 class="text-left">Effectuer une demande de notes de frais </h2>
 
-    <!-- le plus pour ajouter une ligne-->
-    <span class="table-add glyphicon glyphicon-plus"></span>
+	<!-- le plus pour ajouter une ligne-->
+	<span class="table-add glyphicon glyphicon-plus"></span>
 
-    @using (Html.BeginForm("UpdateExpenseReport", "ExpenseReport", FormMethod.Post)) {
-        <div id="table" class="table-editable" data-toggle="table" data-search="true">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Type de frais</th>
-                        <th>Description&nbsp;</th>
-                        <th>Montant du frais</th>
-                        <th>Mission associée</th>
-                        <th>Date du frais</th>
-                        <th>Justificatif</th>
-                        <th>Supprimer</th>
+	@using (Html.BeginForm("UpdateExpenseReport", "ExpenseReport", FormMethod.Post))
+	{
+		<div id="table" class="table-editable" data-toggle="table" data-search="true">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Type de frais</th>
+						<th>Description&nbsp;</th>
+						<th>Montant du frais</th>
+						<th>Mission associée</th>
+						<th>Date du frais</th>
+						<th>Justificatif</th>
+						<th>Supprimer</th>
 
-                    </tr>
-                </thead>
-                <tbody>
-                    @for(int i = 0; i < Model.ExpenseReport.ExpenseLines.Count; i++) { 
-                        <tr>
-                            <!--Type de frais-->
-                            <td>
-                                <select asp-for="Model.ExpenseReport.ExpenseLines[i].Type">
-                                    <optgroup label="Type de frais">
-                                        @foreach (LineType type in LineType.GetValues(typeof(LineType))) {
-                                            if (type == Model.ExpenseReport.ExpenseLines[i].Type) {
-                                                <option value="@type" selected>@type</option>
-                                            }
-                                            else {
-                                                <option value="@type">@type</option>
-                                            }
-                                        }
-                                    </optgroup>
-                                </select>
-                            </td>
+					</tr>
+				</thead>
+				<tbody>
+					@for (int i = 0; i < Model.ExpenseReport.ExpenseLines.Count; i++)
+					{
+						<tr>
+							<!--Type de frais-->
+							<td>
+								<select asp-for="Model.ExpenseReport.ExpenseLines[i].Type">
+									<optgroup label="Type de frais">
+										@foreach (LineType type in LineType.GetValues(typeof(LineType)))
+										{
+											if (type == Model.ExpenseReport.ExpenseLines[i].Type)
+											{
+												<option value="@type" selected>@type</option>
+											}
+											else
+											{
+												<option value="@type">@type</option>
+											}
+										}
+									</optgroup>
+								</select>
+							</td>
 
-                            <!--Description du frais-->
-                            <td>
-                                @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Description)
-                            </td>
+							<!--Description du frais HTML OK-->
+							<td>
+								@Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Description)
+							</td>
 
-                            <!--Montant-->
-                            @{
-                                System.Globalization.CultureInfo customCulture = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
-                                customCulture.NumberFormat.NumberDecimalSeparator = ".";
+							<!--Montant HTML KO-->
+							@{
+								System.Globalization.CultureInfo customCulture = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
+								customCulture.NumberFormat.NumberDecimalSeparator = ".";
 
-                                System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
-                            }
-                            <td><input value="@Model.ExpenseReport.ExpenseLines[i].Cost" type="number" step="0.01" min=0 asp-for="Model.ExpenseReport.ExpenseLines[i].Cost"></td>
-
-
-
-                            <!--Mission associee-->
-
-                            <td>
-                                <select asp-for="Model.ExpenseReport.ExpenseLines[i].Mission">
-                                    <optgroup label="Mission associée">
-                                        @if (Model.CollaboratorMissions.Count == 0) {
-                                            <option value="-1">Aucune mission</option>
-                                        }
-                                        else {
-                                            foreach (var item2 in Model.CollaboratorMissions) {
-                                                if (Model.ExpenseReport.ExpenseLines[i].Mission.Id == item2.Id) {
-                                                    <option value="@item2.Id" selected>@item2.Name</option>
-                                                }
-                                                else {
-                                                    <option value="@item2.Id">@item2.Name</option>
-                                                }
-                                            }
-                                        }
-
-                                    </optgroup>
-
-                                </select>
-                            </td>
-
-                            <!--Date de la ligne de frais-->
-                            <td>
-                                @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Date, new { @type = "date", @class = "form-control datepicker", @Value = Model.ExpenseReport.ExpenseLines[i].Date.ToString("yyyy-MM-dd") })
-                                <!-- ligne 5 copiée d'ici : https://gist.github.com/badcommandorfilename/118012102de8e7201e079e519ee9d135
-                                Ne pas toucher, magie noire-->
-                            </td>
-
-                            <!--justificatif-->
-                            <td><input value="@Model.ExpenseReport.ExpenseLines[i].Justificatory" type="file" id="Justificatory" name="Justificatory"></td>
-
-                            <!--supprimer-->
-                            <td>
-                                <span class="table-remove glyphicon glyphicon-remove"></span>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-
-                <!-- This is our clonable table line --> @*TODO : asp-for dans ce qui suit*@
-                <tr class="hide">
-                    <td>
-                        <select>
-                            <optgroup label="Type de frais">
-                                @foreach (LineType type in LineType.GetValues(typeof(LineType))) {
-                                    <option value="@type">@type</option>
-                                }
-                            </optgroup>
-                        </select>
-                    </td>
-                    <td><input type="text"></td>
-                    <td><input type="number" step="0.01" min=0></td>
-                    <td>
-                        <select>
-                            <optgroup label="Mission associée">
-                                @if (Model.CollaboratorMissions.Count > 0) {
-                                    foreach (var item2 in Model.CollaboratorMissions) {
-                                        <option value="@item2.Id">@item2.Name</option>
-                                    }
-                                }
-                                else {
-                                    <option value="1">Pas de mission.</option>
-                                }
-
-                            </optgroup>
-                        </select>
-                    </td>
-                    <td><input type="date" class="form-control datepicker"></td>
-                    <td><input type="file"></td>
-                    <td>
-                        <span class="table-remove glyphicon glyphicon-remove"></span>
-                    </td>
-                </tr>
+								System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
+							}
+							<td>
+								<input value="@Model.ExpenseReport.ExpenseLines[i].Cost" type="number" step="0.01" min=0 asp-for="Model.ExpenseReport.ExpenseLines[i].Cost">
+							</td>
 
 
+							<!--Mission associee new { class = "form-control" }-->
+
+							<td>
+
+								<!--TODO : select la bonne mission-->
+								@Html.DropDownListFor(m => Model.ExpenseReport.ExpenseLines[i].Mission.Id,
+							   Model.CollaboratorMissions.Select(mission => new SelectListItem
+								{Text = mission.Text, Value = mission.Value, Selected =
+												(mission.Value == Model.ExpenseReport.ExpenseLines[i].Mission.Id.ToString())}), 
+							   new { @class = "form-control" })	
+
+								<!--Leçon de vie-->
+								@*<select asp-for="Model.ExpenseReport.ExpenseLines[i].Mission">
+												<optgroup label="Mission associée">
+													@if (Model.CollaboratorMissions.Count == 0)
+													{
+														<option value="-1">Aucune mission</option>
+													}
+													else
+													{
+														foreach (var item2 in Model.CollaboratorMissions)
+														{
+													if (Model.ExpenseReport.ExpenseLines[i].Mission.Id == item2.Id)
+													{
+														<option value="@item2.Id" selected>@item2.Name</option>
+													}
+													else
+													{
+														<option value="@item2.Id">@item2.Name</option>
+													}
+												}
+											}
+
+										</optgroup>
+
+									</select>*@
+
+							</td>
+
+							<!--Date de la ligne de frais-->
+							<td>
+								@Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Date, new { @type = "date", @class = "form-control datepicker", @Value = Model.ExpenseReport.ExpenseLines[i].Date.ToString("yyyy-MM-dd") })
+								<!-- ligne 5 copiée d'ici : https://gist.github.com/badcommandorfilename/118012102de8e7201e079e519ee9d135
+								Ne pas toucher, magie noire-->
+							</td>
+
+							<!--justificatif-->
+							<td><input value="@Model.ExpenseReport.ExpenseLines[i].Justificatory" type="file" id="Justificatory" name="Justificatory"></td>
+
+							<!--supprimer-->
+							<td>
+								<span class="table-remove glyphicon glyphicon-remove"></span>
+							</td>
+						</tr>
+					}
+				</tbody>
+
+				<!-- This is our clonable table line --> @*TODO : asp-for dans ce qui suit*@
+				<tr class="hide">
+					<td>
+						<select>
+							<optgroup label="Type de frais">
+								@foreach (LineType type in LineType.GetValues(typeof(LineType)))
+								{
+									<option value="@type">@type</option>
+								}
+							</optgroup>
+						</select>
+					</td>
+					<td><input type="text"></td>
+					<td><input type="number" step="0.01" min=0></td>
+					<td>
+						@*<select>
+								<optgroup label="Mission associée">
+									@if (Model.CollaboratorMissions.Count > 0) {
+										foreach (var item2 in Model.CollaboratorMissions) {
+											<option value="@item2.Id">@item2.Name</option>
+										}
+									}
+									else {
+										<option value="1">Pas de mission.</option>
+									}
+
+								</optgroup>
+							</select>*@
+					</td>
+					<td><input type="date" class="form-control datepicker"></td>
+					<td><input type="file"></td>
+					<td>
+						<span class="table-remove glyphicon glyphicon-remove"></span>
+					</td>
+				</tr>
 
 
-            </table>
-        </div>
 
-        <button id="save-btn" type="submit" class="btn btn-primary">Sauvegarder la note de frais</button>
-        <button id="send-btn" type="submit" class="btn btn-primary">Envoyer la note de frais</button>
 
-        @Html.ValidationSummary("");
-    }
+			</table>
+		</div>
 
-    <p id="export"></p>
+		<button id="save-btn" type="submit" class="btn btn-primary">Sauvegarder la note de frais</button>
+		<button id="send-btn" type="submit" class="btn btn-primary">Envoyer la note de frais</button>
+
+		@Html.ValidationSummary("");
+	}
+
+	<p id="export"></p>
 </div>
 
 
@@ -162,83 +184,83 @@
 
 @section Scripts {
 
-    <script>
+	<script>
 
-        var $TABLE = $('#table');
-        var $BTN = $('#save-btn');
-        var $BTNSEND = $('#send-btn');
+		var $TABLE = $('#table');
+		var $BTN = $('#save-btn');
+		var $BTNSEND = $('#send-btn');
 
-        var $EXPORT = $('#export');
+		var $EXPORT = $('#export');
 
-        $('.table-add').click(function () {
-            var $clone = $TABLE.find('tr.hide').clone(true).removeClass('hide table-line');
-            $TABLE.find('table').append($clone);
-        });
+		$('.table-add').click(function () {
+			var $clone = $TABLE.find('tr.hide').clone(true).removeClass('hide table-line');
+			$TABLE.find('table').append($clone);
+		});
 
-        $('.table-remove').click(function () {
-            $(this).parents('tr').detach();
-        });
+		$('.table-remove').click(function () {
+			$(this).parents('tr').detach();
+		});
 
-        // A few jQuery helpers for exporting only
-        jQuery.fn.pop = [].pop;
-        jQuery.fn.shift = [].shift;
-
-
-        // SAVE button
-        $BTN.click(function () {
-            var $rows = $TABLE.find('tr:not(:hidden)');
-            var headers = [];
-            var data = [];
-
-            // Get the headers (add special header logic here)
-            $($rows.shift()).find('th:not(:empty)').each(function () {
-                headers.push($(this).text().toLowerCase());
-            });
-
-            // Turn all existing rows into a loopable array
-            $rows.each(function () {
-                var $td = $(this).find('td');
-                var h = {};
-
-                // Use the headers from earlier to name our hash keys
-                headers.forEach(function (header, i) {
-                    h[header] = $td.eq(i).text();
-                });
-
-                data.push(h);
-            });
-
-            // Output the result
-            $EXPORT.text(JSON.stringify(data));
-        });
+		// A few jQuery helpers for exporting only
+		jQuery.fn.pop = [].pop;
+		jQuery.fn.shift = [].shift;
 
 
-        // SEND button
-        $BTNSEND.click(function () {
-            var $rows = $TABLE.find('tr:not(:hidden)');
-            var headers = [];
-            var data = [];
+		// SAVE button
+		$BTN.click(function () {
+			var $rows = $TABLE.find('tr:not(:hidden)');
+			var headers = [];
+			var data = [];
 
-            // Get the headers (add special header logic here)
-            $($rows.shift()).find('th:not(:empty)').each(function () {
-                headers.push($(this).text().toLowerCase());
-            });
+			// Get the headers (add special header logic here)
+			$($rows.shift()).find('th:not(:empty)').each(function () {
+				headers.push($(this).text().toLowerCase());
+			});
 
-            // Turn all existing rows into a loopable array
-            $rows.each(function () {
-                var $td = $(this).find('td');
-                var h = {};
+			// Turn all existing rows into a loopable array
+			$rows.each(function () {
+				var $td = $(this).find('td');
+				var h = {};
 
-                // Use the headers from earlier to name our hash keys
-                headers.forEach(function (header, i) {
-                    h[header] = $td.eq(i).text();
-                });
+				// Use the headers from earlier to name our hash keys
+				headers.forEach(function (header, i) {
+					h[header] = $td.eq(i).text();
+				});
 
-                data.push(h);
-            });
+				data.push(h);
+			});
 
-            // Output the result
-            $EXPORT.text(JSON.stringify(data));
-        });
-    </script>
+			// Output the result
+			$EXPORT.text(JSON.stringify(data));
+		});
+
+
+		// SEND button
+		$BTNSEND.click(function () {
+			var $rows = $TABLE.find('tr:not(:hidden)');
+			var headers = [];
+			var data = [];
+
+			// Get the headers (add special header logic here)
+			$($rows.shift()).find('th:not(:empty)').each(function () {
+				headers.push($(this).text().toLowerCase());
+			});
+
+			// Turn all existing rows into a loopable array
+			$rows.each(function () {
+				var $td = $(this).find('td');
+				var h = {};
+
+				// Use the headers from earlier to name our hash keys
+				headers.forEach(function (header, i) {
+					h[header] = $td.eq(i).text();
+				});
+
+				data.push(h);
+			});
+
+			// Output the result
+			$EXPORT.text(JSON.stringify(data));
+		});
+	</script>
 }

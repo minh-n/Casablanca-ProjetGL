@@ -21,9 +21,9 @@ namespace Casablanca.Models {
         public DateTime EndDate { get; set; }
         public MissionStatus Status { get; set; }
 
-        public List<Collaborator> CollList { get; set; }
+        public virtual List<Collaborator> CollList { get; set; }
 
-        public Service Service { get; set; }
+        public virtual Service Service { get; set; }
 
         public Mission() {
 
