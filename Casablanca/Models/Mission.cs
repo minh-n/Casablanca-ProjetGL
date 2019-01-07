@@ -14,6 +14,7 @@ namespace Casablanca.Models {
 
     public class Mission {
         [Key]
+        [Display(Name = "mission")]
         public int Id { get; set; }
         public string Name { get; set; }
 

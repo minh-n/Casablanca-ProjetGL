@@ -17,17 +17,34 @@ namespace Casablanca.Models.ExpenseReports {
         [Key]
         public int Id { get; set; }
 
+        [Required]
+        [Display(Name = "mission")]
         public virtual Mission Mission { get; set; }
-		public virtual Collaborator ChiefValidator { get; set; }
+        [Display(Name = "validateur")]
+        public virtual Collaborator ChiefValidator { get; set; }
 
+        [Required]
         public LineType Type { get; set; }
+        [Required]
+        [Display(Name = "description")]
         public string Description { get; set; }
+        [Required]
+        [Display(Name = "coût")]
         public float Cost { get; set; }
+        [Required]
+        [Display(Name = "date")]
         public DateTime Date { get; set; }
+        [Display(Name = "justificatif")]
         public string Justificatory { get; set; }
 
         public ExpenseLine() {
-
+            Mission = null;
+            ChiefValidator = null;
+            Type = LineType.HOTEL;
+            Description = "";
+            Cost = 0;
+            Date = new DateTime();
+            Justificatory = "";
         }
 
 		public ExpenseLine(Mission mission, LineType type, Collaborator chiefValidator, string description, float cost, DateTime date, string justificatory)

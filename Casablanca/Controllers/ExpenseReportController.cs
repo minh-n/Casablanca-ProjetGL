@@ -52,6 +52,7 @@ namespace Casablanca.Controllers
             Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
 
             ExpenseReport er = dal.GetExpenseReport(id);
+            er.ExpenseLines.Add(new ExpenseLine());
 			AddExpenseLineVM model = new AddExpenseLineVM {ExpenseReport = er, CollaboratorMissions = GetMissionsList(coll) };
 
 			return View(model);
@@ -158,7 +159,7 @@ namespace Casablanca.Controllers
 			if (HelperModel.CheckAdmin(coll))
 				return Redirect("/Home/Index");
 
-			return View(new AddExpenseLineVM { CollaboratorMissions = GetMissionsList(coll)});
+			return View("AddExpenseReport", new AddExpenseLineVM { CollaboratorMissions = GetMissionsList(coll)});
 		}
 
 
@@ -168,24 +169,33 @@ namespace Casablanca.Controllers
 
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                 return Redirect("/Home/Index");
-            Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+
             // admin cannot have ER
+            Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
             if (HelperModel.CheckAdmin(coll))
                 return Redirect("/Home/Index");
 
 			if (!ModelState.IsValid)
 			{
 				model.CollaboratorMissions = GetMissionsList(coll);
-				return View(model);
+				return View("AddExpenseReport", model);
 			}
 
-			//Debug.WriteLine("Id de la mission = " + model.SelectedMission);
+            // TODO : get ER from id, mission, reset les EL et les recréer
+            ExpenseReport current = dal.GetExpenseReport(model.ExpenseReport.Id);
 
-			model.ExpenseReport.ExpenseLines[0].Mission = dal.GetMission(model.ExpenseReport.ExpenseLines[0].Mission.Id);
-			Debug.WriteLine("ty de la mission = " + model.ExpenseReport.ExpenseLines[1].Type);
+            dal.ClearExpenseLines(current);
 
+            foreach(ExpenseLine el in model.ExpenseReport.ExpenseLines) {
+                // Create new line
+                ExpenseLine newEL = new ExpenseLine(dal.GetMission(el.Mission.Id), el.Type, el.Description, el.Cost, el.Date, el.Justificatory);
 
-			return Redirect("/ExpenseReport/Index");
+                // TODO : compute validator (in ctor or here and set it)
+                current.AddLine(newEL);
+            }
+            dal.SaveChanges();
+
+            return Redirect("/ExpenseReport/Index");
         }
 
 		//Tuto magique qui m'a sauvé sur ce coup-ci
@@ -221,15 +231,6 @@ namespace Casablanca.Controllers
 		//	Debug.WriteLine(model.ExpenseReport.ExpenseLines[0].Type);
 
 		//	return Redirect("/ExpenseReport/Index");
-		//}
-
-		//public ActionResult VUUE() {
-		//    dd d = new dd();
-		//    return View(d);
-		//}
-
-		//public ActionResult TEST(dd d) {
-		//    return View(d);
 		//}
 	}
 }

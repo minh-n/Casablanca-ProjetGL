@@ -20,6 +20,7 @@ namespace Casablanca.Models.Database {
         ExpenseReport GetExpenseReport(int id);
 		Collaborator Login(string login, string password);
         void CreateExpenseReport(Collaborator coll, Month month, int year);
+        void ClearExpenseLines(ExpenseReport er);
 
         // Services
         List<Service> GetServices();
@@ -31,5 +32,6 @@ namespace Casablanca.Models.Database {
 
         // Helper
         string EncodeMD5(string password);
+        void SaveChanges();
     }
 }

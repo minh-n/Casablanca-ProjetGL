@@ -21,5 +21,6 @@ namespace Casablanca.Models {
         public DbSet<Leave> Leaves { get; set; }
         public DbSet<ExpenseReport> ExpenseReports { get; set; }
 		public DbSet<Service> Services { get; set; }
+        public DbSet<ExpenseLine> ExpenseLines { get; set; }
     }
 }

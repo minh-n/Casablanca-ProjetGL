@@ -198,8 +198,28 @@ namespace Casablanca.Models.Database
             Db.SaveChanges();
         }
 
-		// Login
-		public Collaborator Login(string name, string pass)
+        public void ClearExpenseLines(ExpenseReport er) {
+            List<ExpenseLine> ELs = new List<ExpenseLine>();
+
+            // Remove EL from list (iterate backward to be safe)
+            for (int i = er.ExpenseLines.Count - 1; i >= 0; i--) {
+                ELs.Add(er.ExpenseLines[i]);
+                er.RemoveLine(er.ExpenseLines[i]);
+            }
+
+            // Destroy all ELs
+            for (int i = ELs.Count - 1; i >= 0; i--) {
+                ExpenseLine toRemove = ELs[i];
+                //ExpenseLine toRemove = Db.ExpenseLines.SingleOrDefault(el => el.Id == ELs[i].Id);
+                if (toRemove != null)
+                    Db.ExpenseLines.Remove(toRemove);
+            }
+
+            Db.SaveChanges();
+        }
+
+        // Login
+        public Collaborator Login(string name, string pass)
 		{
 			string passEncoded = EncodeMD5(pass);
 			return Db.Collaborators.FirstOrDefault(u => u.Login == name && u.Password == passEncoded);
@@ -237,6 +257,10 @@ namespace Casablanca.Models.Database
         public string EncodeMD5(string pass) {
             string passSalt = "ChevalDeMetal" + pass + "Casablanca";
             return BitConverter.ToString(new MD5CryptoServiceProvider().ComputeHash(ASCIIEncoding.Default.GetBytes(passSalt)));
+        }
+
+        public void SaveChanges() {
+            Db.SaveChanges();
         }
 
         public void Dispose()

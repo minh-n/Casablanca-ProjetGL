@@ -11,15 +11,11 @@ namespace Casablanca.Models.ViewModel {
 
         public ExpenseReport ExpenseReport { get; set; }
 
-		[Required]
-		[Display(Name = "Mission")]
-		public int SelectedMission { get; set; }
 		public IEnumerable<SelectListItem> CollaboratorMissions { get; set; }
 
 		public AddExpenseLineVM(ExpenseReport expenseReport, int selectedMission, IEnumerable<SelectListItem> collaboratorMissions)
 		{
 			ExpenseReport = expenseReport;
-			SelectedMission = selectedMission;
 			CollaboratorMissions = collaboratorMissions;
 		}
 
