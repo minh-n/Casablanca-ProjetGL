@@ -113,7 +113,9 @@
 
                             <!-- Justificatif TODO -->
                             <td>
-                                <input value="@Model.ExpenseReport.ExpenseLines[i].Justificatory" type="file" asp-for="Model.ExpenseReport.ExpenseLines[0].Justificatory">
+                                @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Justificatory,
+                                    new { type = "file", @Value = Model.ExpenseReport.ExpenseLines[i].Justificatory, accept = ".pdf" })
+                                @*<input value="@Model.ExpenseReport.ExpenseLines[i].Justificatory" type="file" asp-for="Model.ExpenseReport.ExpenseLines[0].Justificatory">*@
                             </td>
 
                             <!-- Supprimer -->
@@ -155,7 +157,8 @@
                     new { @type = "date", @class = "form-control datepicker", @Value = "" })
             </td>
             <td>
-                <input value="@Model.ExpenseReport.ExpenseLines[nbEL].Justificatory" type="file" asp-for="Model.ExpenseReport.ExpenseLines[0].Justificatory">
+                @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Justificatory, new { type = "file", @Value = "", accept = ".pdf" })
+                @*<input value="@Model.ExpenseReport.ExpenseLines[nbEL].Justificatory" type="file" asp-for="Model.ExpenseReport.ExpenseLines[0].Justificatory">*@
             </td>
             <td>
                 <span class="table-remove glyphicon glyphicon-remove"></span>
@@ -170,71 +173,49 @@
 
 
 @section Scripts {
-
     <script>
-
+        // Script to add lines to the ER
         var $TABLE = $('#table');
         var $BTN = $('#save-btn');
         var $BTNSEND = $('#send-btn');
 
         $('.table-add').click(function () {
+            // Add the line to the view and update line numbers
             var $clone = $("#additionnalrow").find('tr.hide').clone(true).removeClass('hide table-line');
             $TABLE.find('table').append($clone);
+            replaceIds();
         });
 
+        // Script to remove lines from the ER
         $('.table-remove').click(function () {
+            // Remove a line and update line numbers
             $(this).parents('tr').detach();
+            replaceIds();
         });
 
-        // SAVE button
-        $BTN.click(function () {
-            var $rows = $TABLE.find('tr:not(:hidden)');
-            var headers = [];
-            var data = [];
+        
 
-            // Get the headers (add special header logic here)
-            $($rows.shift()).find('th:not(:empty)').each(function () {
-                headers.push($(this).text().toLowerCase());
-            });
+        // Script to give the right ID to the new line
+        var replaceIds = function () {
+            var table = $TABLE.find('table').find('tbody');
+            // For every row (tr)
+            for (var j = 0, tr; tr = table.children("tr")[j]; j++) {
+                // For every column (td)
+                for (var i = 0, td; td = tr.children[i]; i++) {
 
-            // Turn all existing rows into a loopable array
-            $rows.each(function () {
-                var $td = $(this).find('td');
-                var h = {};
+                    // Except for the glyphicon-remove (last td in every row)
+                    if (i != tr.children.length - 1) {
+                        // Change id of the td content
+                        var idToChange = td.children[0].id;
+                        td.children[0].id = idToChange.replace(/ExpenseReport_ExpenseLines_[0-9]+/, "ExpenseReport_ExpenseLines_" + j);
 
-                // Use the headers from earlier to name our hash keys
-                headers.forEach(function (header, i) {
-                    h[header] = $td.eq(i).text();
-                });
+                        // Change the name of the td content
+                        var nameToChange = $(td.children[0]).attr("name");
+                        $(td.children[0]).attr("name", nameToChange.replace(/ExpenseReport\.ExpenseLines\[[0-9]+\]/, "ExpenseReport.ExpenseLines[" + j + "]"));
+                    }
+                }
+            }
+        };
 
-                data.push(h);
-            });
-        });
-
-
-        // SEND button
-        $BTNSEND.click(function () {
-            var $rows = $TABLE.find('tr:not(:hidden)');
-            var headers = [];
-            var data = [];
-
-            // Get the headers (add special header logic here)
-            $($rows.shift()).find('th:not(:empty)').each(function () {
-                headers.push($(this).text().toLowerCase());
-            });
-
-            // Turn all existing rows into a loopable array
-            $rows.each(function () {
-                var $td = $(this).find('td');
-                var h = {};
-
-                // Use the headers from earlier to name our hash keys
-                headers.forEach(function (header, i) {
-                    h[header] = $td.eq(i).text();
-                });
-
-                data.push(h);
-            });
-        });
     </script>
 }

@@ -69,6 +69,9 @@ namespace Casablanca.Models.ExpenseReports {
                 this.NbLines--;
                 this.TotalCost -= el.Cost;
             }
+            // TODO : decide if useful
+            if (this.ExpenseLines.Count == 0)
+                this.TotalCost = 0.0f;
         }
     }
 }

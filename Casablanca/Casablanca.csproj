@@ -330,7 +330,7 @@
     <Content Include="Scripts\popper-utils.js.map" />
     <Content Include="Views\Home\CollaboratorView.cshtml" />
     <Content Include="Views\ExpenseReport\Index.cshtml" />
-    <Content Include="Views\ExpenseReport\AddExpenseReport.cshtml" />
+    <Content Include="Views\ExpenseReport\UpdateExpenseReport.cshtml" />
     <Content Include="Views\Login\Index.cshtml" />
     <Content Include="Views\Admin\CreateAccount.cshtml" />
     <Content Include="Views\Admin\Index.cshtml" />

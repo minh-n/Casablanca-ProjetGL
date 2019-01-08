@@ -43,7 +43,7 @@ namespace Casablanca.Controllers
             return View(model);
 		}
 
-		public ActionResult AddExpenseReport(int id = 3)
+		public ActionResult UpdateExpenseReport(int id = 3)
 		{
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                 return Redirect("/Home/Index");
@@ -52,6 +52,8 @@ namespace Casablanca.Controllers
             Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
 
             ExpenseReport er = dal.GetExpenseReport(id);
+
+            // IMPORTANT : do not remove this line v
             er.ExpenseLines.Add(new ExpenseLine());
 			AddExpenseLineVM model = new AddExpenseLineVM {ExpenseReport = er, CollaboratorMissions = GetMissionsList(coll) };
 
@@ -150,17 +152,17 @@ namespace Casablanca.Controllers
 		
 
 		//Get
-		public ActionResult UpdateExpenseReport()
-		{
-			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
-				return Redirect("/Home/Index");
-			Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
-			// admin cannot have ER
-			if (HelperModel.CheckAdmin(coll))
-				return Redirect("/Home/Index");
+		//public ActionResult UpdateExpenseReport()
+		//{
+		//	if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+		//		return Redirect("/Home/Index");
+		//	Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+		//	// admin cannot have ER
+		//	if (HelperModel.CheckAdmin(coll))
+		//		return Redirect("/Home/Index");
 
-			return View("AddExpenseReport", new AddExpenseLineVM { CollaboratorMissions = GetMissionsList(coll)});
-		}
+		//	return View("AddExpenseReport", new AddExpenseLineVM { CollaboratorMissions = GetMissionsList(coll)});
+		//}
 
 
 		//Post
@@ -178,22 +180,28 @@ namespace Casablanca.Controllers
 			if (!ModelState.IsValid)
 			{
 				model.CollaboratorMissions = GetMissionsList(coll);
-				return View("AddExpenseReport", model);
+                // IMPORTANT : do not remove this line v
+                model.ExpenseReport.AddLine(new ExpenseLine());
+
+				return View(model);
 			}
 
-            // TODO : get ER from id, mission, reset les EL et les recréer
+            // Get current ER and clear its ELs
             ExpenseReport current = dal.GetExpenseReport(model.ExpenseReport.Id);
-
             dal.ClearExpenseLines(current);
 
-            foreach(ExpenseLine el in model.ExpenseReport.ExpenseLines) {
-                // Create new line
-                ExpenseLine newEL = new ExpenseLine(dal.GetMission(el.Mission.Id), el.Type, el.Description, el.Cost, el.Date, el.Justificatory);
+            // If we received ELs from the view
+            if (model.ExpenseReport.ExpenseLines != null) {
+                // For each EL in the view
+                foreach (ExpenseLine el in model.ExpenseReport.ExpenseLines) {
+                    // Create a new line from view fields and add it to the current ER
+                    ExpenseLine newEL = new ExpenseLine(dal.GetMission(el.Mission.Id), el.Type, el.Description, el.Cost, el.Date, el.Justificatory);
 
-                // TODO : compute validator (in ctor or here and set it)
-                current.AddLine(newEL);
+                    // TODO : compute validator (in ctor or here and set it)
+                    current.AddLine(newEL);
+                }
+                dal.SaveChanges();
             }
-            dal.SaveChanges();
 
             return Redirect("/ExpenseReport/Index");
         }
