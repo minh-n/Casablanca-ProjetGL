@@ -43,7 +43,7 @@ namespace Casablanca.Controllers
             return View(model);
 		}
 
-		public ActionResult UpdateExpenseReport(int id = 3)
+		public ActionResult UpdateExpenseReport(int id)
 		{
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                 return Redirect("/Home/Index");

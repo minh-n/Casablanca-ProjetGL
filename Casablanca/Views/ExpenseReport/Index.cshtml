@@ -35,7 +35,14 @@
             case ExpenseReportStatus.PENDING_APPROVAL_2: <text>En attente de seconde validation</text>break;
     }
                     </td>
-                    <td>"Un bouton ici"</td>
+
+					@*Un bouton pour accéder à la note de frais en cours*@
+					<td>
+
+						@Html.ActionLink("Modifier","UpdateExpenseReport", "ExpenseReport", new { id = item.Id }, null)
+
+
+					</td>
                 </tr>
             }
         </tbody>
