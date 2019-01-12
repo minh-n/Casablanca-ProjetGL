@@ -1,9 +1,14 @@
 ﻿@using Casablanca.Models
+@using Casablanca.Models.Database;
+
 @using Casablanca.Models.ExpenseReports;
 @using Casablanca.Models.ViewModel;
 
 @{
 	ViewBag.Title = "ProcessList";
+	Dal dal = new Dal();
+	Collaborator coll = dal.GetCollaborator(User.Identity.Name);
+
 }
 
 @model List<ExpenseReport>
@@ -18,7 +23,7 @@
 				<th>Montant Total</th>
 				<th>Nombre de frais</th>
 				<th>Statut</th>
-				<th>Traiter</th>
+				<th>Traitement</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -42,7 +47,16 @@
 
 					<!--traiter-->
 					<td>
-						@Html.ActionLink("Traiter", "ProcessCompta", "ExpenseReport", new { ERId = item.Id }, null)
+
+						@if (HelperModel.CheckCDS(coll))
+						{
+							@Html.ActionLink("Traiter", "ProcessCDS", "ExpenseReport", new { ERId = item.Id }, null)
+
+						}
+						else if (HelperModel.CheckCompta(coll))
+						{
+							@Html.ActionLink("Traiter", "ProcessCompta", "ExpenseReport", new { ERId = item.Id }, null)
+						}
 					</td>
 				</tr>
 			}

@@ -125,28 +125,30 @@ namespace Casablanca.Controllers
 			// if yes, add them to the list returned to the View
 			foreach (ExpenseReport e in AllERList)
 			{
-				if (HelperModel.CheckCompta(coll))
+				if(e.Collaborator != coll)
 				{
-					if(e.Status == ExpenseReportStatus.PENDING_APPROVAL_2)
-						ERListToBeReturnedAsModel.Add(e);
-				}
-				else if (HelperModel.CheckCDS(coll))
-				{
-					if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_1)
+
+					if (HelperModel.CheckCompta(coll))
 					{
-						// in order to know if the Chief needs to see the ER
-						List<Mission> currentERMissionsList = new List<Mission>();
-						foreach (ExpenseLine el in e.ExpenseLines)
+						if(e.Status == ExpenseReportStatus.PENDING_APPROVAL_2)
+							ERListToBeReturnedAsModel.Add(e);
+					}
+					else if (HelperModel.CheckCDS(coll))
+					{
+						if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_1)
 						{
-							if (dal.GetCollaborator(el.Mission.ChiefId).Id == coll.Id)
+							// in order to know if the Chief needs to see the ER
+							List<Mission> currentERMissionsList = new List<Mission>();
+							foreach (ExpenseLine el in e.ExpenseLines)
 							{
-								ERListToBeReturnedAsModel.Add(e);
-								break;
+								if (dal.GetCollaborator(el.Mission.ChiefId).Id == coll.Id)
+								{
+									ERListToBeReturnedAsModel.Add(e);
+									break;
+								}
 							}
 						}
 					}
-
-
 				}
 			}
 			
