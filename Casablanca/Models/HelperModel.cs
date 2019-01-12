@@ -5,12 +5,15 @@ using System.Web;
 
 namespace Casablanca.Models
 {
+	/*
+	 * ------------------------------------------------------------
+	 * Helper methods: check if a Coll is in a certain category----
+	 * depending on his service------------------------------------
+	 * ------------------------------------------------------------
+	 */
+
 	public class HelperModel
 	{
-
-
-
-
 		//true if the coll is in a management role (RH, Compta or Chief)
 		public static bool CheckManagement(Collaborator coll)
 		{

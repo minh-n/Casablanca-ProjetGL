@@ -25,7 +25,12 @@ namespace Casablanca.Models.Database
             Db = new DatabaseContext();
         }
 
-        public void InitializeDatabase() {
+		/*
+		 * ------------------------------------------------------------
+		 * Initalize the DB with test data-----------------------------
+		 * ------------------------------------------------------------
+		 */
+		public void InitializeDatabase() {
 
             // Create services
             Services = new List<Service> {
@@ -70,19 +75,26 @@ namespace Casablanca.Models.Database
 
 			// Create missions
 			Missions = new List<Mission> {
-                new Mission("Mission A", DateTime.Today, new DateTime(2019, 5, 1), MissionStatus.IN_PROGRESS, Services[0]),
-                new Mission("Mission B", new DateTime(2019, 2, 9), new DateTime(2019, 3, 1), MissionStatus.PLANNED, Services[0]),
-                new Mission("Mission C", new DateTime(2018, 12, 25), new DateTime(2018, 12, 26), MissionStatus.CANCELED, Services[1]),
-                new Mission("Mission D", new DateTime(2019, 2, 25), new DateTime(2019, 2, 26), MissionStatus.COMPLETED, Services[0]),
-                new Mission("Mission E", new DateTime(2019, 2, 6), new DateTime(2019, 3, 1), MissionStatus.PLANNED, Services[0]),
-                new Mission("Mission F", new DateTime(2019, 1, 9), new DateTime(2019, 11, 1), MissionStatus.PLANNED, Services[0]),
-                new Mission("Mission G", new DateTime(2019, 1, 2), new DateTime(2019, 1, 4), MissionStatus.IN_PROGRESS, Services[0])
-            };
+                //new Mission("Mission A", DateTime.Today, new DateTime(2019, 5, 1), MissionStatus.IN_PROGRESS, GetCollaborator("Minh", "NGUYEN")),
+                //new Mission("Mission B", new DateTime(2019, 2, 9), new DateTime(2019, 3, 1), MissionStatus.PLANNED, GetCollaborator("Minh", "NGUYEN")),
+                //new Mission("Mission C", new DateTime(2018, 12, 25), new DateTime(2018, 12, 26), MissionStatus.CANCELED, GetCollaborator("Jeffrey", "GONCALVES")),
+                //new Mission("Mission D", new DateTime(2019, 2, 25), new DateTime(2019, 2, 26), MissionStatus.COMPLETED, GetCollaborator("Minh", "NGUYEN")),
+                //new Mission("Mission E", new DateTime(2019, 2, 6), new DateTime(2019, 3, 1), MissionStatus.PLANNED, GetCollaborator("Minh", "NGUYEN")),
+                //new Mission("Mission F", new DateTime(2019, 1, 9), new DateTime(2019, 11, 1), MissionStatus.PLANNED, GetCollaborator("Morgan", "FEURTE")),
+                //new Mission("Mission G", new DateTime(2019, 1, 2), new DateTime(2019, 1, 4), MissionStatus.IN_PROGRESS, GetCollaborator("Minh", "NGUYEN"))
 
-            
+				new Mission("Mission A", DateTime.Today, new DateTime(2019, 5, 1), MissionStatus.IN_PROGRESS),
+				new Mission("Mission B", new DateTime(2019, 2, 9), new DateTime(2019, 3, 1), MissionStatus.PLANNED),
+				new Mission("Mission C", new DateTime(2018, 12, 25), new DateTime(2018, 12, 26), MissionStatus.CANCELED),
+				new Mission("Mission D", new DateTime(2019, 2, 25), new DateTime(2019, 2, 26), MissionStatus.COMPLETED),
+				new Mission("Mission E", new DateTime(2019, 2, 6), new DateTime(2019, 3, 1), MissionStatus.PLANNED),
+				new Mission("Mission F", new DateTime(2019, 1, 9), new DateTime(2019, 11, 1), MissionStatus.PLANNED),
+				new Mission("Mission G", new DateTime(2019, 1, 2), new DateTime(2019, 1, 4), MissionStatus.IN_PROGRESS)
+			};
+
 
 			/*
-			 * Adding every lists to the database
+			 * Adding every lists above to the database
 			 */
 			foreach (Service s in Services) {
                 Db.Services.Add(s);
@@ -99,20 +111,36 @@ namespace Casablanca.Models.Database
             Db.SaveChanges();
 
 
-            // Assign missions to collaborators
-            GetCollaborator("Arthur", "BINELLI").Missions.Add(GetMission("Mission A"));
+			// Assign missions to collaborators
+			GetCollaborator("Arthur", "BINELLI").Missions.Add(GetMission("Mission A"));
             GetCollaborator("Arthur", "BINELLI").Missions.Add(GetMission("Mission B"));
             GetCollaborator("Arthur", "BINELLI").Missions.Add(GetMission("Mission C"));
             GetCollaborator("Arthur", "BINELLI").Missions.Add(GetMission("Mission E"));
 
-            //Adrien is coll2, Adrien gets all the missions because he is admin
-            GetCollaborator("Adrien", "LAVILLONNIERE").Missions = Missions;
+			//Adrien is coll2, Adrien gets all the missions because he is admin
+			//GetCollaborator("Adrien", "LAVILLONNIERE").Missions = Missions;
+			GetCollaborator("Adrien", "LAVILLONNIERE").Missions.Add(GetMission("Mission A"));
+			GetCollaborator("Adrien", "LAVILLONNIERE").Missions.Add(GetMission("Mission B"));
+			GetCollaborator("Adrien", "LAVILLONNIERE").Missions.Add(GetMission("Mission C"));
+			GetCollaborator("Adrien", "LAVILLONNIERE").Missions.Add(GetMission("Mission D"));
+			GetCollaborator("Adrien", "LAVILLONNIERE").Missions.Add(GetMission("Mission E"));
+			GetCollaborator("Adrien", "LAVILLONNIERE").Missions.Add(GetMission("Mission F"));
+			GetCollaborator("Adrien", "LAVILLONNIERE").Missions.Add(GetMission("Mission G"));
 
-            Db.SaveChanges();
+			Missions[0].ChiefId = GetCollaborator("Minh", "NGUYEN").Id;
+			Missions[1].ChiefId = GetCollaborator("Minh", "NGUYEN").Id;
+			Missions[2].ChiefId = GetCollaborator("Minh", "NGUYEN").Id;
+			Missions[3].ChiefId = GetCollaborator("Minh", "NGUYEN").Id;
+			Missions[4].ChiefId = GetCollaborator("Minh", "NGUYEN").Id;
+			Missions[5].ChiefId = GetCollaborator("Minh", "NGUYEN").Id;
+			Missions[6].ChiefId = GetCollaborator("Minh", "NGUYEN").Id;
+
+			Db.SaveChanges();
 
             // Create some expense reports 
             //TODO bizarre : j'ajoute les expense au coll3, alors que c'est le coll 1 qui a des missions. 
             // et ça marche. Par contre si j'enlevais une mission au coll1, alors y a nullpointer.
+			// TODO : je crois que ça a été résolu.
             ExpenseReports = new List<ExpenseReport>() {
                 new ExpenseReport(GetCollaborator("Arthur", "BINELLI"), Month.DECEMBER, 2018, ExpenseReportStatus.PENDING_APPROVAL_2),
 				new ExpenseReport(GetCollaborator("Floriab", "LE PALLEC"), Month.DECEMBER, 2018, ExpenseReportStatus.PENDING_APPROVAL_1),
@@ -120,9 +148,6 @@ namespace Casablanca.Models.Database
                 new ExpenseReport(GetCollaborator("Jeffrey", "GONCALVES"), Month.FEBRUARY, 2018, ExpenseReportStatus.PENDING_APPROVAL_2),
                 new ExpenseReport(GetCollaborator("Jeffrey", "GONCALVES"), Month.NOVEMBER, 2018, ExpenseReportStatus.APPROVED)
             };
-
-			//Db.ExpenseReports.Add(new ExpenseReport(GetCollaborator(4), Month.FEBRUARY, 2019));
-			//Db.ExpenseReports.Add(new ExpenseReport(GetCollaborator(5), Month.JANUARY, 2018));
 
 			Db.SaveChanges();
 
@@ -136,8 +161,9 @@ namespace Casablanca.Models.Database
 			//lignes du frais 1 (arthur)
 			foreach (ExpenseLine el in ExpenseLines) {ExpenseReports[0].AddLine(el);}
 
-			//ligne d'oummar
+			//ligne de flo ?
 			ExpenseReports[1].AddLine(new ExpenseLine(GetMission(6), LineType.RESTAURANT, "Pepperoni Pizza", 10.0f, new DateTime(2019, 1, 7), "pizza.pdf"));
+			ExpenseReports[1].AddLine(new ExpenseLine(GetMission(2), LineType.HOTEL, "Pepperoni Florian", 10.0f, new DateTime(2019, 1, 8), "hotelflo.pdf"));
 
 			//frais 4 (jeffrey). Jeffrey n'a aucune mission à effectuer actuellement
 			ExpenseReports[3].AddLine(new ExpenseLine(GetMission(1), LineType.RESTAURANT, GetCollaborator("Jeffrey", "GONCALVES"), "Trump Burger", 10.0f, new DateTime(2019, 1, 5), "trumpburger.pdf"));
@@ -150,8 +176,34 @@ namespace Casablanca.Models.Database
 			Db.SaveChanges();
         }
 
-        // Collaborators
-        public List<Collaborator> GetCollaborators()
+
+
+
+
+		// ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+		/*
+		 * ------------------------------------------------------------
+		 * Getters, setters and helpers--------------------------------
+		 * ------------------------------------------------------------
+		 */
+
+		// Check if a collaborator is a ChiefValidator of a given Mission
+
+		// Donc faut vérifier que la mission a un service,
+		// que le service a une liste de personnes et que la liste de personne contient un cds
+
+		public static bool CheckChiefValidator(Collaborator chief, Mission mission)
+		{
+
+			return false;
+
+		}
+
+
+
+		// Collaborators
+		public List<Collaborator> GetCollaborators()
         {
             return Db.Collaborators.ToList();
         }

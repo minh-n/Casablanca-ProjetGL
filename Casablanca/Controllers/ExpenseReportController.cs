@@ -26,7 +26,7 @@ namespace Casablanca.Controllers
             this.dal = dal;
         }
 
-        public ActionResult Index() // TODO : get collID
+        public ActionResult Index() // TODO : get collID //TODO : is that done? I'd say yes.
         {
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                 return Redirect("/Home/Index");
@@ -60,10 +60,32 @@ namespace Casablanca.Controllers
 			return View(model);
 		}
 
-		public ActionResult ProcessCDS()
+
+
+		/*
+		 * ------------------------------------------------------------
+		 * Display the ER a Chief needs to process---------------------
+		 * ------------------------------------------------------------
+		 */
+		public ActionResult ProcessCDS(int ERId)
 		{
+			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+				return Redirect("/Home/Index");
+			Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+			if (!HelperModel.CheckCDS(coll))
+				return Redirect("/Home/Index");
+
+
+
+			//get the lines
+			// static helper: return the lines corresponding to the chief's missions
+			// GetERLinesForThisMission(ER, miss)
+
+
 			return View();
 		}
+
+
 
 		public ActionResult ProcessCompta(int ERId)
 		{
@@ -79,6 +101,8 @@ namespace Casablanca.Controllers
 			return View(model);
 		}
 
+
+
 		/*
 		 * display the ER list management needs to process
 		 */
@@ -93,31 +117,45 @@ namespace Casablanca.Controllers
 			if ((HelperModel.CheckManagement(coll) == false) || HelperModel.CheckRH(coll))
 				return Redirect("/Home/Index");
 		
-			List<ExpenseReport> reports = dal.GetExpenseReports();
-			List<ExpenseReport> model = new List<ExpenseReport>();
+			List<ExpenseReport> AllERList = dal.GetExpenseReports();
+			List<ExpenseReport> ERListToBeReturnedAsModel = new List<ExpenseReport>();
 
-			foreach (ExpenseReport e in reports)
+
+			// for each Expense Report, check if they meet the following criterias
+			// if yes, add them to the list returned to the View
+			foreach (ExpenseReport e in AllERList)
 			{
 				if (HelperModel.CheckCompta(coll))
 				{
 					if(e.Status == ExpenseReportStatus.PENDING_APPROVAL_2)
-						model.Add(e);
+						ERListToBeReturnedAsModel.Add(e);
 				}
 				else if (HelperModel.CheckCDS(coll))
 				{
 					if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_1)
 					{
-						
-						//todo foreach e.expenseline voir si le cds est bien notre coll
+						// in order to know if the Chief needs to see the ER
+						List<Mission> currentERMissionsList = new List<Mission>();
+						foreach (ExpenseLine el in e.ExpenseLines)
+						{
+							if (dal.GetCollaborator(el.Mission.ChiefId).Id == coll.Id)
+							{
+								ERListToBeReturnedAsModel.Add(e);
+								break;
+							}
+						}
 					}
 
-					//TODO : get que les trucs en relation avec coll
+
 				}
 			}
 			
-			return View(model);
+			return View(ERListToBeReturnedAsModel);
 		}
 		
+
+
+		//post part of er creation
         [HttpPost]
         public ActionResult CreateExpenseReport() {
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)

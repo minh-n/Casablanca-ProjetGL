@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 
 namespace Casablanca.Models {
+
     public enum MissionStatus {
         COMPLETED,
         IN_PROGRESS,
@@ -24,39 +25,43 @@ namespace Casablanca.Models {
 
         public virtual List<Collaborator> CollList { get; set; }
 
-        public virtual Service Service { get; set; }
+		public virtual int ChiefId { get; set; }
 
-        public Mission() {
+		//public virtual Service Service { get; set; }
+		//public virtual Collaborator ChiefValidator { get; set; }
+
+
+
+		public Mission() {
 
         }
 
-        public Mission(string name, DateTime startDate, DateTime endDate, MissionStatus status, List<Collaborator> collList, Service service) {
-            Name = name;
+		//     public Mission(string name, DateTime startDate, DateTime endDate, MissionStatus status, List<Collaborator> collList, Collaborator chief) {
+		//         Name = name;
+		//         StartDate = startDate;
+		//         EndDate = endDate;
+		//         Status = status;
+		//         CollList = collList;
+		//ChiefValidator = chief;
+		//     }
+
+		//     public Mission(string name, DateTime startDate, DateTime endDate, MissionStatus status, Collaborator chief) : this(name) {
+		//         StartDate = startDate;
+		//         EndDate = endDate;
+		//         Status = status;
+		//ChiefValidator = chief;
+		//     }
+		public Mission(string name, DateTime startDate, DateTime endDate, MissionStatus status, int chief) : this(name)
+		{
+			StartDate = startDate;
+			EndDate = endDate;
+			Status = status;
+			ChiefId = chief;
+		}
+		public Mission(string name, DateTime startDate, DateTime endDate, MissionStatus status) : this(name) {
             StartDate = startDate;
             EndDate = endDate;
             Status = status;
-            CollList = collList;
-            Service = service;
-        }
-
-        public Mission(string name, DateTime startDate, DateTime endDate, MissionStatus status, Service service) : this(name) {
-            StartDate = startDate;
-            EndDate = endDate;
-            Status = status;
-            Service = service;
-        }
-
-        public Mission(string name, DateTime startDate, DateTime endDate, MissionStatus status) : this(name) {
-            StartDate = startDate;
-            EndDate = endDate;
-            Status = status;
-        }
-
-        public Mission(string name, Service service) {
-            Name = name;
-            StartDate = DateTime.Now;
-            Status = MissionStatus.IN_PROGRESS;
-            Service = service;
         }
 
         public Mission(string name) {

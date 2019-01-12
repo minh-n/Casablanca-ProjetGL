@@ -5,7 +5,10 @@ using System.Linq;
 using System.Web;
 
 namespace Casablanca.Models.ExpenseReports {
-    public enum ExpenseReportStatus {
+
+	// See the requirements specification doc 
+	//(Cahier des charges) for more info
+	public enum ExpenseReportStatus {
         UNSENT,
         APPROVED,
         PENDING_APPROVAL_1,

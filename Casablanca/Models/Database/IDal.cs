@@ -33,5 +33,7 @@ namespace Casablanca.Models.Database {
         // Helper
         string EncodeMD5(string password);
         void SaveChanges();
-    }
+		//bool CheckChiefValidator(Collaborator chief, Mission mission);
+		//can't implement because static
+	}
 }
