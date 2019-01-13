@@ -167,7 +167,7 @@ namespace Casablanca.Controllers
 			{
 				er.Status = ExpenseReportStatus.REFUSED; //we refused one or several lines
 			}
-			
+
 			dal.SaveChanges();
 
 			return Redirect("/ExpenseReport/ProcessList");
@@ -229,9 +229,9 @@ namespace Casablanca.Controllers
 			else
 			{
 				er.Status = ExpenseReportStatus.REFUSED; //we refused one or several lines
-															//is refused equal to unsent? we need to transform refused to unsent
+														 //is refused equal to unsent? we need to transform refused to unsent
 			}
-			
+
 			dal.SaveChanges();
 
 			return Redirect("/ExpenseReport/ProcessList");
@@ -383,6 +383,7 @@ namespace Casablanca.Controllers
 			return Redirect("/ExpenseReport/Index");
 		}
 
+
 		public ActionResult SendExpenseReport(int id)
 		{
 			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
@@ -422,5 +423,28 @@ namespace Casablanca.Controllers
 			return missions;
 		}
 
+
+
+		//---------------------------------------------------------------------------------
+		//---------------------------------------------------------------------------------
+		//------------------------View Expense Report--------------------------------------
+		//---------------------------------------------------------------------------------
+
+		public ActionResult ViewExpenseReport(int ERId)
+		{
+
+			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+				return Redirect("/Home/Index");
+
+			ExpenseReport model = dal.GetExpenseReport(ERId);
+
+			Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+			// if it is not own's ER = cannot see
+			if (!coll.ExpenseReports.Contains(model))
+				return Redirect("/Home/Index");
+
+			return View(model);
+
+		}
 	}
 }

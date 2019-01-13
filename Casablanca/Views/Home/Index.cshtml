@@ -65,7 +65,7 @@
 										}
 										else
 										{
-											<div>Voir (TODO)</div>
+											@Html.ActionLink("Voir", "ViewExpenseReport", "ExpenseReport", new { ERId = item.Id }, null)
 										}
 									</td>
 								</tr>
