@@ -37,6 +37,8 @@ namespace Casablanca.Models.ExpenseReports {
         [Display(Name = "justificatif")]
         public string Justificatory { get; set; }
 
+		public bool Validated { get; set; }
+
         public ExpenseLine() {
             Mission = null;
             ChiefValidator = null;

@@ -13,10 +13,13 @@ namespace Casablanca.Models.ViewModel {
 
 		public IEnumerable<SelectListItem> CollaboratorMissions { get; set; }
 
+		public string SubmitValue { get; set; }
+
 		public AddExpenseLineVM(ExpenseReport expenseReport, int selectedMission, IEnumerable<SelectListItem> collaboratorMissions)
 		{
 			ExpenseReport = expenseReport;
 			CollaboratorMissions = collaboratorMissions;
+			SubmitValue = "";
 		}
 
 		public AddExpenseLineVM()

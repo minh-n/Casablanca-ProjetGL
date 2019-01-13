@@ -127,9 +127,9 @@
                 </tbody>
             </table>
         </div>
+		@Html.HiddenFor(model => Model.SubmitValue)
 
         <button id="save-btn" type="submit" class="btn btn-primary">Sauvegarder la note de frais</button>
-        <button id="send-btn" type="submit" class="btn btn-primary">Envoyer la note de frais</button>
 
         @Html.ValidationSummary("");
     }
@@ -168,16 +168,10 @@
 </div>
 
 
-
-
-
-
 @section Scripts {
     <script>
         // Script to add lines to the ER
         var $TABLE = $('#table');
-        var $BTN = $('#save-btn');
-        var $BTNSEND = $('#send-btn');
 
         $('.table-add').click(function () {
             // Add the line to the view and update line numbers
@@ -192,8 +186,6 @@
             $(this).parents('tr').detach();
             replaceIds();
         });
-
-        
 
         // Script to give the right ID to the new line
         var replaceIds = function () {
