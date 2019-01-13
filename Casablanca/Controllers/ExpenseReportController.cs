@@ -225,12 +225,9 @@ namespace Casablanca.Controllers
 			if (allValidated)
 			{
 				er.Status = ExpenseReportStatus.APPROVED;
-				Debug.WriteLine("VALIDATION DU BON BAIL");
 			}
 			else
 			{
-				Debug.WriteLine("REFUSATION DU mauvais BAIL");
-
 				er.Status = ExpenseReportStatus.REFUSED; //we refused one or several lines
 															//is refused equal to unsent? we need to transform refused to unsent
 			}
@@ -240,8 +237,6 @@ namespace Casablanca.Controllers
 			return Redirect("/ExpenseReport/ProcessList");
 
 		}
-
-
 
 		/*
 		 * display the ER list management needs to process

@@ -1,7 +1,9 @@
 ﻿@using Casablanca.Models
+@using Casablanca.Models.ExpenseReports
+
 
 @{
-    ViewBag.Title = "Casablanca";
+	ViewBag.Title = "Casablanca";
 }
 
 @model Collaborator
@@ -9,36 +11,81 @@
 <div class="jumbotron">
 
 	@{
-		if(@HttpContext.Current.User.Identity.IsAuthenticated != false)
+		if (@HttpContext.Current.User.Identity.IsAuthenticated != false)
 		{
-			<h2>Bienvenue @Model.FirstName @Model.LastName !</h2>
+			<h2>Bienvenue sur l'intranet, @Model.FirstName @Model.LastName !</h2>
 		}
 		else
 		{
-		<h2>Bienvenue sur Pops1819. Veuillez vous connecter !</h2>
+			<h2>Bienvenue sur Pops1819. Veuillez vous connecter !</h2>
 		}
 	}
 
 
-	<p class="lead">Cette page sera le futur tableau de bord. On aura accès au Collaborator ici</p>
-	<p><a href="https://asp.net" class="btn btn-primary btn-lg">En apprendre plus &raquo;</a></p>
 </div>
 
 <div class="row">
-    <div class="col-md-4">
-        <h2>Pour commencer</h2>
-        <p>
-            Pour effectuer des demandes, rendez vous dans l'onglet utile dans la barre de navigation.
-            Si vous souhaitez traiter une demande, rendez vous dans l'onglet Gestion de la barre de navigation.
-        </p>
-    </div>
-    <div class="col-md-4">
-        <h2>Ce site est vraiment très beau</h2>
-        <p>En effet ! Il a été réalisé à partir du framework ASP.NET en utilisant le modèle MVC, vive la technologie !</p>
-    </div>
-    <div class="col-md-4">
-        <h2>Dark mode ?</h2>
-        <p>Nous sommes actuellement en train de travailler dessus ! En effet, nous comprenons bien que le besoin principal du 
-        client est d'avoir un mode sombre pour soulager ses yeux, l'utilité du site n'étant qu'un critère secondaire !</p>
-    </div>
+	<div class="col-md-4">
+		@if (Model != null)
+		{
+			<h3>Notes de frais</h3>
+			<p>
+				<div class="table-responsive">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Mois</th>
+								<th>Statut</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach (var item in Model.ExpenseReports)
+							{
+								<tr>
+									<td>@item.Month @item.Year</td>
+									<td>
+										@switch (item.Status)
+										{
+											case ExpenseReportStatus.UNSENT:<text>Non envoyée</text>break;
+										case ExpenseReportStatus.REFUSED: <text>Refusée</text>break;
+									case ExpenseReportStatus.APPROVED: <text>Approuvée</text>break;
+								case ExpenseReportStatus.PENDING_APPROVAL_1: <text>1e validation</text>break;
+							case ExpenseReportStatus.PENDING_APPROVAL_2: <text>2nd validation</text>break;
+					}
+									</td>
+
+									@*Un bouton pour accéder à la note de frais en cours*@
+									<td>
+										@if (item.Status == ExpenseReportStatus.UNSENT)
+										{
+											@Html.ActionLink("Modifier", "UpdateExpenseReport", "ExpenseReport", new { id = item.Id }, null)
+											<div> | </div>
+											@Html.ActionLink("Envoyer", "SendExpenseReport", "ExpenseReport", new { id = item.Id }, null)
+										}
+										else
+										{
+											<div>Voir (TODO)</div>
+										}
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+
+			</p>
+		}
+	</div>
+	<div class="col-md-4">
+		<h3>Ce site est vraiment très beau</h3>
+		<p>En effet ! Il a été réalisé à partir du framework ASP.NET en utilisant le modèle MVC, vive la technologie !</p>
+	</div>
+	<div class="col-md-4">
+		<h3>Notifications</h3>
+		<p>
+			Nous sommes actuellement en train de travailler dessus ! En effet, nous comprenons bien que le besoin principal du
+			client est d'avoir un mode sombre pour soulager ses yeux, l'utilité du site n'étant qu'un critère secondaire !
+		</p>
+	</div>
 </div>

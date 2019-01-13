@@ -39,9 +39,17 @@
 
 					@*Un bouton pour accéder à la note de frais en cours*@
 					<td>
-						@Html.ActionLink("Modifier", "UpdateExpenseReport", "ExpenseReport", new { id = item.Id }, null)
-						|
-						@Html.ActionLink("Envoyer", "SendExpenseReport", "ExpenseReport", new { id = item.Id }, null)
+
+						@if (item.Status == ExpenseReportStatus.UNSENT)
+						{
+							@Html.ActionLink("Modifier", "UpdateExpenseReport", "ExpenseReport", new { id = item.Id }, null)
+							<div> | </div>
+							@Html.ActionLink("Envoyer", "SendExpenseReport", "ExpenseReport", new { id = item.Id }, null)
+						}
+						else
+						{
+							<div>Voir (TODO)</div>
+						}
 					</td>
                 </tr>
             }

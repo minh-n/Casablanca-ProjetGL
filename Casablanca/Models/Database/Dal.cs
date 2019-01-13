@@ -118,8 +118,12 @@ namespace Casablanca.Models.Database
             GetCollaborator("Arthur", "BINELLI").Missions.Add(GetMission("Mission E"));
 
 			GetCollaborator("Jeffrey", "GONCALVES").Missions.Add(GetMission("Mission A"));
+			GetCollaborator("Jeffrey", "GONCALVES").Missions.Add(GetMission("Mission B"));
+			GetCollaborator("Jeffrey", "GONCALVES").Missions.Add(GetMission("Mission C"));
 			GetCollaborator("Jeffrey", "GONCALVES").Missions.Add(GetMission("Mission D"));
 			GetCollaborator("Jeffrey", "GONCALVES").Missions.Add(GetMission("Mission E"));
+			GetCollaborator("Jeffrey", "GONCALVES").Missions.Add(GetMission("Mission F"));
+			GetCollaborator("Jeffrey", "GONCALVES").Missions.Add(GetMission("Mission G"));
 
 			//Adrien is coll2, Adrien gets all the missions because he is admin
 			//GetCollaborator("Adrien", "LAVILLONNIERE").Missions = Missions;
@@ -131,9 +135,9 @@ namespace Casablanca.Models.Database
 			GetCollaborator("Adrien", "LAVILLONNIERE").Missions.Add(GetMission("Mission F"));
 			GetCollaborator("Adrien", "LAVILLONNIERE").Missions.Add(GetMission("Mission G"));
 
-			Missions[0].ChiefId = GetCollaborator("Minh", "NGUYEN").Id;
-			Missions[1].ChiefId = GetCollaborator("Minh", "NGUYEN").Id;
-			Missions[2].ChiefId = GetCollaborator("Minh", "NGUYEN").Id;
+			Missions[0].ChiefId = GetCollaborator("Morgan", "FEURTE").Id;
+			Missions[1].ChiefId = GetCollaborator("Morgan", "FEURTE").Id;
+			Missions[2].ChiefId = GetCollaborator("Morgan", "FEURTE").Id;
 			Missions[3].ChiefId = GetCollaborator("Minh", "NGUYEN").Id;
 			Missions[4].ChiefId = GetCollaborator("Minh", "NGUYEN").Id;
 			Missions[5].ChiefId = GetCollaborator("Minh", "NGUYEN").Id;
