@@ -119,7 +119,7 @@ namespace Casablanca.Controllers
 		[HttpPost]
 		public ActionResult ProcessCDS(ProcessExpenseLineVM model)
 		{
-			// TODO : traiter les lignes
+			// TODO : traiter les lignes Todo fini ?
 			// if not all checked, get model.ExpenseReportId et reset le status
 
 			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
@@ -141,7 +141,7 @@ namespace Casablanca.Controllers
 				return Redirect("/ExpenseReport/Index");
 
 
-			//dddd
+			//dddd Yes
 			bool allValidatedInProcessed = true;
 			foreach (ExpenseLine el in er.ExpenseLines)
 			{
@@ -153,38 +153,25 @@ namespace Casablanca.Controllers
 				}
 			}
 
-
 			if (allValidatedInProcessed)
 			{
 				bool allValidated = true;
 				// Check if all EL are validated TODO
 				foreach (ExpenseLine el in er.ExpenseLines)
 					allValidated &= el.Validated;
-				
-				if(allValidated)
+
+				if (allValidated)
 					er.Status = ExpenseReportStatus.PENDING_APPROVAL_2;
-		
 			}
 			else
 			{
 				er.Status = ExpenseReportStatus.REFUSED; //we refused one or several lines
 			}
-
 			
-
-
-
-
-			// If so, change er.status to "pending approval 2"
-			// If not, change er.status to "refused"
-			// If not but all in model are validated, don't do anything
-			er.Status = er.Status; // TODO
 			dal.SaveChanges();
 
 			return Redirect("/ExpenseReport/ProcessList");
 		}
-
-
 
 
 		public ActionResult ProcessCompta(int ERId)
@@ -201,12 +188,59 @@ namespace Casablanca.Controllers
 			return View(model);
 		}
 
+
 		[HttpPost]
 		public ActionResult ProcessCompta(ExpenseReport model)
 		{
-			// TODO
-			return View();
+
+
+
+			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+				return Redirect("/Home/Index");
+			Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+			if (!HelperModel.CheckCompta(coll))
+				return Redirect("/Home/Index");
+
+
+
+			// Check if ER exists
+			if (model == null)
+				return Redirect("/ExpenseReport/ProcessList");
+
+			ExpenseReport er = dal.GetExpenseReport(model.Id);
+
+			// Check if ER status is "pending approval 2" 
+			if (er.Status != ExpenseReportStatus.PENDING_APPROVAL_2)
+				return Redirect("/ExpenseReport/ProcessList");
+
+			//TODO check if all is processed
+			bool allValidated = true;
+			// Check if all EL are validated 
+			foreach (ExpenseLine el in er.ExpenseLines)
+			{
+				allValidated &= el.Validated;
+
+			}
+
+			if (allValidated)
+			{
+				er.Status = ExpenseReportStatus.APPROVED;
+				Debug.WriteLine("VALIDATION DU BON BAIL");
+			}
+			else
+			{
+				Debug.WriteLine("REFUSATION DU mauvais BAIL");
+
+				er.Status = ExpenseReportStatus.REFUSED; //we refused one or several lines
+															//is refused equal to unsent? we need to transform refused to unsent
+			}
+			
+			dal.SaveChanges();
+
+			return Redirect("/ExpenseReport/ProcessList");
+
 		}
+
 
 
 		/*
@@ -260,8 +294,6 @@ namespace Casablanca.Controllers
 
 			return View(ERListToBeReturnedAsModel);
 		}
-
-
 
 		//post part of er creation
 		[HttpPost]
@@ -395,25 +427,5 @@ namespace Casablanca.Controllers
 			return missions;
 		}
 
-
-
-
-
-		//public ActionResult UpdateExpenseReport(AddExpenseLineVM model)
-		//{
-		//	if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
-		//		return Redirect("/Home/Index");
-
-		//	Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
-
-		//	// admin cannot have ER
-		//	if (HelperModel.CheckAdmin(coll))
-		//		return Redirect("/Home/Index");
-
-		//	Debug.WriteLine(model.ExpenseReport.ExpenseLines[0].Description);
-		//	Debug.WriteLine(model.ExpenseReport.ExpenseLines[0].Type);
-
-		//	return Redirect("/ExpenseReport/Index");
-		//}
 	}
 }
