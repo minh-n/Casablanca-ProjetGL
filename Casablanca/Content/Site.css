@@ -23,29 +23,7 @@ textarea {
     max-width: 280px;
 }
 
-.a:hover {
-	color:white;
-
-}
-
-a:hover,
-a:focus {
-	color: white;
-	text-decoration: underline;
-}
-
-.nav.navbar-nav li a {
-	color: white;
-}
-
-.nav.navbar-nav a:link, a:visited, a:hover, a:active {
-	color: white;
-}
-
-/*
 .selected {
     background-color:#808080;
     color:#ffffff;
 }
-
-	*/
