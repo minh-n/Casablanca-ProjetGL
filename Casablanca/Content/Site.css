@@ -23,7 +23,22 @@ textarea {
     max-width: 280px;
 }
 
+.nav.navbar-nav li a {
+	color: #fff;
+}
+
+.nav.navbar-nav a:hover {
+	color: grey;
+}
+
+.nav-btn {
+	color: grey;
+}
+
+/*
 .selected {
     background-color:#808080;
     color:#ffffff;
 }
+
+	*/

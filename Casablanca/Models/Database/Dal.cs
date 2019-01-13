@@ -117,6 +117,10 @@ namespace Casablanca.Models.Database
             GetCollaborator("Arthur", "BINELLI").Missions.Add(GetMission("Mission C"));
             GetCollaborator("Arthur", "BINELLI").Missions.Add(GetMission("Mission E"));
 
+			GetCollaborator("Jeffrey", "GONCALVES").Missions.Add(GetMission("Mission A"));
+			GetCollaborator("Jeffrey", "GONCALVES").Missions.Add(GetMission("Mission D"));
+			GetCollaborator("Jeffrey", "GONCALVES").Missions.Add(GetMission("Mission E"));
+
 			//Adrien is coll2, Adrien gets all the missions because he is admin
 			//GetCollaborator("Adrien", "LAVILLONNIERE").Missions = Missions;
 			GetCollaborator("Adrien", "LAVILLONNIERE").Missions.Add(GetMission("Mission A"));
