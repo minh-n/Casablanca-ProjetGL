@@ -75,14 +75,6 @@ namespace Casablanca.Models.Database
 
 			// Create missions
 			Missions = new List<Mission> {
-                //new Mission("Mission A", DateTime.Today, new DateTime(2019, 5, 1), MissionStatus.IN_PROGRESS, GetCollaborator("Minh", "NGUYEN")),
-                //new Mission("Mission B", new DateTime(2019, 2, 9), new DateTime(2019, 3, 1), MissionStatus.PLANNED, GetCollaborator("Minh", "NGUYEN")),
-                //new Mission("Mission C", new DateTime(2018, 12, 25), new DateTime(2018, 12, 26), MissionStatus.CANCELED, GetCollaborator("Jeffrey", "GONCALVES")),
-                //new Mission("Mission D", new DateTime(2019, 2, 25), new DateTime(2019, 2, 26), MissionStatus.COMPLETED, GetCollaborator("Minh", "NGUYEN")),
-                //new Mission("Mission E", new DateTime(2019, 2, 6), new DateTime(2019, 3, 1), MissionStatus.PLANNED, GetCollaborator("Minh", "NGUYEN")),
-                //new Mission("Mission F", new DateTime(2019, 1, 9), new DateTime(2019, 11, 1), MissionStatus.PLANNED, GetCollaborator("Morgan", "FEURTE")),
-                //new Mission("Mission G", new DateTime(2019, 1, 2), new DateTime(2019, 1, 4), MissionStatus.IN_PROGRESS, GetCollaborator("Minh", "NGUYEN"))
-
 				new Mission("Mission A", DateTime.Today, new DateTime(2019, 5, 1), MissionStatus.IN_PROGRESS),
 				new Mission("Mission B", new DateTime(2019, 2, 9), new DateTime(2019, 3, 1), MissionStatus.PLANNED),
 				new Mission("Mission C", new DateTime(2018, 12, 25), new DateTime(2018, 12, 26), MissionStatus.CANCELED),
@@ -109,7 +101,6 @@ namespace Casablanca.Models.Database
             }
 
             Db.SaveChanges();
-
 
 			// Assign missions to collaborators
 			GetCollaborator("Arthur", "BINELLI").Missions.Add(GetMission("Mission A"));
@@ -154,16 +145,16 @@ namespace Casablanca.Models.Database
 				new ExpenseReport(GetCollaborator("Floriab", "LE PALLEC"), Month.DECEMBER, 2018, ExpenseReportStatus.PENDING_APPROVAL_1),
 				new ExpenseReport(GetCollaborator("Oubar", "MAYAKI"), Month.JANUARY, 2019, ExpenseReportStatus.UNSENT),
                 new ExpenseReport(GetCollaborator("Jeffrey", "GONCALVES"), Month.FEBRUARY, 2018, ExpenseReportStatus.PENDING_APPROVAL_2),
-                new ExpenseReport(GetCollaborator("Jeffrey", "GONCALVES"), Month.NOVEMBER, 2018, ExpenseReportStatus.APPROVED)
+                new ExpenseReport(GetCollaborator("Jeffrey", "GONCALVES"), Month.NOVEMBER, 2018, ExpenseReportStatus.UNSENT)
             };
 
 			Db.SaveChanges();
 
             ExpenseLines = new List<ExpenseLine>() {
-                new ExpenseLine(GetMission("Mission A"), LineType.HOTEL, GetCollaborator("Minh", "NGUYEN"), "Trump Tower", 1000.0f, new DateTime(2019, 3, 4), "trumptower.pdf"),
-                new ExpenseLine(GetMission("Mission B"), LineType.RESTAURANT, GetCollaborator("Jeffrey", "GONCALVES"), "Trump Tower restaurant", 8000.0f, new DateTime(2019, 1, 2), "trumptower.pdf"),
-                new ExpenseLine(GetMission("Mission C"), LineType.TAXI, GetCollaborator("Jeffrey", "GONCALVES"), "Trump Taxi", 15.98f, new DateTime(2019, 3, 4), "trumptower.pdf"),
-                new ExpenseLine(GetMission("Mission E"), LineType.OTHER, GetCollaborator("Jeffrey", "GONCALVES"), "Trump Other", 80010.0f, new DateTime(2019, 1, 2), "russia.pdf")
+                new ExpenseLine(GetMission("Mission A"), LineType.HOTEL, GetCollaborator("Minh", "NGUYEN"), "T Tower", 1000.0f, new DateTime(2019, 3, 4), "trumptower.pdf"),
+                new ExpenseLine(GetMission("Mission B"), LineType.RESTAURANT, GetCollaborator("Jeffrey", "GONCALVES"), "Tower restaurant", 8000.0f, new DateTime(2019, 1, 2), "restau1.pdf"),
+                new ExpenseLine(GetMission("Mission C"), LineType.TAXI, GetCollaborator("Jeffrey", "GONCALVES"), "Jafar Taxi", 15.98f, new DateTime(2019, 3, 4), "taxig7.pdf"),
+                new ExpenseLine(GetMission("Mission E"), LineType.OTHER, GetCollaborator("Jeffrey", "GONCALVES"), "Jafar Other", 80010.0f, new DateTime(2019, 1, 2), "russia.pdf")
             };
 
 			//lignes du frais 1 (arthur)
@@ -174,7 +165,7 @@ namespace Casablanca.Models.Database
 			ExpenseReports[1].AddLine(new ExpenseLine(GetMission(2), LineType.HOTEL, "Pepperoni Florian", 10.0f, new DateTime(2019, 1, 8), "hotelflo.pdf"));
 
 			//frais 4 (jeffrey). Jeffrey n'a aucune mission à effectuer actuellement
-			ExpenseReports[3].AddLine(new ExpenseLine(GetMission(1), LineType.RESTAURANT, GetCollaborator("Jeffrey", "GONCALVES"), "Trump Burger", 10.0f, new DateTime(2019, 1, 5), "trumpburger.pdf"));
+			ExpenseReports[3].AddLine(new ExpenseLine(GetMission(1), LineType.RESTAURANT, GetCollaborator("Jeffrey", "GONCALVES"), "Simon Burger", 10.0f, new DateTime(2019, 1, 5), "trumpburger.pdf"));
 			ExpenseReports[3].AddLine(new ExpenseLine(GetMission(3), LineType.HOTEL, GetCollaborator("Minh", "NGUYEN"), "Jafar Hotel", 10.0f, new DateTime(2019, 1, 5), "hotel.pdf"));
 
 			//foreach (ExpenseReport er in ExpenseReports) {
@@ -183,10 +174,6 @@ namespace Casablanca.Models.Database
 
 			Db.SaveChanges();
         }
-
-
-
-
 
 		// ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -197,18 +184,15 @@ namespace Casablanca.Models.Database
 		 */
 
 		// Check if a collaborator is a ChiefValidator of a given Mission
-
 		// Donc faut vérifier que la mission a un service,
 		// que le service a une liste de personnes et que la liste de personne contient un cds
 
 		public static bool CheckChiefValidator(Collaborator chief, Mission mission)
 		{
-
+			//inutile?
 			return false;
 
 		}
-
-
 
 		// Collaborators
 		public List<Collaborator> GetCollaborators()
@@ -274,7 +258,6 @@ namespace Casablanca.Models.Database
                 if (toRemove != null)
                     Db.ExpenseLines.Remove(toRemove);
             }
-
             Db.SaveChanges();
         }
 

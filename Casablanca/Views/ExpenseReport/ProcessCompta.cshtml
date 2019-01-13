@@ -40,7 +40,7 @@
 						<td>@Model.ExpenseLines[i].Description</td>
 						<td>@Model.ExpenseLines[i].Cost</td>
 						<td>@Model.ExpenseLines[i].Mission.Name</td>
-						<td>@Model.ExpenseLines[i].Date</td>
+						<td>@Model.ExpenseLines[i].Date.ToString("dd/MM/yyyy")</td>
 						<td>@Model.ExpenseLines[i].Justificatory</td>
 						<td>@Html.CheckBoxFor(model => Model.ExpenseLines[i].Validated)</td>
 					</tr>
