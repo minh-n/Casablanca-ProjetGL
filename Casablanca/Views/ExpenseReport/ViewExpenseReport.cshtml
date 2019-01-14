@@ -1,13 +1,17 @@
 ﻿@using Casablanca.Models.ExpenseReports;
+@using Casablanca.Models.Database;
 @using System.Linq;
 
 @{
-	ViewBag.Title = "Voir une note de frais (dans son intégralité)";
+				/**/
+
+				ViewBag.Title = "Voir une note de frais (dans son intégralité)";
 }
 
 @model ExpenseReport
 
 @{
+	Dal dal = new Dal();
 
 }
 
@@ -25,33 +29,42 @@
 						<th>Description&nbsp;</th>
 						<th>Montant du frais</th>
 						<th>Mission associée</th>
+						<th>Valideur</th>
 						<th>Date du frais</th>
+
+						<th>Statut</th>
 						<th>Justificatif</th>
 					</tr>
 				</thead>
 				<tbody>
 					@foreach (ExpenseLine el in Model.ExpenseLines)
 					{
-						<tr>
-							<!--Type de frais-->
-							<td>@el.Type</td>
+					<tr>
+						<!--Type de frais-->
+						<td>@el.Type</td>
 
-							<!--Description du frais-->
-							<td>@el.Description</td>
+						<!--Description du frais-->
+						<td>@el.Description</td>
 
-							<!--Montant -->
-							<td>@el.Cost €</td>
+						<!--Montant -->
+						<td>@el.Cost €</td>
 
-							<!-- Mission -->
-							<td>@el.Mission.Name</td>
+						<!-- Mission -->
+						<td>@el.Mission.Name</td>
 
-							<!-- Date de la ligne de frais -->
-							<td>@el.Date.ToString("dd/MM/yyyy")</td>
+						<!-- Valideur -->
+						<td>@dal.GetCollaborator(@el.Mission.ChiefId).FirstName @dal.GetCollaborator(@el.Mission.ChiefId).LastName</td>
 
-							<!-- Justificatif TODO -->
-							<td>@el.Justificatory</td>
+						<!-- Date de la ligne de frais -->
+						<td>@el.Date.ToString("dd/MM/yyyy")</td>
 
-						</tr>
+						<!-- Statut -->
+						<td>(en attente, validé ou traité)</td>
+						
+						<!-- Justificatif TODO -->
+						<td>@el.Justificatory</td>
+
+					</tr>
 
 
 					}

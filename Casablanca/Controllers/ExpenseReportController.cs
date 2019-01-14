@@ -140,8 +140,7 @@ namespace Casablanca.Controllers
 			if (er.Status != ExpenseReportStatus.PENDING_APPROVAL_1)
 				return Redirect("/ExpenseReport/Index");
 
-
-			//dddd Yes
+			//Check if we validated everything in the current processing list
 			bool allValidatedInProcessed = true;
 			foreach (ExpenseLine el in er.ExpenseLines)
 			{
@@ -192,16 +191,11 @@ namespace Casablanca.Controllers
 		[HttpPost]
 		public ActionResult ProcessCompta(ExpenseReport model)
 		{
-
-
-
 			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
 				return Redirect("/Home/Index");
 			Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
 			if (!HelperModel.CheckCompta(coll))
 				return Redirect("/Home/Index");
-
-
 
 			// Check if ER exists
 			if (model == null)
@@ -219,7 +213,6 @@ namespace Casablanca.Controllers
 			foreach (ExpenseLine el in er.ExpenseLines)
 			{
 				allValidated &= el.Validated;
-
 			}
 
 			if (allValidated)
@@ -258,22 +251,48 @@ namespace Casablanca.Controllers
 
 			// for each Expense Report, check if they meet the following criterias
 			// if yes, add them to the list returned to the View
-			foreach (ExpenseReport e in AllERList)
+			foreach (ExpenseReport e in AllERList) 
 			{
-				if (e.Collaborator != coll)
+				if (e.Collaborator != coll) //a coll cannot validate his own ER
 				{
+					if (HelperModel.CheckCDSCompta(coll)) //CDS Compta
+					{
+						Debug.WriteLine("is CDS compta");
 
-					if (HelperModel.CheckCompta(coll))
-					{
 						if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_2)
+						{
+							Debug.WriteLine("Morgan recoit la note compta de " + e.Collaborator.FirstName);
 							ERListToBeReturnedAsModel.Add(e);
-					}
-					else if (HelperModel.CheckCDS(coll))
-					{
+						}
 						if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_1)
 						{
 							// in order to know if the Chief needs to see the ER
-							List<Mission> currentERMissionsList = new List<Mission>();
+							foreach (ExpenseLine el in e.ExpenseLines)
+							{
+								if (dal.GetCollaborator(el.Mission.ChiefId).Id == coll.Id)
+								{
+									Debug.WriteLine("Morgan recoit la note CDS de " + e.Collaborator.FirstName);
+									ERListToBeReturnedAsModel.Add(e);
+									break;
+								}
+							}
+						}
+					}
+					else if (HelperModel.CheckCompta(coll)) //Compta
+					{
+						Debug.WriteLine("is compta");
+
+						if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_2)
+							ERListToBeReturnedAsModel.Add(e);
+					}
+					else if (HelperModel.CheckCDS(coll)) //CDS
+					{
+						Debug.WriteLine("is CDS ");
+
+						if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_1)
+						{
+							// in order to know if the Chief needs to see the ER
+							//List<Mission> currentERMissionsList = new List<Mission>();
 							foreach (ExpenseLine el in e.ExpenseLines)
 							{
 								if (dal.GetCollaborator(el.Mission.ChiefId).Id == coll.Id)
@@ -284,6 +303,7 @@ namespace Casablanca.Controllers
 							}
 						}
 					}
+					
 				}
 			}
 

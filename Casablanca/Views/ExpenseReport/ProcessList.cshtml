@@ -48,7 +48,18 @@
 					<!--traiter-->
 					<td>
 
-						@if (HelperModel.CheckCDS(coll))
+						@if (HelperModel.CheckCDSCompta(coll))
+						{
+							if (item.Status == ExpenseReportStatus.PENDING_APPROVAL_1)
+							{
+								@Html.ActionLink("Traiter", "ProcessCDS", "ExpenseReport", new { ERId = item.Id }, null)
+							}
+							else if (item.Status == ExpenseReportStatus.PENDING_APPROVAL_2)
+							{
+								@Html.ActionLink("Traiter", "ProcessCompta", "ExpenseReport", new { ERId = item.Id }, null)
+							}
+						}
+						else if (HelperModel.CheckCDS(coll))
 						{
 							@Html.ActionLink("Traiter", "ProcessCDS", "ExpenseReport", new { ERId = item.Id }, null)
 

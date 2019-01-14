@@ -59,9 +59,9 @@
 									<td>
 										@if (item.Status == ExpenseReportStatus.UNSENT)
 										{
-											@Html.ActionLink("Modifier", "UpdateExpenseReport", "ExpenseReport", new { id = item.Id }, null)
-											<div> | </div>
-											@Html.ActionLink("Envoyer", "SendExpenseReport", "ExpenseReport", new { id = item.Id }, null)
+											<div>
+											@Html.ActionLink("Modifier", "UpdateExpenseReport", "ExpenseReport", new { id = item.Id }, null) | @Html.ActionLink("Envoyer", "SendExpenseReport", "ExpenseReport", new { id = item.Id }, null)
+											</div>
 										}
 										else
 										{

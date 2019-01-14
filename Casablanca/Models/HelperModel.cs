@@ -22,7 +22,7 @@ namespace Casablanca.Models
 
 		public static bool CheckCDSCompta(Collaborator coll)
 		{
-			return coll.Role == Roles.CHIEF && coll.Service.ServiceName.Contains("compta") ? true : false;
+			return coll.Role == Roles.CHIEF && coll.Service.ServiceName.Contains("Compta") ? true : false;
 		}
 
 		public static bool CheckCompta(Collaborator coll)
