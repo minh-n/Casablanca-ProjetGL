@@ -220,7 +220,7 @@ namespace Casablanca.Controllers
 				er.Status = ExpenseReportStatus.APPROVED;
 			}
 			else
-			{			//TODO ça bug ptet
+			{			
 				er.Status = ExpenseReportStatus.REFUSED; //we refused one or several lines
 														 //is refused equal to unsent? we need to transform refused to unsent
 			}
