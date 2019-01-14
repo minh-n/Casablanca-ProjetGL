@@ -210,7 +210,7 @@ namespace Casablanca.Controllers
 			//TODO check if all is processed
 			bool allValidated = true;
 			// Check if all EL are validated 
-			foreach (ExpenseLine el in er.ExpenseLines)
+			foreach (ExpenseLine el in model.ExpenseLines) //Check model validation, not er
 			{
 				allValidated &= el.Validated;
 			}
@@ -220,7 +220,7 @@ namespace Casablanca.Controllers
 				er.Status = ExpenseReportStatus.APPROVED;
 			}
 			else
-			{
+			{			//TODO ça bug ptet
 				er.Status = ExpenseReportStatus.REFUSED; //we refused one or several lines
 														 //is refused equal to unsent? we need to transform refused to unsent
 			}
