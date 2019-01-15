@@ -29,7 +29,7 @@ namespace Casablanca.Models.ExpenseReports {
         [Display(Name = "description")]
         public string Description { get; set; }
         [Required]
-        [Display(Name = "coût")]
+        [Display(Name = "montant du frais")]
         public float Cost { get; set; }
         [Required]
         [Display(Name = "date")]
