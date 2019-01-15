@@ -38,12 +38,7 @@ namespace Casablanca.Controllers {
             Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
             List<ExpenseReport> reports = coll.ExpenseReports;
 
-            ExpenseReport er = dal.GetExpenseReport(1);
-            AddExpenseLineVM linesVM = new AddExpenseLineVM { ExpenseReport = er, CollaboratorMissions = GetMissionsList(coll) };
-
-            AddExpenseReportVM model = new AddExpenseReportVM(linesVM, reports);
-
-            return View(model);
+            return View(reports);
         }
 
         [HttpPost] // Backend call of Index page
@@ -53,18 +48,11 @@ namespace Casablanca.Controllers {
 
             Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
 
-            // admin cannot have ER
-            if (HelperModel.CheckAdmin(coll))
-                return Redirect("/Home/Index");
-
-            string month = Request.Form["monthName"].ToString();
-
             // Compute year
+            string month = Request.Form["monthName"].ToString();
             int year = DateTime.Now.Year;
             if (month != DateTime.Now.ToString("MMMM") && month == new CultureInfo("en-US").DateTimeFormat.GetMonthName(12).ToUpper())
                 year = DateTime.Now.Year - 1;
-
-            string a = new CultureInfo("en-US").DateTimeFormat.GetMonthName(12);
 
             // Compute month
             Enum.TryParse(month, out Month m);
@@ -75,7 +63,7 @@ namespace Casablanca.Controllers {
             return Redirect("/ExpenseReport/Index");
         }
 
-        // Changes the status of ER to SENT (from Index page)
+        // Changes the status of ER to PENDING_APPROVAL (from Index page)
         public ActionResult SendExpenseReport(int id) {
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                 return Redirect("/Home/Index");
@@ -114,8 +102,7 @@ namespace Casablanca.Controllers {
             if (er.Collaborator.Id != coll.Id)
                 return Redirect("/ExpenseReport/Index");
 
-            // IMPORTANT : do not remove this line v
-            er.ExpenseLines.Add(new ExpenseLine());
+            er.ExpenseLines.Add(new ExpenseLine()); // IMPORTANT : do not remove this line
             AddExpenseLineVM model = new AddExpenseLineVM { ExpenseReport = er, CollaboratorMissions = GetMissionsList(coll) };
 
             return View(model);
@@ -123,19 +110,15 @@ namespace Casablanca.Controllers {
 
         [HttpPost] // Backend call of UpdateER page
         public ActionResult UpdateExpenseReport(AddExpenseLineVM model) {
-
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                 return Redirect("/Home/Index");
 
-            // admin cannot have ER
             Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
-            if (HelperModel.CheckAdmin(coll))
-                return Redirect("/Home/Index");
 
+            // If validation fails
             if (!ModelState.IsValid) {
                 model.CollaboratorMissions = GetMissionsList(coll);
-                // IMPORTANT : do not remove this line v
-                model.ExpenseReport.AddLine(new ExpenseLine());
+                model.ExpenseReport.AddLine(new ExpenseLine()); // IMPORTANT : do not remove this line 
 
                 return View(model);
             }
@@ -144,11 +127,9 @@ namespace Casablanca.Controllers {
             ExpenseReport current = dal.GetExpenseReport(model.ExpenseReport.Id);
             dal.ClearExpenseLines(current);
 
-            // If we received ELs from the view
+            // If we received ELs from the view, create a new line from view fields and add it to the current ER
             if (model.ExpenseReport.ExpenseLines != null) {
-                // For each EL in the view
                 foreach (ExpenseLine el in model.ExpenseReport.ExpenseLines) {
-                    // Create a new line from view fields and add it to the current ER
                     ExpenseLine newEL = new ExpenseLine(dal.GetMission(el.Mission.Id), el.Type, el.Description, el.Cost, el.Date, el.Justificatory);
 
                     // TODO : compute validator (in ctor or here and set it)
@@ -160,41 +141,21 @@ namespace Casablanca.Controllers {
             return Redirect("/ExpenseReport/Index");
         }
 
-        //Tuto magique qui m'a sauvé sur ce coup-ci
-        //https://stackoverflow.com/questions/48170338/dropdownlist-selected-value-is-set-to-null-in-the-model-on-post-action
-        //Merci dey.shin !
-        private static IEnumerable<SelectListItem> GetMissionsList(Collaborator coll) {
-            var missions = new List<SelectListItem>();
-            foreach (var s in coll.Missions.ToList()) {
-                var miss = new SelectListItem { Value = s.Id.ToString(), Text = s.Name };
-                missions.Add(miss);
-            }
-            return missions;
-        }
-
-
-
-        //---------------------------------------------------------------------------------
-        //---------------------------------------------------------------------------------
-        //------------------------View Expense Report--------------------------------------
-        //---------------------------------------------------------------------------------
-
+        // Visualize an already sent ER
         public ActionResult ViewExpenseReport(int ERId) {
 
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                 return Redirect("/Home/Index");
 
-            ExpenseReport model = dal.GetExpenseReport(ERId);
-
             Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
-            // if it is not own's ER = cannot see
+            ExpenseReport model = dal.GetExpenseReport(ERId);
+            
+            // if it is not our own ER = cannot see
             if (!coll.ExpenseReports.Contains(model))
                 return Redirect("/Home/Index");
 
             return View(model);
-
         }
-
 
 
         /* ############################################################
@@ -202,7 +163,6 @@ namespace Casablanca.Controllers {
 		 * * * * * * * * * * * * P R O C E S S * * * * * * * * * * * *
 		 * ------------------------------------------------------------
 		 ############################################################*/
-
 
         // Displays the ER list management needs to process
         public ActionResult ProcessList() {
@@ -375,20 +335,20 @@ namespace Casablanca.Controllers {
             return View(model);
         }
 
-
         [HttpPost] // Backend call from ProcessCompta page
         public ActionResult ProcessCompta(ExpenseReport model) {
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                 return Redirect("/Home/Index");
+
             Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+            ExpenseReport er = dal.GetExpenseReport(model.Id);
+
             if (!HelperModel.CheckCompta(coll))
                 return Redirect("/Home/Index");
 
             // Check if ER exists
             if (model == null)
                 return Redirect("/ExpenseReport/ProcessList");
-
-            ExpenseReport er = dal.GetExpenseReport(model.Id);
 
             // Check if ER status is "pending approval 2" 
             if (er.Status != ExpenseReportStatus.PENDING_APPROVAL_2)
@@ -413,7 +373,21 @@ namespace Casablanca.Controllers {
             dal.SaveChanges();
 
             return Redirect("/ExpenseReport/ProcessList");
+        }
 
+        /* ############################################################
+		 * ------------------------------------------------------------
+		 * * * * * * * * * * * * H E L P E R S * * * * * * * * * * * *
+		 * ------------------------------------------------------------
+		 ############################################################*/
+
+        private static IEnumerable<SelectListItem> GetMissionsList(Collaborator coll) {
+            var missions = new List<SelectListItem>();
+            foreach (var s in coll.Missions.ToList()) {
+                var miss = new SelectListItem { Value = s.Id.ToString(), Text = s.Name };
+                missions.Add(miss);
+            }
+            return missions;
         }
     }
 }

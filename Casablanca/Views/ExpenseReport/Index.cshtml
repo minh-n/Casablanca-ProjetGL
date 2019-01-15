@@ -1,13 +1,11 @@
 ﻿@using Casablanca.Models.ExpenseReports;
-@using Casablanca.Models.ViewModel;
 @using System.Globalization;
 
 @{
     ViewBag.Title = "Mes frais";
 }
 
-@model AddExpenseReportVM
-
+@model List<ExpenseReport>
 
 <h2 class="text-left">Notes de frais</h2>
 <div class="table-responsive">
@@ -22,7 +20,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model.ExpenseReports) {
+            @foreach (var item in Model) {
                 <tr>
                     <td>@item.Month @item.Year</td>
                     <td>@item.TotalCost</td>
@@ -30,17 +28,17 @@
                     <td>
                         @switch (item.Status) {
                             case ExpenseReportStatus.UNSENT:<text>Non envoyée</text>break;
-                        case ExpenseReportStatus.REFUSED: <text>Refusée</text>break;
-                    case ExpenseReportStatus.APPROVED: <text>Approuvée</text>break;
-                case ExpenseReportStatus.PENDING_APPROVAL_1: <text>En attente de première validation</text>break;
-            case ExpenseReportStatus.PENDING_APPROVAL_2: <text>En attente de seconde validation</text>break;
-    }
+                            case ExpenseReportStatus.REFUSED: <text>Refusée</text>break;
+                            case ExpenseReportStatus.APPROVED: <text>Approuvée</text>break;
+                            case ExpenseReportStatus.PENDING_APPROVAL_1: <text>En attente de première validation</text>break;
+                            case ExpenseReportStatus.PENDING_APPROVAL_2: <text>En attente de seconde validation</text>break;
+                        }
                     </td>
 
 					@*Un bouton pour accéder à la note de frais en cours*@
 					<td>
 
-						@if (item.Status == ExpenseReportStatus.UNSENT)
+						@if (item.Status == ExpenseReportStatus.UNSENT || item.Status == ExpenseReportStatus.REFUSED)
 						{
 							<div>@Html.ActionLink("Modifier", "UpdateExpenseReport", "ExpenseReport", new { id = item.Id }, null) | @Html.ActionLink("Envoyer", "SendExpenseReport", "ExpenseReport", new { id = item.Id }, null)</div>
 						}
@@ -55,19 +53,18 @@
     </table>
 </div>
 
-
-
 @{
+    // Computing the months available to create new ERs
     string current_month = DateTime.Now.ToString("MMMM", new CultureInfo("en-US")).ToUpper();
     string previous_month = DateTime.Now.AddMonths(-1).ToString("MMMM", new CultureInfo("en-US")).ToUpper();
     int current_year = DateTime.Now.Year;
 
     List<string> months = new List<string> {
-previous_month,
-current_month
-};
+                                previous_month,
+                                current_month
+                              };
 
-    foreach (ExpenseReport er in Model.ExpenseReports) {
+    foreach (ExpenseReport er in Model) {
         if (er.Year == current_year) {
             if (er.Month.ToString() == current_month) {
                 months.Remove(current_month);
@@ -83,6 +80,7 @@ current_month
         }
     }
 }
+<!-- Create a dropdownlist to select which ER to create -->
 @if (months.Count != 0) {
     using (Html.BeginForm("CreateExpenseReport", "ExpenseReport", FormMethod.Post)) {
         <button class="btn btn-primary" type="submit">Créer une note de frais pour le mois</button>

@@ -196,7 +196,6 @@
     <Compile Include="Models\Leaves\Leave.cs" />
     <Compile Include="Models\Service.cs" />
     <Compile Include="Models\ViewModel\AddExpenseLineVM.cs" />
-    <Compile Include="Models\ViewModel\AddExpenseReportVM.cs" />
     <Compile Include="Models\ViewModel\ProcessExpenseLineVM.cs" />
     <Compile Include="Models\ViewModel\ProcessReportVM.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
