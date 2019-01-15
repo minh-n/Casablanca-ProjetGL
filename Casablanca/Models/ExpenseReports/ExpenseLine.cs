@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 
@@ -10,6 +11,12 @@ namespace Casablanca.Models.ExpenseReports {
         HOTEL,
         TAXI,
         OTHER
+    }
+
+    public enum Treatment {
+        NOT_TREATED,
+        CDS,
+        COMPTA
     }
 
     public class ExpenseLine {
@@ -22,7 +29,6 @@ namespace Casablanca.Models.ExpenseReports {
         public virtual Mission Mission { get; set; }
         [Display(Name = "validateur")]
         public virtual Collaborator ChiefValidator { get; set; }
-
         [Required]
         public LineType Type { get; set; }
         [Required]
@@ -37,7 +43,12 @@ namespace Casablanca.Models.ExpenseReports {
         [Display(Name = "justificatif")]
         public string Justificatory { get; set; }
 
-		public bool Validated { get; set; }
+        // Validations 
+		public bool Validated { get; set; }         // Is validated by the CDS
+		public Treatment Treated { get; set; }      // Has been treated by the CDS or the compta
+		public bool FinalValidation { get; set; }   // Is validated by the compta
+
+        // TODO : line validation status (has to be validated by the same person ? validation compta only by DF ? etc.)
 
         public ExpenseLine() {
             Mission = null;
@@ -67,6 +78,25 @@ namespace Casablanca.Models.ExpenseReports {
             this.Cost = cost;
             this.Date = date;
             this.Justificatory = justificatory;
+
+            // TODO : compute who is the chiefvalidator depending on mission ?
+        }
+
+        public bool Equals(ExpenseLine other, int id) {
+            //Debug.WriteLine("[" + this.Id + " ID " + other.Id + "]"); TODO : remove
+            //Debug.WriteLine("[" + this.Mission + " Mission " + other.Mission + "]");
+            //Debug.WriteLine("[" + this.Description + " Desc " + other.Description + "]");
+            //Debug.WriteLine("[" + this.Cost + " Cost " + other.Cost + "]");
+            //Debug.WriteLine("[" + this.Date + " Date " + other.Date + "]");
+            //Debug.WriteLine("[" + this.Justificatory + " Justif " + other.Justificatory + "]");
+
+            return (id == other.Id &&
+                    this.Mission == other.Mission &&
+                    this.Type == other.Type &&
+                    this.Description == other.Description &&
+                    this.Cost == other.Cost &&
+                    this.Date == other.Date &&
+                    this.Justificatory == other.Justificatory);
         }
     }
 }

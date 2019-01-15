@@ -125,18 +125,41 @@ namespace Casablanca.Controllers {
 
             // Get current ER and clear its ELs
             ExpenseReport current = dal.GetExpenseReport(model.ExpenseReport.Id);
-            dal.ClearExpenseLines(current);
+            List<ExpenseLine> tempList = new List<ExpenseLine>();
 
             // If we received ELs from the view, create a new line from view fields and add it to the current ER
             if (model.ExpenseReport.ExpenseLines != null) {
                 foreach (ExpenseLine el in model.ExpenseReport.ExpenseLines) {
-                    ExpenseLine newEL = new ExpenseLine(dal.GetMission(el.Mission.Id), el.Type, el.Description, el.Cost, el.Date, el.Justificatory);
+                    // Create a new EL with the informations from the view
+                    ExpenseLine newEL = new ExpenseLine(dal.GetMission(el.Mission.Id), el.Type, el.Description, el.Cost, el.Date, el.Justificatory) {
+                        Id = el.Id,
+                        Validated = false,
+                        Treated = Treatment.NOT_TREATED,
+                        FinalValidation = false
+                    };
 
-                    // TODO : compute validator (in ctor or here and set it)
-                    current.AddLine(newEL);
+                    // Check if an EL exists with the same values (which means we did not modify this line)
+                    foreach (ExpenseLine old in current.ExpenseLines) {
+                        if(newEL.Equals(old, el.Id)) {
+                            newEL.Validated = old.Validated;
+                            newEL.Treated = old.Treated;
+                            newEL.FinalValidation = old.FinalValidation;
+                            break;
+                        }
+                    }
+
+                    tempList.Add(newEL);
                 }
-                dal.SaveChanges();
             }
+
+            // Clear all previous ELs
+            dal.ClearExpenseLines(current);
+
+            // Finally, add all new ELs to the current ER
+            foreach(ExpenseLine el in tempList) {
+                current.AddLine(el);
+            }
+            dal.SaveChanges();
 
             return Redirect("/ExpenseReport/Index");
         }
@@ -292,19 +315,23 @@ namespace Casablanca.Controllers {
             if (er.Status != ExpenseReportStatus.PENDING_APPROVAL_1)
                 return Redirect("/ExpenseReport/Index");
 
-            //Check if we validated everything in the current processing list
+            // Check if we validated everything in the current processing list
             bool allValidatedInProcessed = true;
             foreach (ExpenseLine el in er.ExpenseLines) {
                 foreach (ExpenseLine processedLine in model.ExpenseLines) {
                     allValidatedInProcessed &= processedLine.Validated;
-                    if (el.Id == processedLine.Id)
+
+                    // Tick the Validated field of the EL and update the Treated fiedl
+                    if (el.Id == processedLine.Id) {
                         el.Validated = processedLine.Validated;
+                        el.Treated = Treatment.CDS;
+                    }
                 }
             }
 
             if (allValidatedInProcessed) {
+                // Check if all EL in ER are validated
                 bool allValidated = true;
-                // Check if all EL are validated TODO
                 foreach (ExpenseLine el in er.ExpenseLines)
                     allValidated &= el.Validated;
 
@@ -312,7 +339,7 @@ namespace Casablanca.Controllers {
                     er.Status = ExpenseReportStatus.PENDING_APPROVAL_2;
             }
             else {
-                er.Status = ExpenseReportStatus.REFUSED; //we refused one or several lines
+                er.Status = ExpenseReportStatus.REFUSED; // we refused one or several lines
             }
 
             dal.SaveChanges();

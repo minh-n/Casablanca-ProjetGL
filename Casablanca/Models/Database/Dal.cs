@@ -150,9 +150,6 @@ namespace Casablanca.Models.Database
 			Db.SaveChanges();
 
             // Create some expense reports 
-            //TODO bizarre : j'ajoute les expense au coll3, alors que c'est le coll 1 qui a des missions. 
-            // et ça marche. Par contre si j'enlevais une mission au coll1, alors y a nullpointer.
-			// TODO : je crois que ça a été résolu.
             ExpenseReports = new List<ExpenseReport>() {
                 new ExpenseReport(GetCollaborator("Arthur", "BINELLI"), Month.DECEMBER, 2018, ExpenseReportStatus.PENDING_APPROVAL_2),
 				new ExpenseReport(GetCollaborator("Floriab", "LE PALLEC"), Month.DECEMBER, 2018, ExpenseReportStatus.PENDING_APPROVAL_1),
@@ -170,14 +167,14 @@ namespace Casablanca.Models.Database
                 new ExpenseLine(GetMission("Mission E"), LineType.OTHER, GetCollaborator("Jeffrey", "GONCALVES"), "Jafar Other", 80010.0f, new DateTime(2019, 1, 2), "russia.pdf")
             };
 
-			//lignes du frais 1 (arthur)
+			// Lignes de l'ER 1 (arthur)
 			foreach (ExpenseLine el in ExpenseLines) {ExpenseReports[0].AddLine(el);}
 
-			//ligne de flo ?
+			// Ligne de l'ER 2 (flo) 
 			ExpenseReports[1].AddLine(new ExpenseLine(GetMission(6), LineType.RESTAURANT, "Pepperoni Pizza", 10.0f, new DateTime(2019, 1, 7), "pizza.pdf"));
 			ExpenseReports[1].AddLine(new ExpenseLine(GetMission(2), LineType.HOTEL, "Pepperoni Florian", 10.0f, new DateTime(2019, 1, 8), "hotelflo.pdf"));
 
-			//frais 4 (jeffrey). Jeffrey n'a aucune mission à effectuer actuellement
+			// Lignes de l'ER 4 (jeffrey). Jeffrey n'a aucune mission à effectuer actuellement
 			ExpenseReports[3].AddLine(new ExpenseLine(GetMission(1), LineType.RESTAURANT, GetCollaborator("Jeffrey", "GONCALVES"), "Simon Burger", 10.0f, new DateTime(2019, 1, 5), "trumpburger.pdf"));
 			ExpenseReports[3].AddLine(new ExpenseLine(GetMission(3), LineType.HOTEL, GetCollaborator("Minh", "NGUYEN"), "Jafar Hotel", 10.0f, new DateTime(2019, 1, 5), "hotel.pdf"));
 

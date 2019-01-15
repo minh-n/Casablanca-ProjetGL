@@ -3,106 +3,80 @@
 @using System.Linq;
 
 @{
-				/**/
+    /**/
 
-				ViewBag.Title = "Voir une note de frais (dans son intégralité)";
+    ViewBag.Title = "Voir une note de frais (dans son intégralité)";
 }
 
 @model ExpenseReport
 
 @{
-	Dal dal = new Dal();
+    Dal dal = new Dal();
 
 }
 
 <div class="container">
-	<h2 class="text-left">Voir une note de frais</h2>
+    <h2 class="text-left">Voir une note de frais</h2>
 
 
-	@using (Html.BeginForm("UpdateExpenseReport", "ExpenseReport", FormMethod.Post))
-	{
-		<div id="table" class="table-editable" data-toggle="table" data-search="true">
-			<table class="table">
-				<thead>
-					<tr>
-						<th>Type de frais</th>
-						<th>Description&nbsp;</th>
-						<th>Montant du frais</th>
-						<th>Mission associée</th>
-						<th>Valideur</th>
-						<th>Date du frais</th>
+    @using (Html.BeginForm("UpdateExpenseReport", "ExpenseReport", FormMethod.Post)) {
+        <div id="table" class="table-editable" data-toggle="table" data-search="true">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Type de frais</th>
+                        <th>Description&nbsp;</th>
+                        <th>Montant du frais</th>
+                        <th>Mission associée</th>
+                        <th>Valideur</th>
+                        <th>Date du frais</th>
+                        <th>Justificatif</th>
+                        <th>Etape de validation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (ExpenseLine el in Model.ExpenseLines) {
+                        <tr>
+                            <!--Type de frais-->
+                            <td>@el.Type</td>
 
-						<th>Statut</th>
-						<th>Justificatif</th>
-					</tr>
-				</thead>
-				<tbody>
-					@foreach (ExpenseLine el in Model.ExpenseLines)
-					{
-					<tr>
-						<!--Type de frais-->
-						<td>@el.Type</td>
+                            <!--Description du frais-->
+                            <td>@el.Description</td>
 
-						<!--Description du frais-->
-						<td>@el.Description</td>
+                            <!--Montant -->
+                            <td>@el.Cost €</td>
 
-						<!--Montant -->
-						<td>@el.Cost €</td>
+                            <!-- Mission -->
+                            <td>@el.Mission.Name</td>
 
-						<!-- Mission -->
-						<td>@el.Mission.Name</td>
+                            <!-- Valideur -->
+                            <td>@dal.GetCollaborator(@el.Mission.ChiefId).FirstName @dal.GetCollaborator(@el.Mission.ChiefId).LastName</td>
 
-						<!-- Valideur -->
-						<td>@dal.GetCollaborator(@el.Mission.ChiefId).FirstName @dal.GetCollaborator(@el.Mission.ChiefId).LastName</td>
+                            <!-- Date de la ligne de frais -->
+                            <td>@el.Date.ToString("dd/MM/yyyy")</td>
 
-						<!-- Date de la ligne de frais -->
-						<td>@el.Date.ToString("dd/MM/yyyy")</td>
+                            <!-- Justificatif TODO -->
+                            <td>@el.Justificatory</td>
 
-						<!-- Statut -->
-						<td>(en attente, validé ou traité)</td>
-						
-						<!-- Justificatif TODO -->
-						<td>@el.Justificatory</td>
-
-					</tr>
-
-
-					}
-
-				</tbody>
-			</table>
-		</div>
-	}
+                            <td>
+                                <!-- TODO : affichage selon l'étape -->
+                                @if (el.FinalValidation) {
+                                    <text>Validée par le service Comptabilité</text>
+                                }
+                                else {
+                                    if (el.Validated) {
+                                        <text>Validée par le chef de la mission</text>
+                                    }
+                                    else {
+                                        <text>En attente de validation par le chef de la mission</text>
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
 
 </div>
-
-
-@section Scripts {
-	<script>
-
-
-
-		// Script to give the right ID to the new line
-		var replaceIds = function () {
-			var table = $TABLE.find('table').find('tbody');
-			// For every row (tr)
-			for (var j = 0, tr; tr = table.children("tr")[j]; j++) {
-				// For every column (td)
-				for (var i = 0, td; td = tr.children[i]; i++) {
-
-					// Except for the glyphicon-remove (last td in every row)
-					if (i != tr.children.length - 1) {
-						// Change id of the td content
-						var idToChange = td.children[0].id;
-						td.children[0].id = idToChange.replace(/ExpenseReport_ExpenseLines_[0-9]+/, "ExpenseReport_ExpenseLines_" + j);
-
-						// Change the name of the td content
-						var nameToChange = $(td.children[0]).attr("name");
-						$(td.children[0]).attr("name", nameToChange.replace(/ExpenseReport\.ExpenseLines\[[0-9]+\]/, "ExpenseReport.ExpenseLines[" + j + "]"));
-					}
-				}
-			}
-		};
-
-	</script>
-}
