@@ -20,8 +20,15 @@ namespace Casablanca.Models.ExpenseReports {
         JANUARY, FEBRUARY, MARCH, APRIL, MAY, JUNE, JULY, AUGUST, SEPTEMBER, OCTOBER, NOVEMBER, DECEMBER 
     }
 
+    public enum Processing {
+        CLASSIC,
+        COMPTA,
+        FINANCIAL_DIRECTOR,
+        CEO
+    }
+
     public class ExpenseReport {
-       
+
         [Key]
         public int Id { get; set; }
         public Month Month { get; set; }
@@ -32,6 +39,8 @@ namespace Casablanca.Models.ExpenseReports {
 
         public virtual Collaborator Collaborator { get; set; }
         public virtual List<ExpenseLine> ExpenseLines { get; set; }
+
+        public Processing Treatment { get; set; }
 
         public ExpenseReport() {
         }
@@ -44,6 +53,7 @@ namespace Casablanca.Models.ExpenseReports {
             this.Status = ExpenseReportStatus.UNSENT;
             this.ExpenseLines = new List<ExpenseLine>();
             this.Collaborator = coll;
+            ComputeTreatment();
 
             coll.ExpenseReports.Add(this);
         }
@@ -57,8 +67,9 @@ namespace Casablanca.Models.ExpenseReports {
 			this.Status = stat;
 			this.ExpenseLines = new List<ExpenseLine>();
 			this.Collaborator = coll;
+            ComputeTreatment();
 
-			coll.ExpenseReports.Add(this);
+            coll.ExpenseReports.Add(this);
 		}
 
 		public void AddLine(ExpenseLine el) {
@@ -75,6 +86,41 @@ namespace Casablanca.Models.ExpenseReports {
             // TODO : decide if useful
             if (this.ExpenseLines.Count == 0)
                 this.TotalCost = 0.0f;
+        }
+
+        public void ComputeTreatment() {
+            Service s = Collaborator.Service;
+            Roles role = Collaborator.Role;
+
+            switch(role) {
+                case Roles.USER:
+                    if(s.Name.Contains("Compta")) {
+                        // Coll compta => double val DF
+                        Treatment = Processing.FINANCIAL_DIRECTOR;
+                    }
+                    else {
+                        // Cas classique
+                        Treatment = Processing.CLASSIC;
+                    }
+                    break;
+                case Roles.CHIEF:
+                    if(s.Name.Contains("Compta")) {
+                        // CDS compta => double val PDG
+                        Treatment = Processing.CEO;
+                    }
+                    else if (s.Name.Contains("RH")) {
+                        // CDS RH => double val compta
+                        Treatment = Processing.COMPTA;
+                    }
+                    else if (s.Name.Contains("Direction")) {
+                        // PDG => double val DF
+                        Treatment = Processing.FINANCIAL_DIRECTOR;
+                    }
+                    else {
+                        Treatment = Processing.COMPTA;
+                    }
+                    break;
+            }
         }
     }
 }
