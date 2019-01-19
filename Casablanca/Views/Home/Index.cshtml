@@ -1,5 +1,6 @@
 ﻿@using Casablanca.Models
 @using Casablanca.Models.ExpenseReports
+@using System.Globalization;
 
 
 @{
@@ -43,7 +44,10 @@
 							@foreach (var item in Model.ExpenseReports)
 							{
 								<tr>
-									<td>@item.Month @item.Year</td>
+									<td>
+										@HelperModel.FirstCharToUpper(DateTime.ParseExact(item.Month.ToString(), "MMMM", new CultureInfo("en-US")).ToString("MMMM"))
+										@item.Year
+									</td>
 									<td>
 										@switch (item.Status)
 										{
@@ -60,7 +64,7 @@
 										@if (item.Status == ExpenseReportStatus.UNSENT || item.Status == ExpenseReportStatus.REFUSED)
 										{
 											<div>
-											@Html.ActionLink("Modifier", "UpdateExpenseReport", "ExpenseReport", new { id = item.Id }, null) | @Html.ActionLink("Envoyer", "SendExpenseReport", "ExpenseReport", new { id = item.Id }, null)
+												@Html.ActionLink("Modifier", "UpdateExpenseReport", "ExpenseReport", new { id = item.Id }, null) | @Html.ActionLink("Envoyer", "SendExpenseReport", "ExpenseReport", new { id = item.Id }, null)
 											</div>
 										}
 										else
