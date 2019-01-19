@@ -12,11 +12,12 @@ namespace Casablanca.Models.Database {
         Collaborator GetCollaborator(string firstname, string lastname);
         void CreateCollaborator(string firstname, string lastname, string login, string password);
 
-        // Missions 
-        Mission GetMission(int id);
+		// Missions 
+		void AddMission(Mission miss);
+		Mission GetMission(int id);
 		Mission GetMission(string name);
 		List<Mission> GetMissions();
-		void CreateMission(int id);
+		int CreateMission(int id);
 
 		// ExpenseReports
 		List<ExpenseReport> GetExpenseReports();
