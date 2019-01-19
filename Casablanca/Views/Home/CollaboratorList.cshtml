@@ -1,7 +1,7 @@
 ﻿@using Casablanca.Models
 
 @{
-    ViewBag.Title = "Collaborateurs";
+	ViewBag.Title = "Collaborateurs";
 }
 
 @model  List<Collaborator>
@@ -12,55 +12,64 @@
 <h2>Collaborateurs</h2>
 
 <table id="table"
-       data-toggle="table"
-       data-search="true"
-       class="table">
-    @if (Model.Count() == 0) {
-        <tr>
-            <td colspan="10">Aucun collaborateur trouvé.</td>
-        </tr>
-    }
-    else {
-        <thead>
-            <tr>
-                <th scope="col" data-field="prenom" data-sortable="true">Prénom</th>
-                <th scope="col" data-field="nom" data-sortable="true">Nom</th>
-                <th scope="col" data-field="service" data-sortable="true">Service</th>
-                <th scope="col" data-field="mission" data-sortable="true">Mission</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model) {
-                <tr>
-                    <td>@item.FirstName</td>
-                    <td>@item.LastName</td>
-                    @if (item.Service != null) {
-                        <td>@item.Service.ServiceName</td>
-                    }
-                    else {
-                        <td>Aucun service</td>
-                    }
-                    <td>
-                        @if (item.Missions.Count != 0) {
+	   data-toggle="table"
+	   data-search="true"
+	   class="table">
+	@if (Model.Count() == 0)
+	{
+		<tr>
+			<td colspan="10">Aucun collaborateur trouvé.</td>
+		</tr>
+	}
+	else
+	{
+		<thead>
+			<tr>
+				<th scope="col" data-field="prenom" data-sortable="true">Prénom</th>
+				<th scope="col" data-field="nom" data-sortable="true">Nom</th>
+				<th scope="col" data-field="service" data-sortable="true">Service</th>
+				<th scope="col" data-field="mission" data-sortable="true">Mission</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in Model)
+			{
+				<tr>
+					<td>@item.FirstName</td>
+					<td>@item.LastName</td>
+					@if (item.Service != null)
+					{
+						<td>@item.Service.ServiceName</td>
+					}
+					else
+					{
+						<td>Aucun service</td>
+					}
+					<td>
+						@if (item.Missions.Count != 0)
+						{
 
-                            foreach (var mission in item.Missions) {
-                                @mission.Name <text> ,</text>
-                            }
+							foreach (var mission in item.Missions)
+							{
+								@mission.Name <text> ,</text>
+							}
 
-                        }
-                        else {
-                            <text>Aucune mission</text>
-                        }
-                    </td>
+						}
+						else
+						{
+							<text>Aucune mission</text>
+						}
+					</td>
 
-                </tr>
-            }
-        </tbody>
-    }
+				</tr>
+			}
+		</tbody>
+	}
 </table>
 
 
 @section Scripts {
-    <!-- Bootstrap table -->
-    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.0/bootstrap-table.js"></script>
+	<!-- Bootstrap table -->
+	<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.13.1/bootstrap-table.js"></script>
+
 }

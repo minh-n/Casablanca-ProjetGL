@@ -1,6 +1,6 @@
 ﻿@using Casablanca.Models
 @using Casablanca.Models.Database;
-
+@using System.Globalization;
 @using Casablanca.Models.ExpenseReports;
 @using Casablanca.Models.ViewModel;
 
@@ -14,63 +14,86 @@
 @model List<ExpenseReport>
 
 <h2 class="text-left">Notes de frais à traiter</h2>
+
 <div class="table-responsive">
-	<table class="table">
-		<thead>
+	<table id="table"
+		   class="table"
+		   data-toggle="table"
+		   data-search="true">
+		@if (Model.Count() == 0)
+		{
 			<tr>
-				<th>Collaborateur</th>
-				<th>Mois</th>
-				<th>Montant Total</th>
-				<th>Nombre de frais</th>
-				<th>Statut</th>
-				<th>Traitement</th>
+				<td colspan="10">Aucune note de frais trouvée.</td>
 			</tr>
-		</thead>
-		<tbody>
-			@foreach (ExpenseReport item in Model)
-			{
+		}
+		else
+		{
+			<thead>
 				<tr>
-					<td>@item.Collaborator.FirstName @item.Collaborator.LastName</td>
-					<td>@item.Month @item.Year</td>
-					<td>@item.TotalCost €</td>
-					<td>@item.NbLines</td>
-					<td>
-						@switch (item.Status)
-						{
-							case ExpenseReportStatus.UNSENT:<text>ERREUR : Non envoyée</text>break;
-						case ExpenseReportStatus.REFUSED: <text>Refusée</text>break;
-					case ExpenseReportStatus.APPROVED: <text>Approuvée</text>break;
-				case ExpenseReportStatus.PENDING_APPROVAL_1: <text>Validation compta en cours</text>break;
-				case ExpenseReportStatus.PENDING_APPROVAL_2: <text>Validation chef de service en cours</text>break;
-			}
-					</td>
+					<th scope="col" data-field="collaborateur" data-sortable="true">Collaborateur</th>
+					<th scope="col" data-field="mois" data-sortable="true">Mois</th>
+					<th scope="col" data-field="montant" data-sortable="true">Montant Total</th>
+					<th scope="col" data-field="nombre" data-sortable="true">Nombre de frais</th>
+					<th scope="col" data-field="statut" data-sortable="true">Statut</th>
+					<th>Traitement</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (ExpenseReport item in Model)
+				{
+					<tr>
+						<td>@item.Collaborator.FirstName @item.Collaborator.LastName</td>
+						<td>
+							@HelperModel.FirstCharToUpper(DateTime.ParseExact(item.Month.ToString(), "MMMM", new CultureInfo("en-US")).ToString("MMMM"))
+							@item.Year
+						</td>
+						<td>@item.TotalCost €</td>
+						<td>@item.NbLines</td>
+						<td>
+							@switch (item.Status)
+							{
+								case ExpenseReportStatus.UNSENT:<text>ERREUR : Non envoyée</text>break;
+							case ExpenseReportStatus.REFUSED: <text>Refusée</text>break;
+						case ExpenseReportStatus.APPROVED: <text>Approuvée</text>break;
+					case ExpenseReportStatus.PENDING_APPROVAL_1: <text>Validation chef de service en cours</text>break;
+					case ExpenseReportStatus.PENDING_APPROVAL_2: <text>Validation compta en cours</text>break;
+				}
+						</td>
 
-					<!--traiter-->
-					<td>
+						<!--traiter-->
+						<td>
 
-						@if (HelperModel.CheckCDSCompta(coll))
-						{
-							if (item.Status == ExpenseReportStatus.PENDING_APPROVAL_1)
+							@if (HelperModel.CheckCDSCompta(coll))
+							{
+								if (item.Status == ExpenseReportStatus.PENDING_APPROVAL_1)
+								{
+									@Html.ActionLink("Traiter", "ProcessCDS", "ExpenseReport", new { ERId = item.Id }, null)
+								}
+								else if (item.Status == ExpenseReportStatus.PENDING_APPROVAL_2)
+								{
+									@Html.ActionLink("Traiter", "ProcessCompta", "ExpenseReport", new { ERId = item.Id }, null)
+								}
+							}
+							else if (HelperModel.CheckCDS(coll))
 							{
 								@Html.ActionLink("Traiter", "ProcessCDS", "ExpenseReport", new { ERId = item.Id }, null)
-							}
-							else if (item.Status == ExpenseReportStatus.PENDING_APPROVAL_2)
-							{
-								@Html.ActionLink("Traiter", "ProcessCompta", "ExpenseReport", new { ERId = item.Id }, null)
-							}
-						}
-						else if (HelperModel.CheckCDS(coll))
-						{
-							@Html.ActionLink("Traiter", "ProcessCDS", "ExpenseReport", new { ERId = item.Id }, null)
 
-						}
-						else if (HelperModel.CheckCompta(coll))
-						{
+							}
+							else if (HelperModel.CheckCompta(coll))
+							{
 							@Html.ActionLink("Traiter", "ProcessCompta", "ExpenseReport", new { ERId = item.Id }, null)
-						}
-					</td>
-				</tr>
-			}
-		</tbody>
+							}
+						</td>
+					</tr>
+				}
+			</tbody>
+		}
 	</table>
 </div>
+
+
+@section Scripts {
+	<!-- Bootstrap table -->
+	<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.13.1/bootstrap-table.js"></script>
+
+}

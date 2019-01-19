@@ -24,7 +24,8 @@ namespace Casablanca
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
-                      "~/Content/Site.css"));
+					  "~/Content/bootstrap-table.css",
+					  "~/Content/Site.css"));
         }
     }
 }
