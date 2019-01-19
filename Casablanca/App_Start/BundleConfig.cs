@@ -22,7 +22,12 @@ namespace Casablanca
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
                       "~/Scripts/bootstrap.js"));
 
-            bundles.Add(new StyleBundle("~/Content/css").Include(
+			// Custom Calendar.
+			bundles.Add(new ScriptBundle("~/bundles/Script-calendar").Include(
+								 "~/Scripts/script-custom-calendar.js"));
+
+
+			bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
 					  "~/Content/bootstrap-table.css",
 					  "~/Content/Site.css"));

@@ -1,4 +1,4 @@
-﻿using Casablanca.Models;
+﻿using Casablanca.Models.ViewModel;
 using System;
 using System.Collections.Generic;
 using Casablanca.Models.Leaves;
@@ -6,97 +6,72 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
+using System.IO;
+using System.Diagnostics;
+using System.Reflection;
+
+
+
+
 namespace Casablanca.Controllers
 {
-    public class LeaveController : Controller
-    {
+	public class LeaveController : Controller
+	{
 
-        public ActionResult Index()
-        {
-            if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
-                return Redirect("/Home/Index");
+		#region Index method
 
-            // Récupérer les congés et demandes de congés dans la BD
-            // var congés = GetCongés();
+		/// <summary>
+		/// GET: Home/Index method.
+		/// </summary>
+		/// <returns>Returns - index view page</returns> 
+		public ActionResult Index()
+		{
+			// Info.
+			return this.View();
+		}
 
-            // Créer un objet LeaveList
-            //LeaveList model = new LeaveList();
-            List<Leave> model = new List<Leave>();
+		#endregion
 
-            // Récupérer les données de congés dans la base de données
-            // %% TEMPORARY : 
-            Leave leave = new Leave("Morgan 04/10 -> 06/10", LeaveStatus.PENDING_APPROVAL, new DateTime(2018, 10, 04));
-            Leave leave2 = new Leave("Morgan 04/10 -> 06/10", LeaveStatus.PENDING_APPROVAL, new DateTime(2018, 10, 05));
-            Leave leave3 = new Leave("Morgan 04/10 -> 06/10", LeaveStatus.PENDING_APPROVAL, new DateTime(2018, 10, 06));
-            Leave pending = new Leave("Minh 24/10 -> 26/10", LeaveStatus.APPROVED, new DateTime(2018, 10, 24));
-            Leave pending2 = new Leave("Minh 24/10 -> 26/10", LeaveStatus.APPROVED, new DateTime(2018, 10, 25));
-            Leave pending3 = new Leave("Minh 24/10 -> 26/10", LeaveStatus.APPROVED, new DateTime(2018, 10, 26));
+		#region Get Calendar data method.
 
-            model.Add(leave);
-            model.Add(leave2);
-            model.Add(leave3);
-            model.Add(pending);
-            model.Add(pending2);
-            model.Add(pending3);
-            // %%
+		/// <summary>
+		/// GET: /Home/GetCalendarData
+		/// </summary>
+		/// <returns>Return data</returns>
+		public ActionResult GetCalendarData()
+		{
+			// Initialization.
+			JsonResult result = new JsonResult();
 
-            return View(model);
-        }
+			try
+			{
+				// Loading.
+				//List<PublicHoliday> data = this.LoadData();
+				List<PublicHoliday> data = new List<PublicHoliday>();
+				data.Add(new PublicHoliday("salut", "description", "2019-01-03", "2019-01-08"));
+				data.Add(new PublicHoliday("salut2", "descriddddption", "2019-01-03", "2019-01-08"));
 
+				data.Add(new PublicHoliday("salut4", "descripfdgdtion", "2019-01-11", "2019-01-18"));
 
+				data.Add(new PublicHoliday("salut6", "descriptgion", "2019-01-08", "2019-01-09"));
 
-
-
-
-
-
-
-		//TODO
-        public ActionResult Process()
-        {
-            if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
-                return Redirect("/Home/Index");
-
-            // TODO : passer les demandes en attente
-
-            // Récupérer les congés et demandes de congés dans la BD
-            // var congés = GetCongés();
-
-            // Créer un objet LeaveList
-            //LeaveList model = new LeaveList();
-            List<Leave> model = new List<Leave>();
-
-            // Récupérer les données de congés dans la base de données
-            // %% TEMPORARY : 
-            Leave leave = new Leave("Morgan 04/10 -> 06/10", LeaveStatus.PENDING_APPROVAL, new DateTime(2018, 10, 04));
-            Leave leave2 = new Leave("Morgan 04/10 -> 06/10", LeaveStatus.PENDING_APPROVAL, new DateTime(2018, 10, 05));
-            Leave leave3 = new Leave("Morgan 04/10 -> 06/10", LeaveStatus.PENDING_APPROVAL, new DateTime(2018, 10, 06));
-            Leave pending = new Leave("Minh 24/10 -> 26/10", LeaveStatus.APPROVED, new DateTime(2018, 10, 24));
-            Leave pending2 = new Leave("Minh 24/10 -> 26/10", LeaveStatus.APPROVED, new DateTime(2018, 10, 25));
-            Leave pending3 = new Leave("Minh 24/10 -> 26/10", LeaveStatus.APPROVED, new DateTime(2018, 10, 26));
-
-            model.Add(leave);
-            model.Add(leave2);
-            model.Add(leave3);
-            model.Add(pending);
-            model.Add(pending2);
-            model.Add(pending3);
-            // %%
+				data.Add(new PublicHoliday("salut5", "descrigption", "2019-02-03", "2019-06-08"));
 
 
-            return View(model);
-        }
+				// Processing.
+				result = this.Json(data, JsonRequestBehavior.AllowGet);
+			}
+			catch (Exception ex)
+			{
+				// Info
+				Console.Write(ex);
+			}
 
+			// Return info.
+			return result;
+		}
 
+		#endregion
 
-
-
-
-
-
-
-
-
-
-    }
+	}
 }
