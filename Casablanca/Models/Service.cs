@@ -9,12 +9,12 @@ namespace Casablanca.Models {
     public class Service {
         [Key]
         public int Id { get; set; }
-        public string ServiceName { get; set; }
+        public string Name { get; set; }
         public virtual List<Collaborator> CollList { get; set; }
         public virtual Collaborator Chief { get; set; }
 
-        public Service(string serviceName) {
-            ServiceName = serviceName;
+        public Service(string name) {
+            Name = name;
             CollList = new List<Collaborator>();
             Chief = null;
         }

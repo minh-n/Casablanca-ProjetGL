@@ -22,37 +22,37 @@ namespace Casablanca.Models
 
 		public static bool CheckCDSCompta(Collaborator coll)
 		{
-			return coll.Role == Roles.CHIEF && coll.Service.ServiceName.Contains("Compta") ? true : false;
+			return coll.Role == Roles.CHIEF && coll.Service.Name.Contains("Compta") ? true : false;
 		}
 
 		public static bool CheckCompta(Collaborator coll)
 		{
             if(coll.Service != null)
-			    return coll.Service.ServiceName.Contains("Compta") ? true : false;
+			    return coll.Service.Name.Contains("Compta") ? true : false;
             return false;
 		}
 
 		public static bool CheckCDSRH(Collaborator coll)
 		{
-			return coll.Role == Roles.CHIEF && coll.Service.ServiceName.Contains("RH") ? true : false;
+			return coll.Role == Roles.CHIEF && coll.Service.Name.Contains("RH") ? true : false;
 		}
 
 		public static bool CheckRH(Collaborator coll)
 		{
             if (coll.Service != null)
-                return coll.Service.ServiceName.Contains("RH") ? true : false;
+                return coll.Service.Name.Contains("RH") ? true : false;
             return false;
         }
 
 		public static bool CheckPDG(Collaborator coll)
 		{
-			return coll.Role == Roles.CHIEF && coll.Service.ServiceName.Contains("Direction") ? true : false;
+			return coll.Role == Roles.CHIEF && coll.Service.Name.Contains("Direction") ? true : false;
 		}
 
 		public static bool CheckDirection(Collaborator coll)
 		{
             if (coll.Service != null)
-                return coll.Service.ServiceName.Contains("Direction") ? true : false;
+                return coll.Service.Name.Contains("Direction") ? true : false;
             return false;
 		}
 
