@@ -64,7 +64,13 @@ namespace Casablanca.Models {
             Status = status;
         }
 
-        public Mission(string name) {
+		public Mission(string name, DateTime startDate, MissionStatus status) : this(name)
+		{
+			StartDate = startDate;
+			Status = status;
+		}
+
+		public Mission(string name) {
             Name = name;
             StartDate = DateTime.Now;
             Status = MissionStatus.IN_PROGRESS;

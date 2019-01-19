@@ -14,6 +14,8 @@ namespace Casablanca.Models.Database {
 
         // Missions 
         Mission GetMission(int id);
+		Mission GetMission(string name);
+		List<Mission> GetMissions();
 
 		// ExpenseReports
 		List<ExpenseReport> GetExpenseReports();
