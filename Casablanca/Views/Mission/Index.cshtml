@@ -41,7 +41,8 @@
 				@foreach (Mission item in Model)
 				{
 					<tr>
-						<td>@item.Name 
+						<td>
+							@item.Name
 						</td>
 						<td>
 							@dal.GetCollaborator(@item.ChiefId).FirstName @dal.GetCollaborator(@item.ChiefId).LastName
@@ -50,7 +51,10 @@
 							@item.StartDate.ToString("dd/MM/yyyy")
 						</td>
 						<td>
+							if(@item.EndDate.Year > 1980)
+							{
 							@item.EndDate.ToString("dd/MM/yyyy")
+							}
 						</td>
 						<td>
 							@switch (item.Status)
@@ -59,14 +63,14 @@
 							case MissionStatus.COMPLETED: <text>Complétée</text>break;
 						case MissionStatus.IN_PROGRESS: <text>En cours</text>break;
 					case MissionStatus.PLANNED: <text>Planifiée</text>break;
-		}
+			}
 						</td>
 
 						<!--traiter-->
 						<td>
-							
-								@Html.ActionLink("Traiter", "ProcessMission", "Mission", new { id = item.Id }, null)
-							
+
+							@Html.ActionLink("Traiter", "ProcessMission", "Mission", new { id = item.Id }, null)
+
 						</td>
 					</tr>
 				}
@@ -76,7 +80,18 @@
 </div>
 
 
+<!-- Create a mission -->
 
+@{
+	using (Html.BeginForm("CreateMission", "Mission", FormMethod.Post))
+	{
+		<div style="padding:15px">
+			<button class="btn btn-primary" type="submit" style="margin-right:10px">Créer une nouvelle mission</button>
+
+			@Html.ValidationSummary("")
+		</div>
+	}
+}
 
 
 @section Scripts {

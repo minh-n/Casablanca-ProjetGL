@@ -67,6 +67,7 @@ namespace Casablanca.Models {
 		public Mission(string name, DateTime startDate, MissionStatus status) : this(name)
 		{
 			StartDate = startDate;
+			EndDate = new DateTime(1970,1,1);
 			Status = status;
 		}
 

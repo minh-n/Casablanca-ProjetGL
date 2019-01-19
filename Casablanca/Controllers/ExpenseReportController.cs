@@ -58,9 +58,10 @@ namespace Casablanca.Controllers {
             Enum.TryParse(month, out Month m);
 
             // Create the ER
-            dal.CreateExpenseReport(coll, m, year);
+            int returnedId = dal.CreateExpenseReport(coll, m, year);
+			string redirectString = "/ExpenseReport/UpdateExpenseReport/?id=" + returnedId;
 
-            return Redirect("/ExpenseReport/Index");
+			return Redirect(redirectString);
         }
 
         // Changes the status of ER to PENDING_APPROVAL (from Index page)

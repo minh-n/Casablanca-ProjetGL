@@ -33,5 +33,20 @@ namespace Casablanca.Controllers
 		{
 			return View(dal.GetMission(id));
 		}
+
+		[HttpPost] // Backend call of Index page
+		public ActionResult CreateMission()
+		{
+			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+				return Redirect("/Home/Index");
+
+			Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+
+			// Create the Mission
+			dal.CreateMission(coll.Id);
+			
+			return Redirect("/Mission/ProcessMission");
+		}
+
 	}
 }

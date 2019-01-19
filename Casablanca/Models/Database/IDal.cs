@@ -16,12 +16,13 @@ namespace Casablanca.Models.Database {
         Mission GetMission(int id);
 		Mission GetMission(string name);
 		List<Mission> GetMissions();
+		void CreateMission(int id);
 
 		// ExpenseReports
 		List<ExpenseReport> GetExpenseReports();
         ExpenseReport GetExpenseReport(int id);
 		Collaborator Login(string login, string password);
-        void CreateExpenseReport(Collaborator coll, Month month, int year);
+        int CreateExpenseReport(Collaborator coll, Month month, int year);
         void ClearExpenseLines(ExpenseReport er);
 
         // Services

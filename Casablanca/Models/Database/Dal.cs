@@ -107,6 +107,8 @@ namespace Casablanca.Models.Database
 			Collaborators[11].Role = Roles.CHIEF; //Mathias is now CDS Animaux
 			Collaborators[8].Role = Roles.CHIEF; //Oubar is now CDS Consultation
 			Collaborators[16].Role = Roles.CHIEF; //KVN is now CDS Digital
+			Collaborators[10].Role = Roles.CHIEF; //Momo is DRH
+
 
 			// Create missions
 			Missions = new List<Mission> {
@@ -117,8 +119,7 @@ namespace Casablanca.Models.Database
 				new Mission("Mission E", new DateTime(2019, 2, 6), new DateTime(2019, 3, 1), MissionStatus.PLANNED),
 				new Mission("Mission F", new DateTime(2019, 1, 9), new DateTime(2019, 11, 1), MissionStatus.PLANNED),
 				new Mission("Mission G", new DateTime(2019, 1, 2), new DateTime(2019, 1, 4), MissionStatus.IN_PROGRESS),
-				//TODO : weird shit. This is not working
-				//new Mission("Mission H", new DateTime(2019, 2, 11), MissionStatus.IN_PROGRESS)
+				new Mission("Mission H", new DateTime(2019, 2, 11), MissionStatus.IN_PROGRESS)
 
 			};
 
@@ -184,7 +185,7 @@ namespace Casablanca.Models.Database
 
 			Missions[6].ChiefId = GetCollaborator("Mathias", "BAZON").Id;
 
-			//Missions[7].ChiefId = GetCollaborator("Momo", "BELDI").Id;
+			Missions[7].ChiefId = GetCollaborator("Momo", "BELDI").Id;
 
 			Db.SaveChanges();
 
@@ -281,6 +282,13 @@ namespace Casablanca.Models.Database
 		{
 			return Db.Missions.ToList();
 		}
+
+		public void CreateMission(int id)
+		{
+			Db.Missions.Add(new Mission { ChiefId = id, StartDate = DateTime.Now, EndDate = DateTime.Now});
+			Db.SaveChanges();
+		}
+
 		// ExpenseReports
 		public List<ExpenseReport> GetExpenseReports() {
             return Db.ExpenseReports.ToList();
@@ -290,9 +298,11 @@ namespace Casablanca.Models.Database
             return Db.ExpenseReports.SingleOrDefault(e => e.Id == id);
         }
 
-        public void CreateExpenseReport(Collaborator coll, Month month, int year) {
-            Db.ExpenseReports.Add(new ExpenseReport(coll, month, year));
+        public int CreateExpenseReport(Collaborator coll, Month month, int year) {
+			ExpenseReport tempER = new ExpenseReport(coll, month, year);
+			Db.ExpenseReports.Add(tempER);
             Db.SaveChanges();
+			return tempER.Id;
         }
 
         public void ClearExpenseLines(ExpenseReport er) {
