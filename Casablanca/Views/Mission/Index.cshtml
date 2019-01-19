@@ -1,0 +1,101 @@
+﻿@using Casablanca.Models;
+@using Casablanca.Models.Database;
+
+@{
+	ViewBag.Title = "Mission list view";
+	Dal dal = new Dal();
+}
+
+@model  List<Mission>
+
+
+
+<h2 class="text-left">Missions gérées</h2>
+
+<div class="table-responsive">
+	<table id="table"
+		   class="table"
+		   data-toggle="table"
+		   data-search="true">
+
+		@if (Model.Count() == 0)
+		{
+			<tr>
+				<td colspan="10">Aucune mission trouvée.</td>
+			</tr>
+		}
+		else
+		{
+			<thead>
+				<tr>
+					<th scope="col" data-field="name" data-sortable="true">Nom</th>
+					<th scope="col" data-field="cds" data-sortable="true">Responsable</th>
+					<th scope="col" data-field="begin" data-sortable="true">Date de début</th>
+					<th scope="col" data-field="end" data-sortable="true">Date de fin</th>
+					<th scope="col" data-field="status" data-sortable="true">Statut</th>
+
+					<th scope="col" data-field="traiter" data-sortable="false">Traiter</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (Mission item in Model)
+				{
+					<tr>
+						<td>
+							@item.Name
+						</td>
+						<td>
+							@dal.GetCollaborator(@item.ChiefId).FirstName @dal.GetCollaborator(@item.ChiefId).LastName
+						</td>
+						<td>
+							@item.StartDate.ToString("dd/MM/yyyy")
+						</td>
+						<td>
+							if(@item.EndDate.Year > 1980)
+							{
+							@item.EndDate.ToString("dd/MM/yyyy")
+							}
+						</td>
+						<td>
+							@switch (item.Status)
+							{
+								case MissionStatus.CANCELED:<text>Annulée</text>break;
+							case MissionStatus.COMPLETED: <text>Complétée</text>break;
+						case MissionStatus.IN_PROGRESS: <text>En cours</text>break;
+					case MissionStatus.PLANNED: <text>Planifiée</text>break;
+			}
+						</td>
+
+						<!--traiter-->
+						<td>
+
+							@Html.ActionLink("Traiter", "ProcessMission", "Mission", new { id = item.Id }, null)
+
+						</td>
+					</tr>
+				}
+			</tbody>
+		}
+	</table>
+</div>
+
+
+<!-- Create a mission -->
+
+@{
+	using (Html.BeginForm("CreateMission", "Mission", FormMethod.Post))
+	{
+		<div style="padding:15px">
+			<button class="btn btn-primary" type="submit" style="margin-right:10px">Créer une nouvelle mission</button>
+
+			@Html.ValidationSummary("")
+		</div>
+	}
+}
+
+
+@section Scripts {
+	<!-- Bootstrap table -->
+	<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.13.1/bootstrap-table.js"></script>
+
+}

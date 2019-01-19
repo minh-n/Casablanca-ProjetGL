@@ -34,54 +34,93 @@ namespace Casablanca.Models.Database
 
             // Create services
             Services = new List<Service> {
-                new Service("Informatique"),
-                new Service("Direction"),
-                new Service("Compta"),
-                new Service("RH"),
-                new Service("Plomberie"),
-                new Service("Matériaux")
-            };
+                new Service("Informatique d'entreprise"),	//0
+                new Service("Direction"),					//1
+                new Service("Compta"),						//2
+                new Service("RH"),							//3
+                new Service("Commerce, Coloriages et Consultation"),		//4
+                new Service("Gestion des flux animaliers"),	//5
+				new Service("Positionnement stratégique digitalisé")	//6
+			};
 
             // Create collaborators
             Collaborators = new List<Collaborator> {
-                new Collaborator("Morgan", "FEURTE", "morgan", EncodeMD5("f")),
+                new Collaborator("Morgan", "FEURTE", "mo", EncodeMD5("go")),
                 new Collaborator("Minh", "NGUYEN", "cds", EncodeMD5("cds")),
-                new Collaborator("Adrien", "LAVILLONNIERE", "a", EncodeMD5("t")),
+                new Collaborator("Adrien", "LAVILLONNIERE", "adm", EncodeMD5("adm")),
                 new Collaborator("Jeffrey", "GONCALVES", "j", EncodeMD5("g")),
                 new Collaborator("Yao", "SHI", "cpt", EncodeMD5("cpt")),
-                new Collaborator("Arthur", "BINELLI", "ar", EncodeMD5("b")),
-                new Collaborator("Thibal", "WITCZAK", "rh", EncodeMD5("rh")),
-                new Collaborator("Floriab", "LE PALLEC", "f", EncodeMD5("l")),
+                new Collaborator("Arthur", "BINELLI", "a", EncodeMD5("b")),
+                new Collaborator("Thibal", "WITCZAK", "t", EncodeMD5("w")),
+                new Collaborator("Floriab", "LE PALLEC", "f", EncodeMD5("lp")),
                 new Collaborator("Oubar", "MAYAKI", "o", EncodeMD5("m")),
-                new Collaborator("Nathon", "BONNARD", "n", EncodeMD5("b"))
-            };
+                new Collaborator("Nathon", "BONNARD", "n", EncodeMD5("b")),
+				new Collaborator("Momo", "BELDI", "momo", EncodeMD5("b")),
+				new Collaborator("Mathias", "BAZON", "mat", EncodeMD5("baz")),
+				new Collaborator("Albon", "DESCOTTES", "alb", EncodeMD5("d")),
+				new Collaborator("Arnaud", "GAY-BAUER", "ar", EncodeMD5("no")),
+				new Collaborator("Coronton", "MONSCOUR", "coco", EncodeMD5("mons")),
+				new Collaborator("Olodie", "LOM", "lom", EncodeMD5("olo")),
+				new Collaborator("Kevon", "LOCOSTE", "kvn", EncodeMD5("kvn")) 
 
-            // Add coll to services
-            AddToService(1, 1); //minh le cds PDG
+			};
+
+
+			// Add coll to services
+
+			AddToService(2, 0); //mow le cds compta
+			AddToService(1, 1); //minh le cds PDG
             AddToService(1, 2); //dadri le user + admin
-            AddToService(0, 3); //jaff le CDS normal
-            AddToService(2, 4); //yao le compta
-            AddToService(2, 5); 
-            AddToService(3, 6); //thib le RH
-            AddToService(5, 7);
-            AddToService(4, 8);
-            AddToService(2, 0); //mow le cds compta
 
-            // Add admin role to Adrien
-            Collaborators[2].Role = Roles.ADMIN;
-			Collaborators[3].Role = Roles.CHIEF;
-			Collaborators[1].Role = Roles.CHIEF;
-			Collaborators[0].Role = Roles.CHIEF;
+            AddToService(0, 3); //jaff le CDS normal
+            AddToService(2, 4); //yao le compta normal
+
+
+            AddToService(3, 6); //thib le RH normal
+            AddToService(3, 7); //flo le RH normal
+
+            AddToService(4, 8); //oubar le cds consultation
+			AddToService(4, 9); //nathon le user normal
+
+			AddToService(3, 10); //momo le CDS RH
+
+			AddToService(5, 11); //mathias le cds animaux
+			AddToService(5, 5); //arthur  user animaux
+
+			AddToService(3, 12); //alban user consultation
+			AddToService(0, 13); //arno user info
+
+			AddToService(0, 14); //corentin user direction
+
+			AddToService(2, 15); //elodie user compta
+
+			AddToService(6, 16); //kvn cds Positionnement stratégique digitalisé
+
+
+			// Add admin role to Adrien
+			Collaborators[2].Role = Roles.ADMIN;
+
+			//Add CHIEF roles to other people
+			Collaborators[3].Role = Roles.CHIEF; //Jeffrey is now CDS info
+			Collaborators[1].Role = Roles.CHIEF; //Minh is now CDS Direction (PDG)
+			Collaborators[0].Role = Roles.CHIEF; //Morgan is now CDS Compta
+			Collaborators[11].Role = Roles.CHIEF; //Mathias is now CDS Animaux
+			Collaborators[8].Role = Roles.CHIEF; //Oubar is now CDS Consultation
+			Collaborators[16].Role = Roles.CHIEF; //KVN is now CDS Digital
+			Collaborators[10].Role = Roles.CHIEF; //Momo is DRH
+
 
 			// Create missions
 			Missions = new List<Mission> {
 				new Mission("Mission A", DateTime.Today, new DateTime(2019, 5, 1), MissionStatus.IN_PROGRESS),
 				new Mission("Mission B", new DateTime(2019, 2, 9), new DateTime(2019, 3, 1), MissionStatus.PLANNED),
 				new Mission("Mission C", new DateTime(2018, 12, 25), new DateTime(2018, 12, 26), MissionStatus.CANCELED),
-				new Mission("Mission D", new DateTime(2019, 2, 25), new DateTime(2019, 2, 26), MissionStatus.COMPLETED),
+				new Mission("Mission D", new DateTime(2018, 2, 25), new DateTime(2018, 2, 26), MissionStatus.COMPLETED),
 				new Mission("Mission E", new DateTime(2019, 2, 6), new DateTime(2019, 3, 1), MissionStatus.PLANNED),
 				new Mission("Mission F", new DateTime(2019, 1, 9), new DateTime(2019, 11, 1), MissionStatus.PLANNED),
-				new Mission("Mission G", new DateTime(2019, 1, 2), new DateTime(2019, 1, 4), MissionStatus.IN_PROGRESS)
+				new Mission("Mission G", new DateTime(2019, 1, 2), new DateTime(2019, 1, 4), MissionStatus.IN_PROGRESS),
+				new Mission("Mission H", new DateTime(2019, 2, 11), MissionStatus.IN_PROGRESS)
+
 			};
 
 
@@ -104,25 +143,18 @@ namespace Casablanca.Models.Database
 
 			// Assign missions to collaborators
 			GetCollaborator("Arthur", "BINELLI").Missions.Add(GetMission("Mission A"));
-            GetCollaborator("Arthur", "BINELLI").Missions.Add(GetMission("Mission B"));
             GetCollaborator("Arthur", "BINELLI").Missions.Add(GetMission("Mission C"));
             GetCollaborator("Arthur", "BINELLI").Missions.Add(GetMission("Mission E"));
 
 			GetCollaborator("Jeffrey", "GONCALVES").Missions.Add(GetMission("Mission A"));
-			GetCollaborator("Jeffrey", "GONCALVES").Missions.Add(GetMission("Mission B"));
-			GetCollaborator("Jeffrey", "GONCALVES").Missions.Add(GetMission("Mission C"));
-			GetCollaborator("Jeffrey", "GONCALVES").Missions.Add(GetMission("Mission D"));
-			GetCollaborator("Jeffrey", "GONCALVES").Missions.Add(GetMission("Mission E"));
 			GetCollaborator("Jeffrey", "GONCALVES").Missions.Add(GetMission("Mission F"));
-			GetCollaborator("Jeffrey", "GONCALVES").Missions.Add(GetMission("Mission G"));
-
-			GetCollaborator("Nathon", "BONNARD").Missions.Add(GetMission("Mission A"));
+			
 			GetCollaborator("Nathon", "BONNARD").Missions.Add(GetMission("Mission B"));
-			GetCollaborator("Nathon", "BONNARD").Missions.Add(GetMission("Mission C"));
-			GetCollaborator("Nathon", "BONNARD").Missions.Add(GetMission("Mission D"));
 			GetCollaborator("Nathon", "BONNARD").Missions.Add(GetMission("Mission E"));
 			GetCollaborator("Nathon", "BONNARD").Missions.Add(GetMission("Mission F"));
-			GetCollaborator("Nathon", "BONNARD").Missions.Add(GetMission("Mission G"));
+
+			GetCollaborator("Floriab", "LE PALLEC").Missions.Add(GetMission("Mission D"));
+			GetCollaborator("Floriab", "LE PALLEC").Missions.Add(GetMission("Mission H"));
 
 			//Adrien is coll2, Adrien gets all the missions because he is admin
 			//GetCollaborator("Adrien", "LAVILLONNIERE").Missions = Missions;
@@ -133,19 +165,27 @@ namespace Casablanca.Models.Database
 			GetCollaborator("Adrien", "LAVILLONNIERE").Missions.Add(GetMission("Mission E"));
 			GetCollaborator("Adrien", "LAVILLONNIERE").Missions.Add(GetMission("Mission F"));
 			GetCollaborator("Adrien", "LAVILLONNIERE").Missions.Add(GetMission("Mission G"));
-
+			GetCollaborator("Adrien", "LAVILLONNIERE").Missions.Add(GetMission("Mission H"));
 
 			GetCollaborator("Morgan", "FEURTE").Missions.Add(GetMission("Mission A"));
 			GetCollaborator("Morgan", "FEURTE").Missions.Add(GetMission("Mission B"));
 			GetCollaborator("Morgan", "FEURTE").Missions.Add(GetMission("Mission C"));
 
+
+			// Setting chief ID for each mission
 			Missions[0].ChiefId = GetCollaborator("Morgan", "FEURTE").Id;
-			Missions[1].ChiefId = GetCollaborator("Morgan", "FEURTE").Id;
-			Missions[2].ChiefId = GetCollaborator("Morgan", "FEURTE").Id;
-			Missions[3].ChiefId = GetCollaborator("Minh", "NGUYEN").Id;
-			Missions[4].ChiefId = GetCollaborator("Minh", "NGUYEN").Id;
-			Missions[5].ChiefId = GetCollaborator("Minh", "NGUYEN").Id;
-			Missions[6].ChiefId = GetCollaborator("Minh", "NGUYEN").Id;
+
+			Missions[1].ChiefId = GetCollaborator("Minh", "NGUYEN").Id;
+
+			Missions[2].ChiefId = GetCollaborator("Jeffrey", "GONCALVES").Id;
+
+			Missions[3].ChiefId = GetCollaborator("Oubar", "MAYAKI").Id;
+			Missions[4].ChiefId = GetCollaborator("Oubar", "MAYAKI").Id;
+			Missions[5].ChiefId = GetCollaborator("Oubar", "MAYAKI").Id;
+
+			Missions[6].ChiefId = GetCollaborator("Mathias", "BAZON").Id;
+
+			Missions[7].ChiefId = GetCollaborator("Momo", "BELDI").Id;
 
 			Db.SaveChanges();
 
@@ -238,8 +278,19 @@ namespace Casablanca.Models.Database
             return Db.Missions.SingleOrDefault(m => m.Name == name);
         }
 
-        // ExpenseReports
-        public List<ExpenseReport> GetExpenseReports() {
+		public List<Mission> GetMissions()
+		{
+			return Db.Missions.ToList();
+		}
+
+		public void CreateMission(int id)
+		{
+			Db.Missions.Add(new Mission { ChiefId = id, StartDate = DateTime.Now, EndDate = DateTime.Now});
+			Db.SaveChanges();
+		}
+
+		// ExpenseReports
+		public List<ExpenseReport> GetExpenseReports() {
             return Db.ExpenseReports.ToList();
         }
 
@@ -247,9 +298,11 @@ namespace Casablanca.Models.Database
             return Db.ExpenseReports.SingleOrDefault(e => e.Id == id);
         }
 
-        public void CreateExpenseReport(Collaborator coll, Month month, int year) {
-            Db.ExpenseReports.Add(new ExpenseReport(coll, month, year));
+        public int CreateExpenseReport(Collaborator coll, Month month, int year) {
+			ExpenseReport tempER = new ExpenseReport(coll, month, year);
+			Db.ExpenseReports.Add(tempER);
             Db.SaveChanges();
+			return tempER.Id;
         }
 
         public void ClearExpenseLines(ExpenseReport er) {
