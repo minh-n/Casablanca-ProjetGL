@@ -54,7 +54,7 @@
 							<td>@el.Mission.Name</td>
 
 							<!-- Valideur -->
-							<td>@dal.GetCollaborator(@el.Mission.ChiefId).FirstName @dal.GetCollaborator(@el.Mission.ChiefId).LastName</td>
+							<td>@el.ChiefValidator</td>
 
 							<!-- Date de la ligne de frais -->
 							<td>@el.Date.ToString("dd/MM/yyyy")</td>

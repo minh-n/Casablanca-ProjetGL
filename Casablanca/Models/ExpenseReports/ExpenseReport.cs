@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 
@@ -83,7 +84,7 @@ namespace Casablanca.Models.ExpenseReports {
                 this.NbLines--;
                 this.TotalCost -= el.Cost;
             }
-            // TODO : decide if useful
+            
             if (this.ExpenseLines.Count == 0)
                 this.TotalCost = 0.0f;
         }
@@ -100,12 +101,14 @@ namespace Casablanca.Models.ExpenseReports {
                     }
                     else {
                         // Cas classique
+                        Debug.WriteLine("OMG");
                         Treatment = Processing.CLASSIC;
                     }
                     break;
                 case Roles.CHIEF:
                     if(s.Name.Contains("Compta")) {
                         // CDS compta => double val PDG
+                        Debug.WriteLine("OOOOOOOOOOH");
                         Treatment = Processing.CEO;
                     }
                     else if (s.Name.Contains("RH")) {

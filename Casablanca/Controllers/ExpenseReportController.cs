@@ -148,6 +148,8 @@ namespace Casablanca.Controllers {
                         FinalValidation = false
                     };
 
+                    newEL.ComputeValidator(current.Treatment);
+
                     // Check if an EL exists with the same values (which means we did not modify this line)
                     foreach (ExpenseLine old in current.ExpenseLines) {
                         if (newEL.Equals(old)) {

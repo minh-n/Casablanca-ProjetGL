@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Casablanca.Models.Database;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
@@ -28,7 +29,7 @@ namespace Casablanca.Models.ExpenseReports {
         [Display(Name = "mission")]
         public virtual Mission Mission { get; set; }
         [Display(Name = "validateur")]
-        public virtual Collaborator ChiefValidator { get; set; }
+        public virtual string ChiefValidator { get; set; }
         [Required]
         public LineType Type { get; set; }
         [Required]
@@ -50,7 +51,7 @@ namespace Casablanca.Models.ExpenseReports {
 
         public ExpenseLine() {
             Mission = null;
-            ChiefValidator = null;
+            ChiefValidator = "";
             Type = LineType.HOTEL;
             Description = "";
             Cost = 0;
@@ -58,7 +59,7 @@ namespace Casablanca.Models.ExpenseReports {
             Justificatory = "";
         }
 
-		public ExpenseLine(Mission mission, LineType type, Collaborator chiefValidator, string description, float cost, DateTime date, string justificatory)
+		public ExpenseLine(Mission mission, LineType type, string chiefValidator, string description, float cost, DateTime date, string justificatory)
 		{
 			Mission = mission;
 			ChiefValidator = chiefValidator;
@@ -67,7 +68,7 @@ namespace Casablanca.Models.ExpenseReports {
 			Cost = cost;
 			Date = date;
 			Justificatory = justificatory;
-		}
+        }
 
 		public ExpenseLine(Mission mission, LineType type, string description, float cost, DateTime date, string justificatory) {
             this.Mission = mission;
@@ -76,8 +77,6 @@ namespace Casablanca.Models.ExpenseReports {
             this.Cost = cost;
             this.Date = date;
             this.Justificatory = justificatory;
-
-            // TODO : compute who is the chiefvalidator depending on mission ?
         }
 
         public bool Equals(ExpenseLine other) {
@@ -88,6 +87,27 @@ namespace Casablanca.Models.ExpenseReports {
                     this.Cost == other.Cost &&
                     this.Date == other.Date &&
                     this.Justificatory == other.Justificatory);
+        }
+
+        public void ComputeValidator(Processing parent) {
+            Dal dal = new Dal();
+
+            switch (parent) {
+                case Processing.CLASSIC:
+                    ChiefValidator = dal.GetCollaborator(Mission.ChiefId).FirstName + " " + dal.GetCollaborator(Mission.ChiefId).LastName;
+                    break;
+                case Processing.COMPTA:
+                    ChiefValidator = "Service Comptabilité";
+                    break;
+                case Processing.FINANCIAL_DIRECTOR:
+                    ChiefValidator = "Directeur financier";
+                    break;
+                case Processing.CEO:
+                    ChiefValidator = "PDG";
+                    break;
+            }
+
+            //dal.SaveChanges();
         }
     }
 }

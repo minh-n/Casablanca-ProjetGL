@@ -201,10 +201,10 @@ namespace Casablanca.Models.Database
 			Db.SaveChanges();
 
             ExpenseLines = new List<ExpenseLine>() {
-                new ExpenseLine(GetMission("Mission A"), LineType.HOTEL, GetCollaborator("Minh", "NGUYEN"), "T Tower", 1000.0f, new DateTime(2019, 3, 4), "trumptower.pdf"),
-                new ExpenseLine(GetMission("Mission B"), LineType.RESTAURANT, GetCollaborator("Jeffrey", "GONCALVES"), "Tower restaurant", 8000.0f, new DateTime(2019, 1, 2), "restau1.pdf"),
-                new ExpenseLine(GetMission("Mission C"), LineType.TAXI, GetCollaborator("Jeffrey", "GONCALVES"), "Jafar Taxi", 15.98f, new DateTime(2019, 3, 4), "taxig7.pdf"),
-                new ExpenseLine(GetMission("Mission E"), LineType.OTHER, GetCollaborator("Jeffrey", "GONCALVES"), "Jafar Other", 80010.0f, new DateTime(2019, 1, 2), "russia.pdf")
+                new ExpenseLine(GetMission("Mission A"), LineType.HOTEL, "Minh NGUYEN", "T Tower", 1000.0f, new DateTime(2019, 3, 4), "trumptower.pdf"),
+                new ExpenseLine(GetMission("Mission B"), LineType.RESTAURANT, "Jeffrey GONCALVES", "Tower restaurant", 8000.0f, new DateTime(2019, 1, 2), "restau1.pdf"),
+                new ExpenseLine(GetMission("Mission C"), LineType.TAXI, "Jeffrey GONCALVES", "Jafar Taxi", 15.98f, new DateTime(2019, 3, 4), "taxig7.pdf"),
+                new ExpenseLine(GetMission("Mission E"), LineType.OTHER, "Jeffrey GONCALVES", "Jafar Other", 80010.0f, new DateTime(2019, 1, 2), "russia.pdf")
             };
 
 			// Lignes de l'ER 1 (arthur)
@@ -215,8 +215,8 @@ namespace Casablanca.Models.Database
 			ExpenseReports[1].AddLine(new ExpenseLine(GetMission(2), LineType.HOTEL, "Pepperoni Florian", 10.0f, new DateTime(2019, 1, 8), "hotelflo.pdf"));
 
 			// Lignes de l'ER 4 (jeffrey). Jeffrey n'a aucune mission à effectuer actuellement
-			ExpenseReports[3].AddLine(new ExpenseLine(GetMission(1), LineType.RESTAURANT, GetCollaborator("Jeffrey", "GONCALVES"), "Simon Burger", 10.0f, new DateTime(2019, 1, 5), "trumpburger.pdf"));
-			ExpenseReports[3].AddLine(new ExpenseLine(GetMission(3), LineType.HOTEL, GetCollaborator("Minh", "NGUYEN"), "Jafar Hotel", 10.0f, new DateTime(2019, 1, 5), "hotel.pdf"));
+			ExpenseReports[3].AddLine(new ExpenseLine(GetMission(1), LineType.RESTAURANT, "Jeffrey GONCALVES", "Simon Burger", 10.0f, new DateTime(2019, 1, 5), "trumpburger.pdf"));
+			ExpenseReports[3].AddLine(new ExpenseLine(GetMission(3), LineType.HOTEL, "Minh NGUYEN", "Jafar Hotel", 10.0f, new DateTime(2019, 1, 5), "hotel.pdf"));
 
 			//foreach (ExpenseReport er in ExpenseReports) {
 			//    Db.ExpenseReports.Add(er);
