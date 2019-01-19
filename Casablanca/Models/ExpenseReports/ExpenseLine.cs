@@ -48,8 +48,6 @@ namespace Casablanca.Models.ExpenseReports {
 		public Treatment Treated { get; set; }      // Has been treated by the CDS or the compta
 		public bool FinalValidation { get; set; }   // Is validated by the compta
 
-        // TODO : line validation status (has to be validated by the same person ? validation compta only by DF ? etc.)
-
         public ExpenseLine() {
             Mission = null;
             ChiefValidator = null;
@@ -83,11 +81,6 @@ namespace Casablanca.Models.ExpenseReports {
         }
 
         public bool Equals(ExpenseLine other) {
-            //Debug.WriteLine("[" + this.Mission + " Mission " + other.Mission + "]");
-            //Debug.WriteLine("[" + this.Description + " Desc " + other.Description + "]");
-            //Debug.WriteLine("[" + this.Cost + " Cost " + other.Cost + "]");
-            //Debug.WriteLine("[" + this.Date + " Date " + other.Date + "]");
-            //Debug.WriteLine("[" + this.Justificatory + " Justif " + other.Justificatory + "]");
 
             return (this.Mission == other.Mission &&
                     this.Type == other.Type &&
