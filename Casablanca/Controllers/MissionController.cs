@@ -72,8 +72,11 @@ namespace Casablanca.Controllers
 			//--------------------------------------------------//
 
 
-			//TODO : check model state
+			//TODO : check model state validity ?
 			dal.GetMission(id).Name = model.Name;
+			dal.GetMission(id).StartDate = model.StartDate;
+			dal.GetMission(id).EndDate = model.EndDate;
+
 			dal.SaveChanges();
 
 			return Redirect("/Mission/Index");
