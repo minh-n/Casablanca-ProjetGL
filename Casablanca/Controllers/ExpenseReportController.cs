@@ -216,38 +216,61 @@ namespace Casablanca.Controllers {
             // for each Expense Report, check if they meet the following criterias
             // if yes, add them to the list returned to the View
             foreach (ExpenseReport e in AllERList) {
-                if (e.Collaborator != coll) //a coll cannot validate his own ER
+                if (e.Collaborator != coll) // a coll cannot validate his own ER
                 {
-                    if (HelperModel.CheckCDSCompta(coll)) //CDS Compta
-                    {
-                        if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_2) {
-                            ERListToBeReturnedAsModel.Add(e);
+                    // If the ER needs to be treated the classic way
+                    if(e.Treatment == Processing.CLASSIC) { 
+                        if (HelperModel.CheckCDSCompta(coll)) // CDS Compta
+                        {
+                            if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_2) {
+                                ERListToBeReturnedAsModel.Add(e);
+                            }
+                            if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_1) {
+                                // in order to know if the Chief needs to see the ER, check if coll is the chief of a mission in ELs
+                                foreach (ExpenseLine el in e.ExpenseLines) {
+                                    if (dal.GetCollaborator(el.Mission.ChiefId).Id == coll.Id) {
+                                        ERListToBeReturnedAsModel.Add(e);
+                                        break;
+                                    }
+                                }
+                            }
                         }
-                        if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_1) {
-                            // in order to know if the Chief needs to see the ER, check if coll is the chief of a mission in ELs
-                            foreach (ExpenseLine el in e.ExpenseLines) {
-                                if (dal.GetCollaborator(el.Mission.ChiefId).Id == coll.Id) {
-                                    ERListToBeReturnedAsModel.Add(e);
-                                    break;
+                        else if (HelperModel.CheckCompta(coll)) // Compta
+                        {
+                            if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_2)
+                                ERListToBeReturnedAsModel.Add(e);
+                        }
+                        else if (HelperModel.CheckCDS(coll)) // CDS
+                        {
+                            if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_1) {
+                                // in order to know if the Chief needs to see the ER
+                                foreach (ExpenseLine el in e.ExpenseLines) {
+                                    if (dal.GetCollaborator(el.Mission.ChiefId).Id == coll.Id) {
+                                        ERListToBeReturnedAsModel.Add(e);
+                                        break;
+                                    }
                                 }
                             }
                         }
                     }
-                    else if (HelperModel.CheckCompta(coll)) //Compta
-                    {
-                        if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_2)
-                            ERListToBeReturnedAsModel.Add(e);
-                    }
-                    else if (HelperModel.CheckCDS(coll)) //CDS
-                    {
-                        if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_1) {
-                            // in order to know if the Chief needs to see the ER
-                            //List<Mission> currentERMissionsList = new List<Mission>();
-                            foreach (ExpenseLine el in e.ExpenseLines) {
-                                if (dal.GetCollaborator(el.Mission.ChiefId).Id == coll.Id) {
-                                    ERListToBeReturnedAsModel.Add(e);
+                    else { // The ER needs to be treated specifically
+                        if(e.Status == ExpenseReportStatus.PENDING_APPROVAL_1) {
+                            switch(e.Treatment) {
+                                case Processing.COMPTA:
+                                    if (HelperModel.CheckCompta(coll)) {
+                                        ERListToBeReturnedAsModel.Add(e);
+                                    }
                                     break;
-                                }
+                                case Processing.FINANCIAL_DIRECTOR:
+                                    if (HelperModel.CheckCDSCompta(coll)) {
+                                        ERListToBeReturnedAsModel.Add(e);
+                                    }
+                                    break;
+                                case Processing.CEO:
+                                    if(HelperModel.CheckPDG(coll)) {
+                                        ERListToBeReturnedAsModel.Add(e);
+                                    }
+                                    break;
                             }
                         }
                     }
@@ -263,11 +286,10 @@ namespace Casablanca.Controllers {
                 return Redirect("/Home/Index");
 
             Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+            ExpenseReport er = dal.GetExpenseReport(ERId);
 
             if (!HelperModel.CheckCDS(coll))
                 return Redirect("/Home/Index");
-
-            ExpenseReport er = dal.GetExpenseReport(ERId);
 
             // Check if ER exists
             if (er == null)
@@ -355,6 +377,10 @@ namespace Casablanca.Controllers {
             Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
             ExpenseReport model = dal.GetExpenseReport(ERId);
 
+            // Check if ER exists
+            if (model == null)
+                return Redirect("/ExpenseReport/ProcessList");
+
             if (!HelperModel.CheckCompta(coll))
                 return Redirect("/Home/Index");
 
@@ -378,6 +404,103 @@ namespace Casablanca.Controllers {
 
             // Check if ER status is "pending approval 2" 
             if (er.Status != ExpenseReportStatus.PENDING_APPROVAL_2)
+                return Redirect("/ExpenseReport/ProcessList");
+
+            // Check if all EL are validated 
+            bool allValidated = true;
+            foreach (ExpenseLine processedLine in model.ExpenseLines) {
+                allValidated &= processedLine.FinalValidation;
+                foreach (ExpenseLine el in er.ExpenseLines) {
+
+                    // Tick the Validated field of the EL and update the Treated field
+                    if (el.Id == processedLine.Id) {
+                        el.FinalValidation = processedLine.FinalValidation;
+                        el.Treated = Treatment.COMPTA;
+                    }
+                }
+            }
+
+            if (allValidated)
+                er.Status = ExpenseReportStatus.APPROVED;
+            else
+                er.Status = ExpenseReportStatus.REFUSED; // We refused one or several lines
+
+            dal.SaveChanges();
+
+            return Redirect("/ExpenseReport/ProcessList");
+        }
+
+        // Displays the ER a comptaboy needs to process
+        public ActionResult OneStepProcess(int ERId = 1) {
+            if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+                return Redirect("/Home/Index");
+
+            Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+            ExpenseReport model = dal.GetExpenseReport(ERId);
+
+            // Check if ER exists
+            if (model == null)
+                return Redirect("/ExpenseReport/ProcessList");
+
+            // Check if coll has the right attributions
+            switch (model.Treatment) {
+                case Processing.COMPTA:
+                    if (!HelperModel.CheckCompta(coll)) {
+                        return Redirect("/ExpenseReport/ProcessList");
+                    }
+                    break;
+                case Processing.FINANCIAL_DIRECTOR:
+                    if (!HelperModel.CheckCDSCompta(coll)) {
+                        return Redirect("/ExpenseReport/ProcessList");
+                    }
+                    break;
+                case Processing.CEO:
+                    if (!HelperModel.CheckPDG(coll)) {
+                        return Redirect("/ExpenseReport/ProcessList");
+                    }
+                    break;
+            }
+
+            // Check if ER status is "pending approval 1" 
+            if (model.Status != ExpenseReportStatus.PENDING_APPROVAL_1)
+                return Redirect("/ExpenseReport/ProcessList");
+
+            return View(model);
+        }
+
+        [HttpPost] // // Backend call from OneStepProcess page
+        public ActionResult OneStepProcess(ExpenseReport model) {
+            if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+                return Redirect("/Home/Index");
+
+            Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+            ExpenseReport er = dal.GetExpenseReport(model.Id);
+
+            // Check if coll has the right attributions
+            switch (model.Treatment) {
+                case Processing.COMPTA:
+                    if (!HelperModel.CheckCompta(coll)) {
+                        return Redirect("/ExpenseReport/ProcessList");
+                    }
+                    break;
+                case Processing.FINANCIAL_DIRECTOR:
+                    if (!HelperModel.CheckCDSCompta(coll)) {
+                        return Redirect("/ExpenseReport/ProcessList");
+                    }
+                    break;
+                case Processing.CEO:
+                    if (!HelperModel.CheckPDG(coll)) {
+                        return Redirect("/ExpenseReport/ProcessList");
+                    }
+                    break;
+            }
+
+            // Check if ER exists
+            if (model == null)
+                return Redirect("/ExpenseReport/ProcessList");
+
+            // Check if ER status is "pending approval 1" 
+            if (er.Status != ExpenseReportStatus.PENDING_APPROVAL_1)
                 return Redirect("/ExpenseReport/ProcessList");
 
             // Check if all EL are validated 

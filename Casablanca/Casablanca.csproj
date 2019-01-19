@@ -348,6 +348,7 @@
     <Content Include="Views\ExpenseReport\ViewExpenseReport.cshtml" />
     <Content Include="Views\Mission\Index.cshtml" />
     <Content Include="Views\Mission\ProcessMission.cshtml" />
+    <Content Include="Views\ExpenseReport\OneStepProcess.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
