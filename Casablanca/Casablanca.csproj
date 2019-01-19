@@ -198,6 +198,7 @@
     <Compile Include="Models\Service.cs" />
     <Compile Include="Models\ViewModel\AddExpenseLineVM.cs" />
     <Compile Include="Models\ViewModel\ProcessExpenseLineVM.cs" />
+    <Compile Include="Models\ViewModel\ProcessMissionVM.cs" />
     <Compile Include="Models\ViewModel\ProcessReportVM.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -352,6 +353,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\ProcessMissionVM\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

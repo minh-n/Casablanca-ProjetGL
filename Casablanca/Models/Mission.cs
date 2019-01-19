@@ -19,8 +19,14 @@ namespace Casablanca.Models {
         public int Id { get; set; }
         public string Name { get; set; }
 
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+		[DataType(DataType.Date)]
+		[DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd-MM-yyyy}")]
+		public DateTime StartDate { get; set; }
+
+		[DataType(DataType.Date)]
+		[DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd-MM-yyyy}")]
+		public DateTime EndDate { get; set; }
+
         public MissionStatus Status { get; set; }
 
         public virtual List<Collaborator> CollList { get; set; }

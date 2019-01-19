@@ -51,7 +51,7 @@
 							@item.StartDate.ToString("dd/MM/yyyy")
 						</td>
 						<td>
-							if(@item.EndDate.Year > 1980)
+							@if(@item.EndDate.Year > 1980)
 							{
 							@item.EndDate.ToString("dd/MM/yyyy")
 							}

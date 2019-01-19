@@ -269,8 +269,15 @@ namespace Casablanca.Models.Database
             Db.SaveChanges();
         }
 
-        // Missions
-        public Mission GetMission(int id) {
+		// Missions
+
+		public void AddMission(Mission miss)
+		{
+			Db.Missions.Add(miss);
+			Db.SaveChanges();
+		}
+
+		public Mission GetMission(int id) {
             return Db.Missions.SingleOrDefault(m => m.Id == id);
         }
 
@@ -283,10 +290,12 @@ namespace Casablanca.Models.Database
 			return Db.Missions.ToList();
 		}
 
-		public void CreateMission(int id)
+		public int CreateMission(int id)
 		{
-			Db.Missions.Add(new Mission { ChiefId = id, StartDate = DateTime.Now, EndDate = DateTime.Now});
+			Mission tempMiss = new Mission { ChiefId = id, StartDate = DateTime.Now, EndDate = DateTime.Now, Status = MissionStatus.PLANNED};
+			Db.Missions.Add(tempMiss);
 			Db.SaveChanges();
+			return tempMiss.Id;
 		}
 
 		// ExpenseReports
