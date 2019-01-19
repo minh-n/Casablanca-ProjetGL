@@ -82,16 +82,14 @@ namespace Casablanca.Models.ExpenseReports {
             // TODO : compute who is the chiefvalidator depending on mission ?
         }
 
-        public bool Equals(ExpenseLine other, int id) {
-            //Debug.WriteLine("[" + this.Id + " ID " + other.Id + "]"); TODO : remove
+        public bool Equals(ExpenseLine other) {
             //Debug.WriteLine("[" + this.Mission + " Mission " + other.Mission + "]");
             //Debug.WriteLine("[" + this.Description + " Desc " + other.Description + "]");
             //Debug.WriteLine("[" + this.Cost + " Cost " + other.Cost + "]");
             //Debug.WriteLine("[" + this.Date + " Date " + other.Date + "]");
             //Debug.WriteLine("[" + this.Justificatory + " Justif " + other.Justificatory + "]");
 
-            return (id == other.Id &&
-                    this.Mission == other.Mission &&
+            return (this.Mission == other.Mission &&
                     this.Type == other.Type &&
                     this.Description == other.Description &&
                     this.Cost == other.Cost &&

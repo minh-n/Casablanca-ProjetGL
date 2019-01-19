@@ -57,7 +57,7 @@
 
 									@*Un bouton pour accéder à la note de frais en cours*@
 									<td>
-										@if (item.Status == ExpenseReportStatus.UNSENT)
+										@if (item.Status == ExpenseReportStatus.UNSENT || item.Status == ExpenseReportStatus.REFUSED)
 										{
 											<div>
 											@Html.ActionLink("Modifier", "UpdateExpenseReport", "ExpenseReport", new { id = item.Id }, null) | @Html.ActionLink("Envoyer", "SendExpenseReport", "ExpenseReport", new { id = item.Id }, null)

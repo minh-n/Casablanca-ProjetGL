@@ -125,11 +125,8 @@
 
                             <!-- Supprimer -->
                             <td>
-                                <span class="table-remove glyphicon glyphicon-remove"></span>
+                                <span class="table-remove fa fa-remove"> X </span>
                             </td>
-
-                            <!-- Dont move that v -->
-                            @Html.HiddenFor(model => Model.ExpenseReport.ExpenseLines[i].Id)
                         </tr>
 
                     }
@@ -176,11 +173,11 @@
             </td>
             @if (Model.ExpenseReport.Status == ExpenseReportStatus.REFUSED) {
                 <td>
-                    <text>x</text>
+                    <text> </text>
                 </td>
             }
             <td>
-                <span class="table-remove glyphicon glyphicon-remove"></span>
+                <span class="table-remove fa fa-remove"> X </span>
             </td>
         </tr>
     </table>
@@ -188,7 +185,7 @@
 
 @{
     // Magic by Morgan, do not touch
-    int toRemove = (@Model.ExpenseReport.Status == ExpenseReportStatus.REFUSED ? 3 : 2);
+    int toRemove = (@Model.ExpenseReport.Status == ExpenseReportStatus.REFUSED ? 2 : 1);
 }
 
 
@@ -221,7 +218,7 @@
                 for (var i = 0, td; i < (tr.children.length - toRemove); i++) {
                     td = tr.children[i];
 
-                    // Except for the glyphicon-remove and status (two last td in every row), change id of the td content 
+                    // Except for the fa-remove and status (two last td in every row), change id of the td content 
                     var idToChange = td.children[0].id;
                     td.children[0].id = idToChange.replace(/ExpenseReport_ExpenseLines_[0-9]+/, "ExpenseReport_ExpenseLines_" + j);
 

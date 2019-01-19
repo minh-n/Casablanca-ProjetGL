@@ -63,9 +63,9 @@
 						if (HelperModel.CheckManagement(coll))
 						{
 							<li class="nav-item dropdown">
-								<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-									Gestion <span class="glyphicon glyphicon-chevron-down"></span>
-								</a>
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Gestion
+                                </a>
 								<div class="dropdown-menu" aria-labelledby="navbarDropdown">
 
 									@if (!HelperModel.CheckCompta(coll))
@@ -92,9 +92,9 @@
 					@if (@User.Identity.IsAuthenticated)
 					{
 						<li class="nav-item dropdown">
-							<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								@coll.FirstName @coll.LastName <span class="glyphicon glyphicon-chevron-down"></span>
-							</a>
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                @coll.FirstName @coll.LastName
+                            </a>
 							<div class="dropdown-menu" aria-labelledby="navbarDropdown">
 								@Html.ActionLink("Mon profil", "UserProfile", "Home", null, new { @class = "btn" })
 								<div class="dropdown-divider"></div>

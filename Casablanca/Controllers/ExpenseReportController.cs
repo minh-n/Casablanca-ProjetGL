@@ -64,7 +64,7 @@ namespace Casablanca.Controllers {
         }
 
         // Changes the status of ER to PENDING_APPROVAL (from Index page)
-        public ActionResult SendExpenseReport(int id) {
+        public ActionResult SendExpenseReport(int id = 1) {
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                 return Redirect("/Home/Index");
 
@@ -87,7 +87,7 @@ namespace Casablanca.Controllers {
         }
 
         // Page where a coll can modify a given ER
-        public ActionResult UpdateExpenseReport(int id) {
+        public ActionResult UpdateExpenseReport(int id = 1) {
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                 return Redirect("/Home/Index");
 
@@ -132,7 +132,6 @@ namespace Casablanca.Controllers {
                 foreach (ExpenseLine el in model.ExpenseReport.ExpenseLines) {
                     // Create a new EL with the informations from the view
                     ExpenseLine newEL = new ExpenseLine(dal.GetMission(el.Mission.Id), el.Type, el.Description, el.Cost, el.Date, el.Justificatory) {
-                        Id = el.Id,
                         Validated = false,
                         Treated = Treatment.NOT_TREATED,
                         FinalValidation = false
@@ -140,7 +139,10 @@ namespace Casablanca.Controllers {
 
                     // Check if an EL exists with the same values (which means we did not modify this line)
                     foreach (ExpenseLine old in current.ExpenseLines) {
-                        if(newEL.Equals(old, el.Id)) {
+                        if (newEL.Equals(old)) {
+                            Debug.WriteLine(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+                            Debug.WriteLine(old.FinalValidation);
+                            newEL.Id = old.Id;
                             newEL.Validated = old.Validated;
                             newEL.Treated = old.Treated;
                             newEL.FinalValidation = old.FinalValidation;
@@ -156,7 +158,7 @@ namespace Casablanca.Controllers {
             dal.ClearExpenseLines(current);
 
             // Finally, add all new ELs to the current ER
-            foreach(ExpenseLine el in tempList) {
+            foreach (ExpenseLine el in tempList) {
                 current.AddLine(el);
             }
             dal.SaveChanges();
@@ -165,14 +167,14 @@ namespace Casablanca.Controllers {
         }
 
         // Visualize an already sent ER
-        public ActionResult ViewExpenseReport(int ERId) {
+        public ActionResult ViewExpenseReport(int ERId = 1) {
 
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                 return Redirect("/Home/Index");
 
             Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
             ExpenseReport model = dal.GetExpenseReport(ERId);
-            
+
             // if it is not our own ER = cannot see
             if (!coll.ExpenseReports.Contains(model))
                 return Redirect("/Home/Index");
@@ -209,17 +211,13 @@ namespace Casablanca.Controllers {
                 {
                     if (HelperModel.CheckCDSCompta(coll)) //CDS Compta
                     {
-                        Debug.WriteLine("is CDS compta");
-
                         if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_2) {
-                            Debug.WriteLine("Morgan recoit la note compta de " + e.Collaborator.FirstName);
                             ERListToBeReturnedAsModel.Add(e);
                         }
                         if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_1) {
-                            // in order to know if the Chief needs to see the ER
+                            // in order to know if the Chief needs to see the ER, check if coll is the chief of a mission in ELs
                             foreach (ExpenseLine el in e.ExpenseLines) {
                                 if (dal.GetCollaborator(el.Mission.ChiefId).Id == coll.Id) {
-                                    Debug.WriteLine("Morgan recoit la note CDS de " + e.Collaborator.FirstName);
                                     ERListToBeReturnedAsModel.Add(e);
                                     break;
                                 }
@@ -228,15 +226,11 @@ namespace Casablanca.Controllers {
                     }
                     else if (HelperModel.CheckCompta(coll)) //Compta
                     {
-                        Debug.WriteLine("is compta");
-
                         if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_2)
                             ERListToBeReturnedAsModel.Add(e);
                     }
                     else if (HelperModel.CheckCDS(coll)) //CDS
                     {
-                        Debug.WriteLine("is CDS ");
-
                         if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_1) {
                             // in order to know if the Chief needs to see the ER
                             //List<Mission> currentERMissionsList = new List<Mission>();
@@ -248,7 +242,6 @@ namespace Casablanca.Controllers {
                             }
                         }
                     }
-
                 }
             }
 
@@ -294,9 +287,6 @@ namespace Casablanca.Controllers {
 
         [HttpPost] // Backend call from ProcessCDS page
         public ActionResult ProcessCDS(ProcessExpenseLineVM model) {
-            // TODO : traiter les lignes Todo fini ?
-            // if not all checked, get model.ExpenseReportId et reset le status
-
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                 return Redirect("/Home/Index");
 
@@ -321,7 +311,7 @@ namespace Casablanca.Controllers {
                 foreach (ExpenseLine processedLine in model.ExpenseLines) {
                     allValidatedInProcessed &= processedLine.Validated;
 
-                    // Tick the Validated field of the EL and update the Treated fiedl
+                    // Tick the Validated field of the EL and update the Treated field
                     if (el.Id == processedLine.Id) {
                         el.Validated = processedLine.Validated;
                         el.Treated = Treatment.CDS;
@@ -335,11 +325,12 @@ namespace Casablanca.Controllers {
                 foreach (ExpenseLine el in er.ExpenseLines)
                     allValidated &= el.Validated;
 
+                // If all EL are validated, switch to next status
                 if (allValidated)
                     er.Status = ExpenseReportStatus.PENDING_APPROVAL_2;
             }
             else {
-                er.Status = ExpenseReportStatus.REFUSED; // we refused one or several lines
+                er.Status = ExpenseReportStatus.REFUSED; // We refused one or several lines
             }
 
             dal.SaveChanges();
@@ -348,17 +339,16 @@ namespace Casablanca.Controllers {
         }
 
         // Displays the ER a comptaboy needs to process
-        public ActionResult ProcessCompta(int ERId) {
+        public ActionResult ProcessCompta(int ERId = 1) {
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                 return Redirect("/Home/Index");
 
             Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+            ExpenseReport model = dal.GetExpenseReport(ERId);
 
-            // in compta or cannot see
             if (!HelperModel.CheckCompta(coll))
                 return Redirect("/Home/Index");
 
-            ExpenseReport model = dal.GetExpenseReport(ERId);
             return View(model);
         }
 
@@ -381,21 +371,24 @@ namespace Casablanca.Controllers {
             if (er.Status != ExpenseReportStatus.PENDING_APPROVAL_2)
                 return Redirect("/ExpenseReport/ProcessList");
 
-            //TODO check if all is processed
-            bool allValidated = true;
             // Check if all EL are validated 
-            foreach (ExpenseLine el in model.ExpenseLines) //Check model validation, not er
-            {
-                allValidated &= el.Validated;
+            bool allValidated = true;
+            foreach (ExpenseLine processedLine in model.ExpenseLines) {
+                allValidated &= processedLine.FinalValidation;
+                foreach (ExpenseLine el in er.ExpenseLines) {
+
+                    // Tick the Validated field of the EL and update the Treated field
+                    if (el.Id == processedLine.Id) {
+                        el.FinalValidation = processedLine.FinalValidation;
+                        el.Treated = Treatment.COMPTA;
+                    }
+                }
             }
 
-            if (allValidated) {
+            if (allValidated)
                 er.Status = ExpenseReportStatus.APPROVED;
-            }
-            else {
-                er.Status = ExpenseReportStatus.REFUSED; //we refused one or several lines
-                                                         //is refused equal to unsent? we need to transform refused to unsent
-            }
+            else
+                er.Status = ExpenseReportStatus.REFUSED; // We refused one or several lines
 
             dal.SaveChanges();
 
