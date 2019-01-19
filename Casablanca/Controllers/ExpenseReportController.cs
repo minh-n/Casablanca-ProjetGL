@@ -79,6 +79,10 @@ namespace Casablanca.Controllers {
             if (er.Collaborator.Id != coll.Id)
                 return Redirect("/ExpenseReport/Index");
 
+            if(er.ExpenseLines.Count == 0) {
+                return Redirect("/ExpenseReport/Index");
+            }
+
             // Change the status of the ER
             er.Status = ExpenseReportStatus.PENDING_APPROVAL_1;
             dal.SaveChanges();
@@ -117,7 +121,13 @@ namespace Casablanca.Controllers {
 
             // If validation fails
             if (!ModelState.IsValid) {
-                model.CollaboratorMissions = GetMissionsList(coll);
+                model.CollaboratorMissions = GetMissionsList(coll); // Put the missions list back into the model
+                foreach (ExpenseLine el in model.ExpenseReport.ExpenseLines) { // All dates that are not set go to Now
+                    if(el.Date == new DateTime(0001,01,01)) {
+                        el.Date = DateTime.Now;
+                    }
+                }
+
                 model.ExpenseReport.AddLine(new ExpenseLine()); // IMPORTANT : do not remove this line 
 
                 return View(model);
@@ -140,8 +150,6 @@ namespace Casablanca.Controllers {
                     // Check if an EL exists with the same values (which means we did not modify this line)
                     foreach (ExpenseLine old in current.ExpenseLines) {
                         if (newEL.Equals(old)) {
-                            Debug.WriteLine(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-                            Debug.WriteLine(old.FinalValidation);
                             newEL.Id = old.Id;
                             newEL.Validated = old.Validated;
                             newEL.Treated = old.Treated;
