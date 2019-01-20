@@ -125,7 +125,7 @@
 
                             <!-- Supprimer -->
                             <td>
-                                <span class="table-remove fa fa-remove"> X </span>
+                                <span class="table-remove fa fa-remove"></span>
                             </td>
                         </tr>
 
@@ -140,6 +140,12 @@
         </div>
         @Html.ValidationSummary("");
     }
+
+    <div id="informations">
+        <div>
+            Montant total de la note : <label id="montant">0</label> €
+        </div>
+    </div>
 
     <!-- This is our clonable table line -->
     <table id="additionnalrow" hidden>
@@ -177,7 +183,7 @@
                 </td>
             }
             <td>
-                <span class="table-remove fa fa-remove"> X </span>
+                <span class="table-remove fa fa-remove"></span>
             </td>
         </tr>
     </table>
@@ -193,25 +199,25 @@
     <script>
         // Script to add lines to the ER
         var $TABLE = $('#table');
+        var table = $TABLE.find('table').find('tbody');
         var toRemove = @toRemove;
 
         $('.table-add').click(function () {
-            // Add the line to the view and update line numbers
+            // Add a line to the view and update line numbers
             var $clone = $("#additionnalrow").find('tr.hide').clone(true).removeClass('hide table-line');
             $TABLE.find('table').append($clone);
             replaceIds();
         });
 
-        // Script to remove lines from the ER
         $('.table-remove').click(function () {
             // Remove a line and update line numbers
             $(this).parents('tr').detach();
             replaceIds();
+            computeTotalAmount();
         });
 
         // Script to give the right ID to the new line
         var replaceIds = function () {
-            var table = $TABLE.find('table').find('tbody');
             // For every row (tr)
             for (var j = 0, tr; tr = table.children("tr")[j]; j++) {
                 // For every column (td)
@@ -225,9 +231,32 @@
                     // Change the name of the td content
                     var nameToChange = $(td.children[0]).attr("name");
                     $(td.children[0]).attr("name", nameToChange.replace(/ExpenseReport\.ExpenseLines\[[0-9]+\]/, "ExpenseReport.ExpenseLines[" + j + "]"));
+
+                    if (i == 2) {
+                        td.children[0].addEventListener("input", function (e) {
+                            computeTotalAmount();
+                        });
+                    }
                 }
             }
         };
 
+
+        // Visual syntaxic sugar
+        var computeTotalAmount = function () {
+            var totalAmount = 0;
+
+            for (var j = 0; j < table.children("tr").length; j++) {
+                var amount = table.find("#ExpenseReport_ExpenseLines_" + j + "__Cost").val();
+                if (amount != "" && amount != undefined) {
+                    totalAmount += parseFloat(amount.replace(',', '.'));
+                }
+            }
+
+            $("#montant").text(totalAmount.toFixed(2));
+        };
+
+        // Start-up scripts
+        computeTotalAmount();
     </script>
 }
