@@ -37,6 +37,8 @@ namespace Casablanca.Models.Database {
 
 		// Leave
 		List<Leave> GetLeaves();
+		Leave GetLeave(int id);
+		int CreateLeave(Collaborator collaborator, LeaveType type);
 
 		// Helper
 		string EncodeMD5(string password);

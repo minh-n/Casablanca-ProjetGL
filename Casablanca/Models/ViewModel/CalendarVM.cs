@@ -23,10 +23,10 @@ namespace Casablanca.Models.ViewModel
 
 		public CalendarVM(Leave leave)
 		{
-			Title = "Congé ou RTT ou whatever"; //ou RTT etc whatever
+			Title = "salut leave " +leave.Type.ToString(); //ou RTT etc whatever
 			Desc = leave.EventName;
-			Start_Date = leave.StartDateString;
-			End_Date = leave.EndDateString;
+			Start_Date = leave.StartDate.ToString("yyyy-MM-dd");
+			End_Date = leave.EndDate.ToString("yyyy-MM-dd");
 			Color = leave.Color;
 		}
 	}

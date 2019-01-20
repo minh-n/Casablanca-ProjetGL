@@ -241,25 +241,25 @@ namespace Casablanca.Models.Database
 
 			#region Create leaves
 
-
 			List<Leave> leaves = new List<Leave>()
 			{
-				new Leave(LeaveStatus.PENDING_APPROVAL, GetCollaborator("Morgan", "FEURTE"), new DateTime(2019, 1, 05), new DateTime(2019, 1, 15)),
-				new Leave(LeaveStatus.REFUSED, GetCollaborator("Oubar", "MAYAKI"), new DateTime(2019, 1, 3), new DateTime(2019, 1, 6)),
-				new Leave(LeaveStatus.APPROVED, GetCollaborator("Oubar", "MAYAKI"), new DateTime(2019, 1, 4), new DateTime(2019, 1, 12)),
-				new Leave(LeaveStatus.PENDING_APPROVAL, GetCollaborator("Floriab", "LE PALLEC"), new DateTime(2019, 1, 9), new DateTime(2019, 1, 11)),
-				new Leave(LeaveStatus.APPROVED, GetCollaborator("Nathon", "BONNARD"), new DateTime(2019, 1, 19), new DateTime(2019, 1, 22)),
-				new Leave(LeaveStatus.PENDING_APPROVAL, GetCollaborator("Nathon", "BONNARD"), new DateTime(2019, 1, 1), new DateTime(2019, 1, 12)),
-				new Leave(LeaveStatus.PENDING_APPROVAL, GetCollaborator("Momo", "BELDI"), new DateTime(2019, 2, 1), new DateTime(2019, 2, 8)),
-				new Leave(LeaveStatus.APPROVED, GetCollaborator("Thibal", "WITCZAK"), new DateTime(2019, 1, 05), new DateTime(2019, 2, 15)),
-				new Leave(LeaveStatus.PENDING_APPROVAL, GetCollaborator("Minh", "NGUYEN"), new DateTime(2019, 2, 4), new DateTime(2019, 2, 5)),
+				new Leave(LeaveStatus.PENDING_APPROVAL, LeaveType.OTHER, GetCollaborator("Morgan", "FEURTE"), new DateTime(2019, 1, 05), new DateTime(2019, 1, 15)),
+				new Leave(LeaveStatus.REFUSED, LeaveType.PAID, GetCollaborator("Oubar", "MAYAKI"), new DateTime(2019, 1, 3), new DateTime(2019, 1, 6)),
+				new Leave(LeaveStatus.APPROVED, LeaveType.PAID, GetCollaborator("Oubar", "MAYAKI"), new DateTime(2019, 1, 4), new DateTime(2019, 1, 12)),
 
-				new Leave(LeaveStatus.REFUSED, GetCollaborator("Thibal", "WITCZAK"), new DateTime(2018, 12, 05), new DateTime(2019, 1, 15)),
-				new Leave(LeaveStatus.APPROVED, GetCollaborator("Minh", "NGUYEN"), new DateTime(2019, 3, 4), new DateTime(2019, 9, 18)) //je vais au Japon frère
+				new Leave(LeaveStatus.PENDING_APPROVAL, LeaveType.PAID, GetCollaborator("Floriab", "LE PALLEC"), new DateTime(2019, 1, 9), new DateTime(2019, 1, 11)),
+				new Leave(LeaveStatus.APPROVED, LeaveType.PAID, GetCollaborator("Nathon", "BONNARD"), new DateTime(2019, 1, 19), new DateTime(2019, 1, 22)),
+				new Leave(LeaveStatus.PENDING_APPROVAL, LeaveType.RTT, GetCollaborator("Nathon", "BONNARD"), new DateTime(2019, 1, 1), new DateTime(2019, 1, 12)),
+
+				new Leave(LeaveStatus.PENDING_APPROVAL, LeaveType.RTT, GetCollaborator("Momo", "BELDI"), new DateTime(2019, 2, 1), new DateTime(2019, 2, 8)),
+				new Leave(LeaveStatus.APPROVED, LeaveType.PAID, GetCollaborator("Thibal", "WITCZAK"), new DateTime(2019, 1, 05), new DateTime(2019, 2, 15)),
+				new Leave(LeaveStatus.PENDING_APPROVAL, LeaveType.PAID, GetCollaborator("Minh", "NGUYEN"), new DateTime(2019, 2, 4), new DateTime(2019, 2, 5)),
+
+				new Leave(LeaveStatus.REFUSED, LeaveType.RTT, GetCollaborator("Thibal", "WITCZAK"), new DateTime(2018, 12, 05), new DateTime(2019, 1, 15)),
+				new Leave(LeaveStatus.APPROVED, LeaveType.PAID, GetCollaborator("Minh", "NGUYEN"), new DateTime(2019, 3, 4), new DateTime(2019, 9, 18)) //je vais au Japon frère
 
 			};
 			
-
 			foreach (Leave l in leaves)
 			{
 				Db.Leaves.Add(l);
@@ -407,6 +407,18 @@ namespace Casablanca.Models.Database
 			return Db.Leaves.ToList();
 		}
 
+		public Leave GetLeave(int id)
+		{
+			return Db.Leaves.SingleOrDefault(s => s.Id == id);
+		}
+
+		public int CreateLeave(Collaborator collaborator, LeaveType type)
+		{
+			Leave tempLeave = new Leave(LeaveStatus.PENDING_APPROVAL, type, collaborator, DateTime.Now, DateTime.Now);
+			Db.Leaves.Add(tempLeave);
+			Db.SaveChanges();
+			return tempLeave.Id;
+		}
 
 		// Helper
 		public string EncodeMD5(string pass) {

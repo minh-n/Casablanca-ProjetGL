@@ -24,8 +24,8 @@ namespace Casablanca
 
 			// Custom Calendar.
 			bundles.Add(new ScriptBundle("~/bundles/Script-calendar").Include(
-								 "~/Scripts/script-custom-calendar.js"));
-
+								 "~/Scripts/script-custom-calendar.js",
+								 "~/Scripts/locale/fr.js"));
 
 			bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",

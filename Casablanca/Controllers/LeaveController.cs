@@ -10,6 +10,8 @@ using System.IO;
 using System.Diagnostics;
 using System.Reflection;
 using Casablanca.Models.Database;
+using Casablanca.Models;
+using System.Globalization;
 
 namespace Casablanca.Controllers
 {
@@ -18,61 +20,119 @@ namespace Casablanca.Controllers
         private IDal dal;
         public LeaveController() : this(new Dal()) { }
         private LeaveController(IDal dal) { this.dal = dal; }
-
-
-        #region Index method
-
-        /// <summary>
-        /// GET: Home/Index method.
-        /// </summary>
-        /// <returns>Returns - index view page</returns> 
+		
         public ActionResult Index()
+		{
+			//------------Background identity check-------------//
+			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+				return Redirect("/Home/Index");
+			Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+			//--------------------------------------------------//
+			
+			// fill the leave table
+			List<Leave> model = new List<Leave>();
+
+			foreach (Leave l in dal.GetLeaves())
+			{
+				if (l.Collaborator.Id == coll.Id)
+					model.Add(l);
+			}
+			return View(model);
+		}
+
+
+		#region Calendar
+
+		public ActionResult CalendarViewFull()
 		{
 			return this.View();
 		}
 
-		#endregion
-
-		#region Get Calendar data method.
-
-		/// <summary>
-		/// GET: /Home/GetCalendarData
-		/// </summary>
-		/// <returns>Return data</returns>
 		public ActionResult GetCalendarData()
 		{
-			// Initialization.
+			// Initialization
 			JsonResult result = new JsonResult();
 
 			try
 			{
-				// Loading.
-				//List<PublicHoliday> data = this.LoadData();
+				// Loading
 				List<CalendarVM> data = ConvertLeavesIntoCalendarVM();
 				
-				// Processing.
+				// Processing
 				result = this.Json(data, JsonRequestBehavior.AllowGet);
 			}
 			catch (Exception ex){Console.Write(ex);}
 			return result;
 		}
-		#endregion
 
 		public List<CalendarVM> ConvertLeavesIntoCalendarVM()
 		{
 			List<CalendarVM> leaves = new List<CalendarVM>();
 
-			foreach(Leave l in dal.GetLeaves())
+			foreach (Leave l in dal.GetLeaves())
 			{
-				//CalendarVM cal = new CalendarVM("titre vm", l.EventName, l.StartDateString, l.EndDateString);
-				CalendarVM cal = new CalendarVM(l);
-
-				leaves.Add(cal);
-				Debug.WriteLine("Salut conversion. Cal = " + cal.Desc + " " + cal.Start_Date);
+				Debug.WriteLine("Salut Alban = " + l.EventName + "#  " +  l.Collaborator.LastName);
+				
+				leaves.Add(new CalendarVM(l));
 			}
 			return leaves;
 		}
+		#endregion
 
+
+		#region Create and Edit Leave
+
+		[HttpPost] // Backend call of create page
+		public ActionResult CreateLeave()
+		{
+			//------------Background identity check-------------//
+			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+				return Redirect("/Home/Index");
+			Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+			//--------------------------------------------------//
+
+			// Create the ER
+			int returnedId = dal.CreateLeave(coll, LeaveType.OTHER); //temporary OTHER, TODO
+			string redirectString = "/Leave/UpdateLeave/?id=" + returnedId;
+
+			return Redirect(redirectString);
+		}
+
+		public ActionResult UpdateLeave(int id)
+		{
+			//------------Background identity check-------------//
+			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+				return Redirect("/Home/Index");
+
+			Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+			//--------------------------------------------------//
+
+			return View(dal.GetLeave(id));
+		}
+
+		[HttpPost] // Backend call of UpdateLeave page
+		public ActionResult UpdateLeave(Leave leave, int id)
+		{
+			//------------Background identity check-------------//
+			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+				return Redirect("/Home/Index");
+			//Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+			//--------------------------------------------------//
+
+
+			// Create the leave. TODO : check model state validity ?
+
+			dal.GetLeave(id).EventName = leave.EventName;
+			dal.GetLeave(id).EndDate = leave.EndDate;
+			dal.GetLeave(id).StartDate = leave.StartDate;
+
+			dal.SaveChanges();
+
+			return Redirect("/Leave/Index");
+		}
+
+
+		#endregion
 
 	}
 }

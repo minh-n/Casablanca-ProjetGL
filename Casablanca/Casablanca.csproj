@@ -361,7 +361,6 @@
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Home\CollaboratorList.cshtml" />
-    <Content Include="Views\Leave\Process.cshtml" />
     <Content Include="Views\Home\CollaboratorView.cshtml" />
     <Content Include="Views\ExpenseReport\Index.cshtml" />
     <Content Include="Views\ExpenseReport\UpdateExpenseReport.cshtml" />
@@ -387,9 +386,10 @@
     <Content Include="Views\Mission\Index.cshtml" />
     <Content Include="Views\Mission\ProcessMission.cshtml" />
     <Content Include="Views\ExpenseReport\OneStepProcess.cshtml" />
-    <Content Include="Views\Leave\Indexold.cshtml" />
-    <Content Include="Views\Leave\_CalendarPartial.cshtml" />
     <Content Include="Views\Leave\Index.cshtml" />
+    <Content Include="Views\Leave\CalendarViewFull.cshtml" />
+    <Content Include="Views\Leave\ProcessList.cshtml" />
+    <Content Include="Views\Leave\UpdateLeave.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
