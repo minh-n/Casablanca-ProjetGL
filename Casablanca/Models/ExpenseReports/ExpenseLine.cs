@@ -11,6 +11,7 @@ namespace Casablanca.Models.ExpenseReports {
         RESTAURANT,
         HOTEL,
         TAXI,
+        ADVANCE,
         OTHER
     }
 

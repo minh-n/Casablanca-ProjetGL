@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Casablanca.Models.ViewModel
 {
-    public class PublicHoliday
+    public class CalendarVM
     {
         public int Id { get; set; }
         public string Title { get; set; }
@@ -11,7 +11,7 @@ namespace Casablanca.Models.ViewModel
         public string Start_Date { get; set; }
         public string End_Date { get; set; }
 
-		public PublicHoliday(string title, string desc, string start_Date, string end_Date)
+		public CalendarVM(string title, string desc, string start_Date, string end_Date)
 		{
 			Title = title;
 			Desc = desc;
@@ -19,7 +19,4 @@ namespace Casablanca.Models.ViewModel
 			End_Date = end_Date;
 		}
 	}
-
-
-
 }
