@@ -32,8 +32,9 @@ namespace Casablanca.Models.Database
 		 */
 		public void InitializeDatabase() {
 
-            // Create services
-            Services = new List<Service> {
+			#region Create services
+
+			Services = new List<Service> {
                 new Service("Informatique d'entreprise"),	//0
                 new Service("Direction"),					//1
                 new Service("Compta"),						//2
@@ -43,8 +44,10 @@ namespace Casablanca.Models.Database
 				new Service("Positionnement stratégique digitalisé")	//6
 			};
 
-            // Create collaborators
-            Collaborators = new List<Collaborator> {
+			#endregion
+
+			#region Create collaborators
+			Collaborators = new List<Collaborator> {
                 new Collaborator("Morgan", "FEURTE", "mo", EncodeMD5("go")),
                 new Collaborator("Minh", "NGUYEN", "cds", EncodeMD5("cds")),
                 new Collaborator("Adrien", "LAVILLONNIERE", "adm", EncodeMD5("adm")),
@@ -64,7 +67,9 @@ namespace Casablanca.Models.Database
 				new Collaborator("Kevon", "LOCOSTE", "kvn", EncodeMD5("kvn")) 
 
 			};
+			#endregion 
 
+			#region Add coll to services
 
 			// Add coll to services
 
@@ -96,6 +101,9 @@ namespace Casablanca.Models.Database
 
 			AddToService(6, 16); //kvn cds Positionnement stratégique digitalisé
 
+			#endregion
+
+			#region Add admin roles
 
 			// Add admin role to Adrien
 			Collaborators[2].Role = Roles.ADMIN;
@@ -109,8 +117,9 @@ namespace Casablanca.Models.Database
 			Collaborators[16].Role = Roles.CHIEF; //KVN is now CDS Digital
 			Collaborators[10].Role = Roles.CHIEF; //Momo is DRH
 
+			#endregion
 
-			// Create missions
+			#region Create missions
 			Missions = new List<Mission> {
 				new Mission("Mission A", DateTime.Today, new DateTime(2019, 5, 1), MissionStatus.IN_PROGRESS),
 				new Mission("Mission B", new DateTime(2019, 2, 9), new DateTime(2019, 3, 1), MissionStatus.PLANNED),
@@ -122,11 +131,10 @@ namespace Casablanca.Models.Database
 				new Mission("Mission H", new DateTime(2019, 2, 11), MissionStatus.IN_PROGRESS)
 
 			};
+			#endregion
 
+			#region Adding every lists above to the database
 
-			/*
-			 * Adding every lists above to the database
-			 */
 			foreach (Service s in Services) {
                 Db.Services.Add(s);
             }
@@ -140,8 +148,10 @@ namespace Casablanca.Models.Database
             }
 
             Db.SaveChanges();
+			#endregion
 
-			// Assign missions to collaborators
+			#region Assign missions to collaborators and setting chiefId
+
 			GetCollaborator("Arthur", "BINELLI").Missions.Add(GetMission("Mission A"));
             GetCollaborator("Arthur", "BINELLI").Missions.Add(GetMission("Mission C"));
             GetCollaborator("Arthur", "BINELLI").Missions.Add(GetMission("Mission E"));
@@ -189,8 +199,11 @@ namespace Casablanca.Models.Database
 
 			Db.SaveChanges();
 
-            // Create some expense reports 
-            ExpenseReports = new List<ExpenseReport>() {
+			#endregion
+
+			#region Create some expense reports 
+
+			ExpenseReports = new List<ExpenseReport>() {
                 new ExpenseReport(GetCollaborator("Arthur", "BINELLI"), Month.DECEMBER, 2018, ExpenseReportStatus.PENDING_APPROVAL_2),
 				new ExpenseReport(GetCollaborator("Floriab", "LE PALLEC"), Month.DECEMBER, 2018, ExpenseReportStatus.PENDING_APPROVAL_1),
 				new ExpenseReport(GetCollaborator("Oubar", "MAYAKI"), Month.JANUARY, 2019, ExpenseReportStatus.UNSENT),
@@ -223,7 +236,8 @@ namespace Casablanca.Models.Database
 			//}
 
 			Db.SaveChanges();
-        }
+			#endregion 
+		}
 
 		// ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
