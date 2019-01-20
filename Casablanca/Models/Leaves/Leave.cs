@@ -9,9 +9,10 @@ using System.Diagnostics;
 namespace Casablanca.Models.Leaves {
     public enum LeaveStatus {
         APPROVED,
-        PENDING_APPROVAL,
-        REFUSED
-    }
+        PENDING_APPROVAL_1,
+		PENDING_APPROVAL_2,
+		REFUSED
+	}
 
 	public enum LeaveType
 	{
@@ -35,8 +36,8 @@ namespace Casablanca.Models.Leaves {
 		public DateTime StartDate { get; set; }
 		public DateTime EndDate { get; set; }
 
-		public string StartDateString { get; set; }
-		public string EndDateString { get; set; }
+		public bool StartMorningOrAfternoon { get; set; } //true for leave starting on Morning, false for on Afternoon
+		public bool EndMorningOrAfternoon { get; set; } //true for leave ending on Morning, false for on Afternoon
 
 		public Leave(LeaveStatus status, LeaveType type, Collaborator collaborator, DateTime startDate, DateTime endDate)
 		{
@@ -53,9 +54,13 @@ namespace Casablanca.Models.Leaves {
 			{
 				this.Color = "#256cbf";
 			}
-			else if (status == LeaveStatus.PENDING_APPROVAL)
+			else if (status == LeaveStatus.PENDING_APPROVAL_1)
 			{
 				this.Color = "#c69b00";
+			}
+			else if (status == LeaveStatus.PENDING_APPROVAL_2)
+			{
+				this.Color = "#c68b90";
 			}
 			else
 			{

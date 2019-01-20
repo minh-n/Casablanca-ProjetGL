@@ -10,22 +10,23 @@
 @Styles.Render("~/Content/themes/base/jquery-ui.min.css")
 
 
-<h2>Récapitulatif des congés</h2>
+<h2>Demandes de congé</h2>
 <div class="row">
-
 
 	<div class="col-lg-6">
 		<div id="calendar"></div> <!-- FULL CALENDAR -->
+
+		<p style="padding:20px">TODO : légende des couleurs.</p>
 	</div>
 
 
 	<div class="col-lg-6">
 		<div class="jumbotron">
-			<b>Jours de congés restants : </b> 5
+			<b>Jours de congés restants : </b> 5TODO
 			<br>
-			<b>Jours de congés en attente : </b> 9
+			<b>Jours de congés en attente : </b> 9TODO
 			<br>
-			<b>Jours de congés déjà pris : </b> 176
+			<b>Jours de congés déjà pris : </b> 176TODO
 			<br>
 		</div>
 		@using (Html.BeginForm("CreateLeave", "Leave", FormMethod.Post))
@@ -36,82 +37,88 @@
 				@Html.ValidationSummary("")
 			</div>
 		}
+
+
+
+		<div class="table-responsive">
+			<table id="table"
+				   class="table"
+				   data-toggle="table"
+				   data-search="true">
+
+				@if (Model.Count() == 0)
+				{
+					<tr style="padding:15px">
+						<td colspan="10">Aucune demande de congé trouvée.</td>
+					</tr>
+				}
+				else
+				{
+					<thead>
+						<tr>
+							<th scope="col" data-field="description" data-sortable="true">Description</th>
+							<th scope="col" data-field="type" data-sortable="true">Type</th>
+							<th scope="col" data-field="begin" data-sortable="true">Date de début</th>
+							<th scope="col" data-field="end" data-sortable="true">Date de fin</th>
+							<th scope="col" data-field="demijour" data-sortable="true">Nb demi-journées</th>
+
+							<th scope="col" data-field="status" data-sortable="true">Statut</th>
+
+							<th scope="col" data-field="action" data-sortable="false">Action</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (Leave item in Model)
+						{
+						<tr>
+							<td>
+								@item.EventName
+							</td>
+							<td>
+								@HelperModel.ToString(@item.Type)
+							</td>
+							<td>
+								@item.StartDate.ToString("dd/MM/yyyy")
+							</td>
+							<td>
+								@item.EndDate.ToString("dd/MM/yyyy")
+							</td>
+							<td>
+								Nb TODO
+							</td>
+							<td>
+								@HelperModel.ToString(item.Status)
+
+							</td>
+
+
+							<!--traiter-->
+							<td>
+								@Html.ActionLink("Voir", "ViewLeave", "Leave", new { id = item.Id }, null) 
+								<!--TODO ! Modifier ou supprimer la note ?-->
+								<!-- ??? eske on peut modifier une demande de congé ?-->
+								@*@if ((item.Status == LeaveStatus.PENDING_APPROVAL_1) | (item.Status == LeaveStatus.PENDING_APPROVAL_2))
+															*@
+
+							</td>
+						</tr>
+						}
+					</tbody>
+				}
+			</table>
+		</div>
+
+
+
 	</div>
 </div>
 
 
-<div class="table-responsive">
-	<table id="table"
-		   class="table"
-		   data-toggle="table"
-		   data-search="true">
-
-		@if (Model.Count() == 0)
-		{
-			<tr>
-				<td colspan="10">Aucune demande de congé trouvée.</td>
-			</tr>
-		}
-		else
-		{
-			<thead>
-				<tr>
-					<th scope="col" data-field="description" data-sortable="true">Description</th>
-					<th scope="col" data-field="type" data-sortable="true">Type</th>
-					<th scope="col" data-field="begin" data-sortable="true">Date de début</th>
-					<th scope="col" data-field="end" data-sortable="true">Date de fin</th>
-					<th scope="col" data-field="status" data-sortable="true">Statut</th>
-
-					<th scope="col" data-field="action" data-sortable="false">Action</th>
-				</tr>
-			</thead>
-			<tbody>
-				@foreach (Leave item in Model)
-				{
-					<tr>
-						<td>
-							@item.EventName
-						</td>
-						<td>
-							@item.Type
-						</td>
-						<td>
-							@item.StartDate.ToString("dd/MM/yyyy")
-						</td>
-						<td>
-							@item.EndDate.ToString("dd/MM/yyyy")
-						</td>
-						<td>
-							@switch (item.Status)
-							{
-								case LeaveStatus.APPROVED:<text>Approuvée</text>break;
-							case LeaveStatus.PENDING_APPROVAL: <text>En cours de traitement</text>break;
-						case LeaveStatus.REFUSED: <text>Refusée</text>break;
-				}
-						</td>
-
-						<!--traiter-->
-						<td>
-
-							@Html.ActionLink("Voir", "UpdateLeave", "Leave", new { id = item.Id }, null)
-
-						</td>
-					</tr>
-				}
-			</tbody>
-		}
-	</table>
-</div>
-
-<button id="refresh">
-	Bouton test TODO refresh cal
-</button>
-
 @section Scripts{
-	<script>
+	@*<script>
 		$('#refresh').click(function () {
 			$("#calendar").fullCalendar("refetchEvents");
 		});
-	</script>
+	</script>*@
 	
 }

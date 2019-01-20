@@ -12,6 +12,8 @@ namespace Casablanca.Models.ViewModel
 		public string Start_Date { get; set; }
 		public string End_Date { get; set; }
 		public string Color { get; set; }
+		public string URL { get; set; }
+
 
 		public CalendarVM(string title, string desc, string start_Date, string end_Date)
 		{
@@ -23,7 +25,7 @@ namespace Casablanca.Models.ViewModel
 
 		public CalendarVM(Leave leave)
 		{
-			Title = "salut leave " +leave.Type.ToString(); //ou RTT etc whatever
+			Title =  leave.Collaborator.LastName + " ("+  leave.Collaborator.Service.Name +  ") - " + leave.Type.ToString(); //Name (Service) - LeaveType
 			Desc = leave.EventName;
 			Start_Date = leave.StartDate.ToString("yyyy-MM-dd");
 			End_Date = leave.EndDate.ToString("yyyy-MM-dd");

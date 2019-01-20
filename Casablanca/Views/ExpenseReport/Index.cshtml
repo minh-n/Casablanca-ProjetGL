@@ -6,7 +6,7 @@
     ViewBag.Title = "Mes frais";
 }
 <!-- Bootstrap Table Style -->
-@Styles.Render("//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/bootstrap-table.min.css")
+@Styles.Render("/Content/bootstrap-table.min.css")
 
 @model List<ExpenseReport>
 
@@ -37,13 +37,7 @@
                     <td>@item.TotalCost</td>
                     <td>@item.NbLines</td>
                     <td>
-                        @switch (item.Status) {
-                            case ExpenseReportStatus.UNSENT:<text>Non envoyée</text>break;
-                        case ExpenseReportStatus.REFUSED: <text>Refusée</text>break;
-                    case ExpenseReportStatus.APPROVED: <text>Approuvée</text>break;
-                case ExpenseReportStatus.PENDING_APPROVAL_1: <text>Validation chef de service en cours</text>break;
-            case ExpenseReportStatus.PENDING_APPROVAL_2: <text>Validation compta en cours</text>break;
-    }
+						@HelperModel.ToString(item.Status)
                     </td>
 
                     @*Un bouton pour accéder à la note de frais en cours*@
@@ -112,6 +106,6 @@ else if (months.Count != 0) {
 
 @section Scripts {
     <!-- Bootstrap table -->
-    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.13.1/bootstrap-table.js"></script>
+    <script src="~/Scripts/bootstrap-table.js"></script>
 
 }

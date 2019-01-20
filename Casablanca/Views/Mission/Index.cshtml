@@ -56,14 +56,9 @@
 							@item.EndDate.ToString("dd/MM/yyyy")
 							}
 						</td>
+
 						<td>
-							@switch (item.Status)
-							{
-								case MissionStatus.CANCELED:<text>Annulée</text>break;
-							case MissionStatus.COMPLETED: <text>Complétée</text>break;
-						case MissionStatus.IN_PROGRESS: <text>En cours</text>break;
-					case MissionStatus.PLANNED: <text>Planifiée</text>break;
-			}
+							@HelperModel.ToString(@item.Status)
 						</td>
 
 						<!--traiter-->
@@ -96,6 +91,6 @@
 
 @section Scripts {
 	<!-- Bootstrap table -->
-	<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.13.1/bootstrap-table.js"></script>
+	<script href="/Content/bootstrap-table.js"></script>
 
 }

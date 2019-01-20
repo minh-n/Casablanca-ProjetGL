@@ -40,8 +40,19 @@ namespace Casablanca.Controllers
 			return View(model);
 		}
 
+		public ActionResult ViewLeave(int id = 1)
+		{
+			//------------Background identity check-------------//
+			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+				return Redirect("/Home/Index");
+			Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+			//--------------------------------------------------//
+			
+			return View(dal.GetLeave(id));
+		}
 
-		#region Calendar
+
+		#region Calendar Helpers
 
 		public ActionResult CalendarViewFull()
 		{
@@ -71,7 +82,7 @@ namespace Casablanca.Controllers
 
 			foreach (Leave l in dal.GetLeaves())
 			{
-				Debug.WriteLine("Salut Alban = " + l.EventName + "#  " +  l.Collaborator.LastName);
+				//Debug.WriteLine("Salut  = " + l.EventName + "#  " +  l.Collaborator.LastName);
 				
 				leaves.Add(new CalendarVM(l));
 			}
@@ -92,7 +103,7 @@ namespace Casablanca.Controllers
 			//--------------------------------------------------//
 
 			// Create the ER
-			int returnedId = dal.CreateLeave(coll, LeaveType.OTHER); //temporary OTHER, TODO
+			int returnedId = dal.CreateLeave(coll, LeaveType.RTT); //temporary OTHER, TODO
 			string redirectString = "/Leave/UpdateLeave/?id=" + returnedId;
 
 			return Redirect(redirectString);
@@ -122,6 +133,7 @@ namespace Casablanca.Controllers
 
 			// Create the leave. TODO : check model state validity ?
 
+			dal.GetLeave(id).Type = leave.Type;
 			dal.GetLeave(id).EventName = leave.EventName;
 			dal.GetLeave(id).EndDate = leave.EndDate;
 			dal.GetLeave(id).StartDate = leave.StartDate;
@@ -134,5 +146,27 @@ namespace Casablanca.Controllers
 
 		#endregion
 
+
+
+		#region Process Leaves
+
+		public ActionResult ProcessList()
+		{
+			//------------Background identity check-------------//
+			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+				return Redirect("/Home/Index");
+
+			Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+
+			//not in management OR isCompta = cannot see
+			if ((HelperModel.CheckManagement(coll) == false))
+				return Redirect("/Home/Index");
+			//--------------------------------------------------//
+
+			return View();
+		}
+
+
+		#endregion
 	}
 }

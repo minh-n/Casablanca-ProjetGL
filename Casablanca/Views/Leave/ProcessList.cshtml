@@ -7,15 +7,13 @@
 
 @model  List<Leave>
 
-@Styles.Render("~/Content/Calendar.css")
-
 <div class="col-lg-5">
     <h2 style="text-align:center;">Calendrier des congés actuels</h2>
     <div id="calendar"></div>
 </div>
 
 <div class="col-lg-7">
-    <h2>Demandes de congés en cours DEBUG:RH</h2>
+    <h2>Demandes de congés en cours</h2>
 
     <table class="table">
         <thead>
@@ -56,13 +54,13 @@
                 <td>09/08</td>
                 <td><button class="btn">Valider congé</button></td>
             </tr>
-            <tr>
-                <th scope="row">5</th>
-                <td>01/08 -> 23/08</td>
-                <td>01/08</td>
-                <td>Yao SHI</td>
-                <td><button class="btn">Valider congé</button></td>
-            </tr>
+			<tr>
+				<th scope="row">5</th>
+				<td>Yao SHI</td>
+				<td>01/08 -> 23/08</td>
+				<td>01/08</td>
+				<td><button class="btn">Valider congé</button></td>
+			</tr>
         </tbody>
     </table>
 </div>
@@ -70,7 +68,6 @@
 @section Scripts
 {
     <script src="~/Scripts/moment.js"></script>
-    <script src="~/Scripts/Congé/Calendar.js"></script>
 
     <script>
     // Conversion des données de congés en javascript et création du calendrier

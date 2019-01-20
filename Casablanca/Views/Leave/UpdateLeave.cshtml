@@ -9,74 +9,80 @@
 <h2 class="text-left">Modifier une demande de congé </h2>
 
 
-<div>
+<div align="center">
 	@using (Html.BeginForm())
 	{
 		<hr />
-		<dl class="dl-horizontal">
-			<dt>
+		<div>
+			<div style="padding:10px">
 				Description du congé
-			</dt>
-			<dd>
-				@Html.TextBoxFor(model => model.EventName)
-			</dd>
+
+				@Html.TextBoxFor(model => model.EventName, new { style = "width:500px;" })
+			</div>
 
 
-			<dt>
+			<!-- Type -->
+			<div style="padding:10px">
 				Type du congé
-			</dt>
-			<dd>
+
 				@Html.DropDownListFor(model => Model.Type,
 								(LeaveType.GetValues(typeof(LeaveType))).Cast<LeaveType>().ToList().Select(type => new SelectListItem {
 									Text = type.ToString(),
 									Value = type.ToString(),
 									Selected = (type == Model.Type)
 								}))
-			</dd>
-			<dt>
-				Date de début
-			</dt>
-
-			<dd style="padding:10px">
-
-				<div>
-					@Html.TextBoxFor(model => Model.StartDate,
-							  new { @type = "date", @class = "form-control datepicker", @Value = Model.StartDate.ToString("dd-MM-yyyy") })
-				</div>
-			</dd>
-
-			<dt>
-				Date de fin
-			</dt>
-
-			<dd style="padding:10px">
-
-				<div>
-					@Html.TextBoxFor(model => Model.EndDate,
-							  new { @type = "date", @class = "form-control datepicker", @Value = Model.EndDate.ToString("dd-MM-yyyy") })
-				</div>
-			</dd>
-
-
-			<div style="padding:20px">
-
-				salut TEST TODO
 			</div>
 
 
-			<dt>
-				Statut du congé
-			</dt>
 
-			<dd>
+			<!-- StartDate -->
+
+			<div style="padding:10px">
+				Date de début
+
+
+
+				@Html.TextBoxFor(model => Model.StartDate,
+						  new { @type = "date", @class = "form-control datepicker", @Value = Model.StartDate.ToString("dd-MM-yyyy") })
+
+			</div>
+
+
+
+			<!-- EndDate -->
+
+			<div style="padding:10px">
+				Date de fin
+
+
+
+				@Html.TextBoxFor(model => Model.EndDate,
+						  new { @type = "date", @class = "form-control datepicker", @Value = Model.EndDate.ToString("dd-MM-yyyy") })
+
+			</div>
+
+
+
+
+
+
+			<!-- Displaying status -->
+			<div style="padding:10px">
+				(DEBUG) Statut du congé
+
 				@Html.DisplayFor(model => model.Status)
-			</dd>
+			</div>
 
-		</dl>
+		</div>
+
+
+
 
 		<div style="padding:10px">
 			<input type="submit" value="Sauvegarder" />
 		</div>
+
+
 
 		@Html.ValidationSummary("");
 	}
