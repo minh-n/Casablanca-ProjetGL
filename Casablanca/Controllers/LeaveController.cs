@@ -28,7 +28,6 @@ namespace Casablanca.Controllers
         /// <returns>Returns - index view page</returns> 
         public ActionResult Index()
 		{
-			// Info.
 			return this.View();
 		}
 
@@ -49,31 +48,31 @@ namespace Casablanca.Controllers
 			{
 				// Loading.
 				//List<PublicHoliday> data = this.LoadData();
-				List<CalendarVM> data = new List<CalendarVM>();
-				data.Add(new CalendarVM("salut", "description", "2019-01-03", "2019-01-08"));
-				data.Add(new CalendarVM("salut2", "descriddddption", "2019-01-03", "2019-01-08"));
-
-				data.Add(new CalendarVM("salut4", "descripfdgdtion", "2019-01-11", "2019-01-18"));
-
-				data.Add(new CalendarVM("salut6", "descriptgion", "2019-01-08", "2019-01-09"));
-
-				data.Add(new CalendarVM("salut5", "descrigption", "2019-02-03", "2019-06-08"));
-
-
+				List<CalendarVM> data = ConvertLeavesIntoCalendarVM();
+				
 				// Processing.
 				result = this.Json(data, JsonRequestBehavior.AllowGet);
 			}
-			catch (Exception ex)
-			{
-				// Info
-				Console.Write(ex);
-			}
-
-			// Return info.
+			catch (Exception ex){Console.Write(ex);}
 			return result;
 		}
-
 		#endregion
+
+		public List<CalendarVM> ConvertLeavesIntoCalendarVM()
+		{
+			List<CalendarVM> leaves = new List<CalendarVM>();
+
+			foreach(Leave l in dal.GetLeaves())
+			{
+				//CalendarVM cal = new CalendarVM("titre vm", l.EventName, l.StartDateString, l.EndDateString);
+				CalendarVM cal = new CalendarVM(l);
+
+				leaves.Add(cal);
+				Debug.WriteLine("Salut conversion. Cal = " + cal.Desc + " " + cal.Start_Date);
+			}
+			return leaves;
+		}
+
 
 	}
 }

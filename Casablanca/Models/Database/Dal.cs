@@ -7,6 +7,7 @@ using Casablanca.Models.ExpenseReports;
 using System.Security.Cryptography;
 using System.Text;
 using System.Diagnostics;
+using Casablanca.Models.Leaves;
 
 namespace Casablanca.Models.Database
 {
@@ -236,7 +237,36 @@ namespace Casablanca.Models.Database
 			//}
 
 			Db.SaveChanges();
-			#endregion 
+			#endregion
+
+			#region Create leaves
+
+
+			List<Leave> leaves = new List<Leave>()
+			{
+				new Leave(LeaveStatus.PENDING_APPROVAL, GetCollaborator("Morgan", "FEURTE"), new DateTime(2019, 1, 05), new DateTime(2019, 1, 15)),
+				new Leave(LeaveStatus.REFUSED, GetCollaborator("Oubar", "MAYAKI"), new DateTime(2019, 1, 3), new DateTime(2019, 1, 6)),
+				new Leave(LeaveStatus.APPROVED, GetCollaborator("Oubar", "MAYAKI"), new DateTime(2019, 1, 4), new DateTime(2019, 1, 12)),
+				new Leave(LeaveStatus.PENDING_APPROVAL, GetCollaborator("Floriab", "LE PALLEC"), new DateTime(2019, 1, 9), new DateTime(2019, 1, 11)),
+				new Leave(LeaveStatus.APPROVED, GetCollaborator("Nathon", "BONNARD"), new DateTime(2019, 1, 19), new DateTime(2019, 1, 22)),
+				new Leave(LeaveStatus.PENDING_APPROVAL, GetCollaborator("Nathon", "BONNARD"), new DateTime(2019, 1, 1), new DateTime(2019, 1, 12)),
+				new Leave(LeaveStatus.PENDING_APPROVAL, GetCollaborator("Momo", "BELDI"), new DateTime(2019, 2, 1), new DateTime(2019, 2, 8)),
+				new Leave(LeaveStatus.APPROVED, GetCollaborator("Thibal", "WITCZAK"), new DateTime(2019, 1, 05), new DateTime(2019, 2, 15)),
+				new Leave(LeaveStatus.PENDING_APPROVAL, GetCollaborator("Minh", "NGUYEN"), new DateTime(2019, 2, 4), new DateTime(2019, 2, 5)),
+
+				new Leave(LeaveStatus.REFUSED, GetCollaborator("Thibal", "WITCZAK"), new DateTime(2018, 12, 05), new DateTime(2019, 1, 15)),
+				new Leave(LeaveStatus.APPROVED, GetCollaborator("Minh", "NGUYEN"), new DateTime(2019, 3, 4), new DateTime(2019, 9, 18)) //je vais au Japon frère
+
+			};
+			
+
+			foreach (Leave l in leaves)
+			{
+				Db.Leaves.Add(l);
+			}
+			Db.SaveChanges();
+
+			#endregion
 		}
 
 		// ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -246,17 +276,6 @@ namespace Casablanca.Models.Database
 		 * Getters, setters and helpers--------------------------------
 		 * ------------------------------------------------------------
 		 */
-
-		// Check if a collaborator is a ChiefValidator of a given Mission
-		// Donc faut vérifier que la mission a un service,
-		// que le service a une liste de personnes et que la liste de personne contient un cds
-
-		public static bool CheckChiefValidator(Collaborator chief, Mission mission)
-		{
-			//inutile?
-			return false;
-
-		}
 
 		// Collaborators
 		public List<Collaborator> GetCollaborators()
@@ -382,8 +401,15 @@ namespace Casablanca.Models.Database
 			Db.SaveChanges(); //Very important to save
 		}
 
-        // Helper
-        public string EncodeMD5(string pass) {
+		// Leaves
+		public List<Leave> GetLeaves()
+		{
+			return Db.Leaves.ToList();
+		}
+
+
+		// Helper
+		public string EncodeMD5(string pass) {
             string passSalt = "ChevalDeMetal" + pass + "Casablanca";
             return BitConverter.ToString(new MD5CryptoServiceProvider().ComputeHash(ASCIIEncoding.Default.GetBytes(passSalt)));
         }

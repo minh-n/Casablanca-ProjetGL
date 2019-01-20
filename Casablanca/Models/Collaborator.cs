@@ -17,7 +17,10 @@ namespace Casablanca.Models {
 
 
     public class Collaborator {
-        [Key]
+
+		#region Attributs
+
+		[Key]
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Le champ nom de compte doit être rempli.")]
@@ -35,9 +38,14 @@ namespace Casablanca.Models {
         public virtual List<ExpenseReport> ExpenseReports { get; set; }
         public Roles Role { get; set; }
 
-        // TODO : Autres attributs ? Jour de congés restants par exemple
+		// TODO : Autres attributs ? Jour de congés restants par exemple
 
-        public Collaborator(string firstName, string lastName, Mission mission) {
+
+		#endregion
+
+		#region Constructors 
+
+		public Collaborator(string firstName, string lastName, Mission mission) {
             this.Login = "default";
             this.Password = "default";
             this.FirstName = firstName;
@@ -82,5 +90,6 @@ namespace Casablanca.Models {
             this.ExpenseReports = null;
             this.Role = Roles.USER;
         }
-    }
+		#endregion
+	}
 }

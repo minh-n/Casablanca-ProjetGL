@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Casablanca.Models.ExpenseReports;
+using Casablanca.Models.Leaves;
 
 namespace Casablanca.Models.Database {
     interface IDal : IDisposable
@@ -34,8 +35,11 @@ namespace Casablanca.Models.Database {
 		// Admin
 		void SetCollaboratorAccount(int collId, string login, string pass);
 
-        // Helper
-        string EncodeMD5(string password);
+		// Leave
+		List<Leave> GetLeaves();
+
+		// Helper
+		string EncodeMD5(string password);
         void SaveChanges();
 		//bool CheckChiefValidator(Collaborator chief, Mission mission);
 		//can't implement because static
