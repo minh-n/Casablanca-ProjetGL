@@ -29,12 +29,12 @@
                     {  
                         events.push(  
                        {  
-							title: data.Collaborator.FirstName,  
-							description: data.EventName,  
-							start: moment(data.StartDate).format('YYYY-MM-DD'),  
-							end: moment(data.EndDate).format('YYYY-MM-DD'),  
+							title: data.Title,  
+							description: data.Desc,  
+							start: moment(data.Start_Date).format('YYYY-MM-DD'),  
+							end: moment(data.End_Date).format('YYYY-MM-DD'),  
 							backgroundColor: data.Color,  
-						    borderColor: "#707e93"
+							borderColor: data.Color
                        });  
                     });  
   

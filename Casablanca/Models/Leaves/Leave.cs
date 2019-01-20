@@ -32,7 +32,7 @@ namespace Casablanca.Models.Leaves {
 		public Leave(LeaveStatus status, Collaborator collaborator, DateTime startDate, DateTime endDate)
 		{
 			
-			EventName = collaborator.FirstName + " " + collaborator.LastName + "( " + collaborator.Service.Name + " )"; //generer un nom du type "NomPrenom (Service) - nbDemiJournées"
+			EventName = collaborator.FirstName + " " + collaborator.LastName + "(" + collaborator.Service.Name + ")"; //generer un nom du type "NomPrenom (Service) - nbDemiJournées"
 			Status = status;
 		
 			Collaborator = collaborator;
@@ -41,20 +41,18 @@ namespace Casablanca.Models.Leaves {
 
 			StartDateString = StartDate.ToString("yyyy-MM-dd");
 			EndDateString = EndDate.ToString("yyyy-MM-dd");
-
-		
-
+			
 			if (status == LeaveStatus.APPROVED)
 			{
-				this.Color = "green";
+				this.Color = "#256cbf";
 			}
 			else if (status == LeaveStatus.PENDING_APPROVAL)
 			{
-				this.Color = "orange";
+				this.Color = "#c69b00";
 			}
 			else
 			{
-				this.Color = "red"; //TODO : mettre des couleurs pastel plus visibles
+				this.Color = "#bf4425"; //TODO : mettre des couleurs pastel plus visibles
 			}
 		}
 
