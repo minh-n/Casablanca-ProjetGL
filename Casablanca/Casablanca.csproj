@@ -188,6 +188,8 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Database\DatabaseInitialization.cs" />
+    <Compile Include="Models\Advances\AdvanceLine.cs" />
+    <Compile Include="Models\Advances\AdvanceReport.cs" />
     <Compile Include="Models\HelperModel.cs" />
     <Compile Include="Models\Notification.cs" />
     <Compile Include="Models\Mission.cs" />
