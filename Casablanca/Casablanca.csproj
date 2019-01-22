@@ -178,6 +178,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\AvanceController.cs" />
     <Compile Include="Controllers\ExpenseReportController.cs" />
     <Compile Include="Controllers\LeaveController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -268,6 +269,7 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Scripts\bootstrap-table.js" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -393,6 +395,13 @@
     <Content Include="Views\Leave\ViewLeave.cshtml" />
     <Content Include="Views\Leave\ProcessCDS.cshtml" />
     <Content Include="Views\Leave\ProcessRH.cshtml" />
+    <Content Include="Views\Advance\Index.cshtml" />
+    <Content Include="Views\Advance\OneStepProcess.cshtml" />
+    <Content Include="Views\Advance\ProcessCDS.cshtml" />
+    <Content Include="Views\Advance\ProcessCompta.cshtml" />
+    <Content Include="Views\Advance\ProcessList.cshtml" />
+    <Content Include="Views\Advance\UpdateAdvance.cshtml" />
+    <Content Include="Views\Advance\ViewAdvance.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

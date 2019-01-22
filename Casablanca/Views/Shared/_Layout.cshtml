@@ -92,6 +92,9 @@
 									{
 										<div class="dropdown-divider"></div>
 										@Html.ActionLink("Traiter les notes de frais", "ProcessList", "ExpenseReport", null, new { @class = "btn" })
+
+										<div class="dropdown-divider"></div>
+										@Html.ActionLink("Traiter les demandes d'avance", "ProcessList", "Advance", null, new { @class = "btn" })
 									}
 									@if (HelperModel.CheckCDS(coll))
 									{
@@ -137,7 +140,7 @@
 	@Scripts.Render("~/bundles/jquery")
 	@Scripts.Render("~/bundles/bootstrap")
 
-	<!-- Include moment-->
+	<!-- Include moment. All of this should work, ignore warning. False positive?-->
 	<script type="text/javascript" src="/Scripts/moment.min.js"></script>
 
 	<!-- qTip -->

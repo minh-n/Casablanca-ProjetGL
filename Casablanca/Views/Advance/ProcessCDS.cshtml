@@ -1,0 +1,54 @@
+﻿@using Casablanca.Models.ExpenseReports
+@using Casablanca.Models.ViewModel
+
+@{
+	ViewBag.Title = "Valider des lignes de frais";
+}
+
+@model ProcessExpenseLineVM
+
+@{
+	int nbEL = Model.ExpenseLines.Count;
+}
+
+<h2 class="text-left">
+	Note de frais du collaborateur @Model.ExpenseReport.Collaborator.FirstName  @Model.ExpenseReport.Collaborator.LastName
+</h2>
+
+@using (Html.BeginForm("ProcessCDS", "ExpenseReport", FormMethod.Post))
+{
+	<div id="table" class="table-responsive">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Type de frais</th>
+					<th>Description</th>
+					<th>Montant du frais</th>
+					<th>Mission associée</th>
+					<th>Date du frais</th>
+					<th>Justificatif</th>
+					<th>Valider</th>
+				</tr>
+			</thead>
+			<tbody>
+				@Html.HiddenFor(model => Model.ExpenseReport.Id)
+
+				@for (int i = 0; i < nbEL; i++)
+				{
+					<tr>
+						@Html.HiddenFor(model => Model.ExpenseLines[i].Id)
+						<td>@Model.ExpenseLines[i].Type</td>
+						<td>@Model.ExpenseLines[i].Description</td>
+						<td>@Model.ExpenseLines[i].Cost €</td>
+						<td>@Model.ExpenseLines[i].Mission.Name</td>
+						<td>@Model.ExpenseLines[i].Date.ToString("dd/MM/yyyy")</td>
+						<td>@Model.ExpenseLines[i].Justificatory</td>
+						<td>@Html.CheckBoxFor(model => Model.ExpenseLines[i].Validated)</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+
+	<button id="save-btn" type="submit" class="btn btn-primary">Terminer la validation</button>
+}
