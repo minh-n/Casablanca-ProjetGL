@@ -4,31 +4,15 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
 using System.Web;
+using Casablanca.Models.ExpenseReports;
 
 namespace Casablanca.Models.Advances {
 
 	// See the requirements specification doc 
 	//(Cahier des charges) for more info
-	public enum AdvanceStatus {
-        UNSENT,
-        APPROVED,
-        PENDING_APPROVAL_1,
-        PENDING_APPROVAL_2,
-        REFUSED
-    }
+	
 
-    public enum Month {
-        JANUARY, FEBRUARY, MARCH, APRIL, MAY, JUNE, JULY, AUGUST, SEPTEMBER, OCTOBER, NOVEMBER, DECEMBER 
-    }
-
-    public enum Processing {
-        CLASSIC,
-        COMPTA,
-        FINANCIAL_DIRECTOR,
-        CEO
-    }
-
-    public class ExpenseReport {
+    public class AdvanceReport {
 
         [Key]
         public int Id { get; set; }
@@ -36,56 +20,56 @@ namespace Casablanca.Models.Advances {
         public int Year { get; set; }
         public float TotalCost { get; set; }
         public int NbLines { get; set; }
-        public AdvanceStatus Status { get; set; }
+        public ExpenseReportStatus Status { get; set; }
 
         public virtual Collaborator Collaborator { get; set; }
-        public virtual List<ExpenseLine> ExpenseLines { get; set; }
+        public virtual List<AdvanceLine> AdvanceLines { get; set; }
 
         public Processing Treatment { get; set; }
 
-        public ExpenseReport() {
+        public AdvanceReport() {
         }
 
-        public ExpenseReport(Collaborator coll, Month month, int year) {
+        public AdvanceReport(Collaborator coll, Month month, int year) {
             this.Month = month;
             this.Year = year;
             this.TotalCost = 0;
             this.NbLines = 0;
-            this.Status = AdvanceStatus.UNSENT;
-            this.ExpenseLines = new List<ExpenseLine>();
+            this.Status = ExpenseReportStatus.UNSENT;
+            this.AdvanceLines = new List<AdvanceLine>();
             this.Collaborator = coll;
             ComputeTreatment();
 
-            coll.ExpenseReports.Add(this);
+            coll.AdvanceReports.Add(this);
         }
 
-		public ExpenseReport(Collaborator coll, Month month, int year, AdvanceStatus stat)
+		public AdvanceReport(Collaborator coll, Month month, int year, ExpenseReportStatus stat)
 		{
 			this.Month = month;
 			this.Year = year;
 			this.TotalCost = 0;
 			this.NbLines = 0;
 			this.Status = stat;
-			this.ExpenseLines = new List<ExpenseLine>();
+			this.AdvanceLines = new List<AdvanceLine>();
 			this.Collaborator = coll;
             ComputeTreatment();
 
-            coll.ExpenseReports.Add(this);
+            coll.AdvanceReports.Add(this);
 		}
 
-		public void AddLine(ExpenseLine el) {
-            this.ExpenseLines.Add(el);
+		public void AddLine(AdvanceLine el) {
+            this.AdvanceLines.Add(el);
             this.NbLines++;
             this.TotalCost += el.Cost;
         }
 
-        public void RemoveLine(ExpenseLine el) {
-            if(this.ExpenseLines.Remove(el)) {
+        public void RemoveLine(AdvanceLine el) {
+            if(this.AdvanceLines.Remove(el)) {
                 this.NbLines--;
                 this.TotalCost -= el.Cost;
             }
             
-            if (this.ExpenseLines.Count == 0)
+            if (this.AdvanceLines.Count == 0)
                 this.TotalCost = 0.0f;
         }
 

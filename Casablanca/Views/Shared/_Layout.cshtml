@@ -75,6 +75,7 @@
 					<!-- GESTION -->
 					@if (@User.Identity.IsAuthenticated)
 					{
+						<!-- TODO : Check if not Admin, because Admin see an empty list?????????????????????-->
 						if (HelperModel.CheckManagement(coll))
 						{
 							<li class="nav-item dropdown">

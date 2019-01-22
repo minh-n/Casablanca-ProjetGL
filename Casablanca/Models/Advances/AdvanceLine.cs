@@ -1,4 +1,5 @@
-﻿using Casablanca.Models.Database;
+﻿using Casablanca.Models.ExpenseReports;
+using Casablanca.Models.Database;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -7,21 +8,8 @@ using System.Linq;
 using System.Web;
 
 namespace Casablanca.Models.Advances {
-    public enum LineType {
-        RESTAURANT,
-        HOTEL,
-        TAXI,
-        ADVANCE,
-        OTHER
-    }
 
-    public enum Treatment {
-        NOT_TREATED,
-        CDS,
-        COMPTA
-    }
-
-    public class ExpenseLine {
+    public class AdvanceLine {
 
         [Key]
         public int Id { get; set; }
@@ -50,7 +38,7 @@ namespace Casablanca.Models.Advances {
 		public Treatment Treated { get; set; }      // Has been treated by the CDS or the compta
 		public bool FinalValidation { get; set; }   // Is validated by the compta
 
-        public ExpenseLine() {
+        public AdvanceLine() {
             Mission = null;
             ChiefValidator = "";
             Type = LineType.HOTEL;
@@ -60,7 +48,7 @@ namespace Casablanca.Models.Advances {
             Justificatory = "";
         }
 
-		public ExpenseLine(Mission mission, LineType type, string chiefValidator, string description, float cost, DateTime date, string justificatory)
+		public AdvanceLine(Mission mission, LineType type, string chiefValidator, string description, float cost, DateTime date, string justificatory)
 		{
 			Mission = mission;
 			ChiefValidator = chiefValidator;
@@ -71,7 +59,7 @@ namespace Casablanca.Models.Advances {
 			Justificatory = justificatory;
         }
 
-		public ExpenseLine(Mission mission, LineType type, string description, float cost, DateTime date, string justificatory) {
+		public AdvanceLine(Mission mission, LineType type, string description, float cost, DateTime date, string justificatory) {
             this.Mission = mission;
             this.Type = type;
             this.Description = description;
@@ -80,7 +68,7 @@ namespace Casablanca.Models.Advances {
             this.Justificatory = justificatory;
         }
 
-        public bool Equals(ExpenseLine other) {
+        public bool Equals(AdvanceLine other) {
 
             return (this.Mission == other.Mission &&
                     this.Type == other.Type &&
