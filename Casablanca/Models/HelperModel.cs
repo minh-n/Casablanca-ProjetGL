@@ -4,7 +4,6 @@ using System.Linq;
 using System.Web;
 using Casablanca.Models.ExpenseReports;
 using Casablanca.Models.Leaves;
-using Casablanca.Models.Advances;
 
 namespace Casablanca.Models
 {
