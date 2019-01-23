@@ -4,6 +4,7 @@ using Casablanca.Models.ExpenseReports;
 using Casablanca.Models.Leaves;
 
 namespace Casablanca.Models.Database {
+
     interface IDal : IDisposable
     {
         // Collaborators

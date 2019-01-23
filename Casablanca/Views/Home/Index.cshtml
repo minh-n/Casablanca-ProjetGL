@@ -1,10 +1,20 @@
 ﻿@using Casablanca.Models
+
+@using Casablanca.Models.Database
+
+@using Casablanca.Models.Leaves
+
 @using Casablanca.Models.ExpenseReports
 @using System.Globalization;
 
 
 @{
 	ViewBag.Title = "Casablanca";
+	Dal dal = new Dal();
+
+	List<Leave> leaves = dal.GetLeaves();
+	
+
 }
 
 @model Collaborator
@@ -49,14 +59,7 @@
 										@item.Year
 									</td>
 									<td>
-										@switch (item.Status)
-										{
-											case ExpenseReportStatus.UNSENT:<text>Non envoyée</text>break;
-										case ExpenseReportStatus.REFUSED: <text>Refusée</text>break;
-									case ExpenseReportStatus.APPROVED: <text>Approuvée</text>break;
-								case ExpenseReportStatus.PENDING_APPROVAL_1: <text>1e validation</text>break;
-							case ExpenseReportStatus.PENDING_APPROVAL_2: <text>2nd validation</text>break;
-					}
+										@HelperModel.ToString(item.Status)
 									</td>
 
 									@*Un bouton pour accéder à la note de frais en cours*@
@@ -82,14 +85,72 @@
 		}
 	</div>
 	<div class="col-md-4">
-		<h3>Ce site est vraiment très beau</h3>
-		<p>En effet ! Il a été réalisé à partir du framework ASP.NET en utilisant le modèle MVC, vive la technologie !</p>
+		@if (Model != null)
+		{
+			<h3>Demandes de congé</h3>
+			<p>
+				<div class="table-responsive">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Type</th>
+								<th>Début</th>
+								<th>Fin</th>
+								<th>Statut</th>
+								
+							</tr>
+						</thead>
+						<tbody>
+
+							@{ 
+								List<Leave> leavesColl = new List<Leave>();
+
+								Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+
+								foreach (Leave l in leaves)
+								{
+									if (l.Collaborator.Id == coll.Id)
+									{
+										leavesColl.Add(l);
+									}
+								}
+							}
+							
+							@foreach (var item in leavesColl)
+							{
+								<tr>
+									<td>
+										@HelperModel.ToString(item.Type)
+									</td>
+									<td>
+										@item.StartDate.ToString("dd/MM/yyyy")
+									</td>
+									<td>
+										@item.EndDate.ToString("dd/MM/yyyy")
+									</td>
+									<td>
+										@HelperModel.ToString(item.Status, item.Treatment)
+									</td>
+
+									@*
+									<td>
+									
+										@Html.ActionLink("Voir", "ViewLeave", "Leave", new { id = item.Id }, null)
+										
+									</td>*@
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+
+			</p>
+		}
 	</div>
 	<div class="col-md-4">
 		<h3>Notifications</h3>
 		<p>
-			Nous sommes actuellement en train de travailler dessus ! En effet, nous comprenons bien que le besoin principal du
-			client est d'avoir un mode sombre pour soulager ses yeux, l'utilité du site n'étant qu'un critère secondaire !
+			ddddddd
 		</p>
 	</div>
 </div>

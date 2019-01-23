@@ -61,9 +61,7 @@
 							<th scope="col" data-field="begin" data-sortable="true">Date de début</th>
 							<th scope="col" data-field="end" data-sortable="true">Date de fin</th>
 							<th scope="col" data-field="demijour" data-sortable="true">Nb demi-journées</th>
-
 							<th scope="col" data-field="status" data-sortable="true">Statut</th>
-
 							<th scope="col" data-field="action" data-sortable="false">Action</th>
 						</tr>
 					</thead>
@@ -84,21 +82,17 @@
 								@item.EndDate.ToString("dd/MM/yyyy")
 							</td>
 							<td>
-								Nb TODO
+								TODO calcul
 							</td>
 							<td>
 								@HelperModel.ToString(item.Status, item.Treatment)
-
 							</td>
-
 
 							<!--traiter-->
 							<td>
 								@Html.ActionLink("Voir", "ViewLeave", "Leave", new { id = item.Id }, null) 
 								<!--TODO ! Modifier ou supprimer la note ?-->
-								<!-- ??? eske on peut modifier une demande de congé ?-->
-								@*@if ((item.Status == LeaveStatus.PENDING_APPROVAL_1) | (item.Status == LeaveStatus.PENDING_APPROVAL_2))
-															*@
+								@*@if ((item.Status == LeaveStatus.PENDING_APPROVAL_1) | (item.Status == LeaveStatus.PENDING_APPROVAL_2))*@
 
 							</td>
 						</tr>

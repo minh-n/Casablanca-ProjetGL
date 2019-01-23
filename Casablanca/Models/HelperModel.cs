@@ -120,9 +120,6 @@ namespace Casablanca.Models
 
 
 
-
-
-
 		#region ToString
 
 		public static string ToString(LeaveType type)

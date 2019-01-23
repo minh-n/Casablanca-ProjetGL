@@ -33,22 +33,21 @@ namespace Casablanca.Models {
         [Display(Name = "Mot de passe")]
         public virtual string Password { get; set; }
 
-
-
         public string FirstName { get; set; }
         public string LastName { get; set; }
 
         public virtual Service Service { get; set; }
-
-
         public virtual List<Mission> Missions { get; set; }
-        public virtual List<ExpenseReport> ExpenseReports { get; set; }
 
+        public virtual List<ExpenseReport> ExpenseReports { get; set; }
 		public virtual List<AdvanceReport> AdvanceReports { get; set; }
 
 		public Roles Role { get; set; }
 
 		// TODO : Autres attributs ? Jour de congés restants par exemple
+		public int NbRTT { get; set; }
+		public int NbPaid { get; set; }
+		public int NbOther { get; set; }
 
 		#endregion
 
@@ -65,8 +64,27 @@ namespace Casablanca.Models {
             this.ExpenseReports = new List<ExpenseReport>();
 			this.AdvanceReports = new List<AdvanceReport>();
 			this.Role = Roles.USER;
-        }
+			this.NbPaid = 0;
+			this.NbRTT = 0;
+			this.NbOther = 0;
+		}
 
+		public Collaborator(string firstName, string lastName, Mission mission, int paid, int rtt, int other)
+		{
+			this.Login = "default";
+			this.Password = "default";
+			this.FirstName = firstName;
+			this.LastName = lastName;
+			this.Service = null;
+			this.Missions = new List<Mission>();
+			this.Missions.Add(mission);
+			this.ExpenseReports = new List<ExpenseReport>();
+			this.AdvanceReports = new List<AdvanceReport>();
+			this.Role = Roles.USER;
+			this.NbPaid = paid;
+			this.NbRTT = rtt;
+			this.NbOther = other;
+		}
 
 		public Collaborator(string firstName, string lastName) {
             this.Login = "default";
@@ -78,8 +96,10 @@ namespace Casablanca.Models {
             this.ExpenseReports = new List<ExpenseReport>();
 			this.AdvanceReports = new List<AdvanceReport>();
 			this.Role = Roles.USER;
-        }
-
+			this.NbPaid = 0;
+			this.NbRTT = 0;
+			this.NbOther = 0;
+		}
 
         public Collaborator(string firstName, string lastName, string log, string pass) {
             this.Login = log;
@@ -91,7 +111,10 @@ namespace Casablanca.Models {
             this.ExpenseReports = new List<ExpenseReport>();
 			this.AdvanceReports = new List<AdvanceReport>();
 			this.Role = Roles.USER;
-        }
+			this.NbPaid = 0;
+			this.NbRTT = 0;
+			this.NbOther = 0;
+		}
 
         public Collaborator() {
             this.Login = "";
@@ -103,7 +126,10 @@ namespace Casablanca.Models {
             this.ExpenseReports = null;
 			this.AdvanceReports = null;
 			this.Role = Roles.USER;
-        }
+			this.NbPaid = 0;
+			this.NbRTT = 0;
+			this.NbOther = 0;
+		}
 		#endregion
 	}
 }
