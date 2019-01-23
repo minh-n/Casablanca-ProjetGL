@@ -395,8 +395,6 @@
     <Content Include="Views\Leave\ProcessList.cshtml" />
     <Content Include="Views\Leave\UpdateLeave.cshtml" />
     <Content Include="Views\Leave\ViewLeave.cshtml" />
-    <Content Include="Views\Leave\ProcessCDS.cshtml" />
-    <Content Include="Views\Leave\ProcessRH.cshtml" />
     <Content Include="Views\Advance\OneStepProcess.cshtml" />
     <Content Include="Views\Advance\ProcessCDS.cshtml" />
     <Content Include="Views\Advance\ProcessCompta.cshtml" />

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
-
 using System.Diagnostics;
+using Casablanca.Models;
 
 namespace Casablanca.Models.Leaves {
     public enum LeaveStatus {
@@ -25,31 +25,33 @@ namespace Casablanca.Models.Leaves {
         [Key]
         public int Id { get; set; }
 
-        public string EventName { get; set; }
+        public string Description { get; set; }
 		public LeaveStatus Status { get; set; }
 		public string Color { get; set; }
 
 		public LeaveType Type { get; set; }
+		public Processing Treatment { get; set; }
 
 		public virtual Collaborator Collaborator { get; set; }
 
 		public DateTime StartDate { get; set; }
 		public DateTime EndDate { get; set; }
 
-		public bool StartMorningOrAfternoon { get; set; } //true for leave starting on Morning, false for on Afternoon
-		public bool EndMorningOrAfternoon { get; set; } //true for leave ending on Morning, false for on Afternoon
+		public bool StartMorningOrAfternoon { get; set; } //TODO: true for leave starting on Morning, false for on Afternoon
+		public bool EndMorningOrAfternoon { get; set; } //TODO: true for leave ending on Morning, false for on Afternoon
 
 		public Leave(LeaveStatus status, LeaveType type, Collaborator collaborator, DateTime startDate, DateTime endDate)
 		{
-			
-			EventName = collaborator.FirstName + " " + collaborator.LastName + " (" + collaborator.Service.Name + ")"; //generer un nom du type "NomPrenom (Service) - nbDemiJournées"
+
+			Description = collaborator.FirstName + " " + collaborator.LastName + " (" + collaborator.Service.Name + ")"; //generer un nom du type "NomPrenom (Service) - nbDemiJournées"
 			Status = status;
 			Type = type;
 			Collaborator = collaborator;
 			StartDate = startDate;
 			EndDate = endDate;
 
-			
+			Treatment = HelperModel.ComputeTreatmentLeave(Collaborator);
+
 			if (status == LeaveStatus.APPROVED)
 			{
 				this.Color = "#256cbf";
@@ -71,5 +73,7 @@ namespace Casablanca.Models.Leaves {
 		public Leave()
 		{
 		}
+
+		
 	}
 }

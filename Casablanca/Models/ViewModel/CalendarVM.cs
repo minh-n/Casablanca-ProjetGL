@@ -26,7 +26,7 @@ namespace Casablanca.Models.ViewModel
 		public CalendarVM(Leave leave)
 		{
 			Title =  leave.Collaborator.LastName + " ("+  leave.Collaborator.Service.Name +  ") - " + leave.Type.ToString(); //Name (Service) - LeaveType
-			Desc = leave.EventName;
+			Desc = leave.Description;
 			Start_Date = leave.StartDate.ToString("yyyy-MM-dd");
 			End_Date = leave.EndDate.ToString("yyyy-MM-dd");
 			Color = leave.Color;

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using Casablanca.Models.ExpenseReports;
 using Casablanca.Models.Leaves;
-using Casablanca.Models.Advances;
 
 namespace Casablanca.Models
 {
@@ -15,8 +15,116 @@ namespace Casablanca.Models
 	 * ------------------------------------------------------------
 	 */
 
+
+	public enum Processing
+	{
+		CLASSIC,
+		COMPTA,
+		FINANCIAL_DIRECTOR,
+		CEO,
+		DHR,
+		HR
+	}
+
+
 	public class HelperModel
 	{
+
+
+		public static Processing ComputeTreatmentER(Collaborator coll)
+		{
+			Service s = coll.Service;
+			Roles role = coll.Role;
+
+			switch (role)
+			{
+				case Roles.USER:
+					if (s.Name.Contains("Compta"))
+					{
+						// Coll compta => double val DF
+						return Processing.FINANCIAL_DIRECTOR;
+					}
+					else
+					{
+						// Cas classique
+						return Processing.CLASSIC;
+					}
+				case Roles.CHIEF:
+					if (s.Name.Contains("Compta"))
+					{
+						// CDS compta => double val PDG
+						return Processing.CEO;
+					}
+					else if (s.Name.Contains("RH"))
+					{
+						// CDS RH => double val compta
+						return Processing.COMPTA;
+					}
+					else if (s.Name.Contains("Direction"))
+					{
+						// PDG => double val DF
+						return Processing.FINANCIAL_DIRECTOR;
+					}
+					else
+					{
+						return Processing.COMPTA;
+					}
+				default:
+					return Processing.CLASSIC;
+			}
+		}
+
+		public static Processing ComputeTreatmentLeave(Collaborator coll)
+		{
+			Service s = coll.Service;
+			Roles role = coll.Role;
+
+
+			switch (role)
+			{
+				case Roles.USER:
+					if(CheckRH(coll))
+					{
+						// Coll RH => double val DHR
+						return Processing.DHR;
+					}
+					else
+					{
+						// Cas classique
+						return Processing.CLASSIC;
+					}
+				case Roles.CHIEF:
+					if (s.Name.Contains("Compta"))
+					{
+						// CDS compta => double val RH
+						return Processing.HR;
+					}
+					else if (s.Name.Contains("RH"))
+					{
+						// CDS RH => double val PDG
+						return Processing.CEO;
+					}
+					else if (s.Name.Contains("Direction"))
+					{
+						// PDG => double val DRH
+						return Processing.DHR;
+					}
+					else
+					{
+						return Processing.HR;
+					}
+				default:
+					return Processing.CLASSIC;
+			}
+		}
+
+
+
+
+
+
+		#region ToString
+
 		public static string ToString(LeaveType type)
 		{
 			switch(type)
@@ -28,15 +136,29 @@ namespace Casablanca.Models
 			return "Debug: TypeCongé";
 		}
 
-		public static string ToString(LeaveStatus status)
+		public static string ToString(LeaveStatus status, Processing process)
 		{
-			switch (status)
+			if(process == Processing.CLASSIC)
 			{
-				case LeaveStatus.APPROVED: return "Approuvée";
-				case LeaveStatus.PENDING_APPROVAL_1: return "Traitement CDS";
-				case LeaveStatus.PENDING_APPROVAL_2: return "Traitement RH";
-				case LeaveStatus.REFUSED: return "Refusée";
+				switch (status)
+				{
+					case LeaveStatus.APPROVED: return "Approuvée";
+					case LeaveStatus.PENDING_APPROVAL_1: return "Traitement CDS";
+					case LeaveStatus.PENDING_APPROVAL_2: return "Traitement RH";
+					case LeaveStatus.REFUSED: return "Refusée";
+				}
 			}
+			else
+			{
+				switch (status)
+				{
+					case LeaveStatus.APPROVED: return "Approuvée";
+					case LeaveStatus.PENDING_APPROVAL_1: return "Traitement spécial";
+					case LeaveStatus.PENDING_APPROVAL_2: return "Traitement spécial";
+					case LeaveStatus.REFUSED: return "Refusée";
+				}
+			}
+			
 			return "Debug: StatutCongé";
 		}
 
@@ -65,7 +187,7 @@ namespace Casablanca.Models
 			return "Debug: StatutER";
 		}
 
-		
+		#endregion
 
 		//public enum Treatment
 		//{

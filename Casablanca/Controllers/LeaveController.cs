@@ -81,9 +81,7 @@ namespace Casablanca.Controllers
 			List<CalendarVM> leaves = new List<CalendarVM>();
 
 			foreach (Leave l in dal.GetLeaves())
-			{
-				//Debug.WriteLine("Salut  = " + l.EventName + "#  " +  l.Collaborator.LastName);
-				
+			{				
 				leaves.Add(new CalendarVM(l));
 			}
 			return leaves;
@@ -135,8 +133,7 @@ namespace Casablanca.Controllers
 			//--------------------------------------------------//
 
 
-			// Create the leave. TODO : check model state validity ?
-
+			// Create the leave
 			if(!ModelState.IsValid)
 			{
 				return View(model);
@@ -146,9 +143,11 @@ namespace Casablanca.Controllers
 			{
 				Collaborator = coll,
 				Type = model.Type,
-				EventName = model.EventName,
+				Description = model.Description,
 				EndDate = model.EndDate,
-				StartDate = model.StartDate
+				StartDate = model.StartDate,
+				Status = LeaveStatus.PENDING_APPROVAL_1,
+				Treatment = HelperModel.ComputeTreatmentLeave(coll)
 			};
 
 
@@ -179,7 +178,123 @@ namespace Casablanca.Controllers
 				return Redirect("/Home/Index");
 			//--------------------------------------------------//
 
-			return View();
+			List<Leave> LeaveListToBeReturnedAsModel = new List<Leave>();
+
+			List<Leave> allLeaves = dal.GetLeaves();
+
+			// for each Leave, check if they meet the following criterias
+			// if yes, add them to the list returned to the View
+			foreach (Leave e in allLeaves)
+			{
+				if (e.Collaborator != coll) // a coll cannot validate his own ER
+				{
+					// If the ER needs to be treated the classic way
+					if (e.Treatment == Processing.CLASSIC)
+					{
+						if (HelperModel.CheckCDSRH(coll)) // CDS RH
+						{
+							if (e.Status == LeaveStatus.PENDING_APPROVAL_2)
+							{
+								LeaveListToBeReturnedAsModel.Add(e);
+							}
+							if (e.Status == LeaveStatus.PENDING_APPROVAL_1)
+							{								
+								if (e.Collaborator.Service.GetChiefFromService() == coll.Id)
+								{
+									LeaveListToBeReturnedAsModel.Add(e);
+								}
+							}
+						}
+						else if (HelperModel.CheckRH(coll)) // RH
+						{
+							if (e.Status == LeaveStatus.PENDING_APPROVAL_2)
+								LeaveListToBeReturnedAsModel.Add(e);
+						}
+						else if (HelperModel.CheckCDS(coll)) // CDS
+						{
+							if (e.Status == LeaveStatus.PENDING_APPROVAL_1)
+							{
+								// in order to know if the Chief needs to see the leave
+								
+								if (e.Collaborator.Service.GetChiefFromService() == coll.Id)
+								{
+									LeaveListToBeReturnedAsModel.Add(e);
+								}
+								
+							}
+						}
+					}
+					else
+					{ // The ER needs to be treated specifically
+						if (e.Status == LeaveStatus.PENDING_APPROVAL_1)
+						{
+							switch (e.Treatment)
+							{
+								case Processing.DHR:
+									if (HelperModel.CheckCDSRH(coll)) //si le coll traiteur est un CDSRH
+									{
+										LeaveListToBeReturnedAsModel.Add(e);
+									}
+									break;
+								case Processing.HR:
+									if (HelperModel.CheckRH(coll))
+									{
+										LeaveListToBeReturnedAsModel.Add(e);
+									}
+									break;
+								case Processing.CEO:
+									if (HelperModel.CheckPDG(coll))
+									{
+										LeaveListToBeReturnedAsModel.Add(e);
+									}
+									break;
+							}
+						}
+					}
+				}
+			}
+
+			return View(LeaveListToBeReturnedAsModel);
+			
+		}
+
+		public ActionResult AcceptLeave(int id = 1)
+		{
+			Leave l = dal.GetLeave(id);
+			if (l.Status == LeaveStatus.PENDING_APPROVAL_1)
+			{
+				l.Status = LeaveStatus.PENDING_APPROVAL_2;
+			}
+			else
+			{
+				l.Status = LeaveStatus.APPROVED;
+			}
+			dal.SaveChanges();
+			return Redirect("/Leave/ProcessList");
+		}
+
+		public ActionResult RefuseLeave(int id = 1)
+		{
+			Leave l = dal.GetLeave(id);
+			l.Status = LeaveStatus.REFUSED;
+			dal.SaveChanges();
+			return Redirect("/Leave/ProcessList");
+		}
+
+		public ActionResult AcceptLeaveDHR(int id = 1)
+		{
+			Leave l = dal.GetLeave(id);
+			l.Status = LeaveStatus.APPROVED;
+			dal.SaveChanges();
+			return Redirect("/Leave/ProcessList");
+		}
+
+		public ActionResult RefuseLeaveDHR(int id = 1)
+		{
+			Leave l = dal.GetLeave(id);
+			l.Status = LeaveStatus.REFUSED;
+			dal.SaveChanges();
+			return Redirect("/Leave/ProcessList");
 		}
 
 

@@ -72,10 +72,10 @@
 						{
 						<tr>
 							<td>
-								@item.EventName
+								@item.Description
 							</td>
 							<td>
-								@HelperModel.ToString(@item.Type)
+								@HelperModel.ToString(item.Type)
 							</td>
 							<td>
 								@item.StartDate.ToString("dd/MM/yyyy")
@@ -87,7 +87,7 @@
 								Nb TODO
 							</td>
 							<td>
-								@HelperModel.ToString(item.Status)
+								@HelperModel.ToString(item.Status, item.Treatment)
 
 							</td>
 
