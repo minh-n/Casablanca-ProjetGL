@@ -5,7 +5,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 using Casablanca.Models.Database;
-using Casablanca.Models.Advances;
 
 using Casablanca.Models.ExpenseReports;
 
@@ -44,8 +43,6 @@ namespace Casablanca.Models {
         public virtual List<Mission> Missions { get; set; }
         public virtual List<ExpenseReport> ExpenseReports { get; set; }
 
-		public virtual List<AdvanceReport> AdvanceReports { get; set; }
-
 		public Roles Role { get; set; }
 
 		// TODO : Autres attributs ? Jour de congés restants par exemple
@@ -63,7 +60,6 @@ namespace Casablanca.Models {
             this.Missions = new List<Mission>();
             this.Missions.Add(mission);
             this.ExpenseReports = new List<ExpenseReport>();
-			this.AdvanceReports = new List<AdvanceReport>();
 			this.Role = Roles.USER;
         }
 
@@ -76,7 +72,6 @@ namespace Casablanca.Models {
             this.Service = null;
             this.Missions = new List<Mission>();
             this.ExpenseReports = new List<ExpenseReport>();
-			this.AdvanceReports = new List<AdvanceReport>();
 			this.Role = Roles.USER;
         }
 
@@ -89,7 +84,6 @@ namespace Casablanca.Models {
             this.Service = null;
             this.Missions = new List<Mission>();
             this.ExpenseReports = new List<ExpenseReport>();
-			this.AdvanceReports = new List<AdvanceReport>();
 			this.Role = Roles.USER;
         }
 
@@ -101,7 +95,6 @@ namespace Casablanca.Models {
             this.Service = null;
             this.Missions = null;
             this.ExpenseReports = null;
-			this.AdvanceReports = null;
 			this.Role = Roles.USER;
         }
 		#endregion
