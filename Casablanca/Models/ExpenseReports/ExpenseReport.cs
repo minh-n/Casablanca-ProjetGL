@@ -18,7 +18,7 @@ namespace Casablanca.Models.ExpenseReports {
     }
 
     public enum Month {
-        JANUARY, FEBRUARY, MARCH, APRIL, MAY, JUNE, JULY, AUGUST, SEPTEMBER, OCTOBER, NOVEMBER, DECEMBER 
+        JANUARY, FEBRUARY, MARCH, APRIL, MAY, JUNE, JULY, AUGUST, SEPTEMBER, OCTOBER, NOVEMBER, DECEMBER, NONE 
     }
 
     public enum Processing {
@@ -41,6 +41,9 @@ namespace Casablanca.Models.ExpenseReports {
         public virtual Collaborator Collaborator { get; set; }
         public virtual List<ExpenseLine> ExpenseLines { get; set; }
 
+        //Advance
+        public bool IsAdvance { get; set; }
+
         public Processing Treatment { get; set; }
 
         public ExpenseReport() {
@@ -53,6 +56,7 @@ namespace Casablanca.Models.ExpenseReports {
             this.NbLines = 0;
             this.Status = ExpenseReportStatus.UNSENT;
             this.ExpenseLines = new List<ExpenseLine>();
+            this.IsAdvance = false;
             this.Collaborator = coll;
             ComputeTreatment();
 
@@ -67,12 +71,29 @@ namespace Casablanca.Models.ExpenseReports {
 			this.NbLines = 0;
 			this.Status = stat;
 			this.ExpenseLines = new List<ExpenseLine>();
+            this.IsAdvance = false;
 			this.Collaborator = coll;
             ComputeTreatment();
 
             coll.ExpenseReports.Add(this);
 		}
 
+        //Case for advances
+        public ExpenseReport(Collaborator coll)
+        {
+            this.Month = Month.NONE;
+            this.Year = 0;
+            this.TotalCost = 0;
+            this.NbLines = 0;
+            this.Status = ExpenseReportStatus.UNSENT;
+            this.ExpenseLines = new List<ExpenseLine>();
+            this.IsAdvance = true;
+            this.Collaborator = coll;
+            ComputeTreatment();
+
+            coll.ExpenseReports.Add(this);
+
+        }
 		public void AddLine(ExpenseLine el) {
             this.ExpenseLines.Add(el);
             this.NbLines++;

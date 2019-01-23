@@ -64,6 +64,29 @@ namespace Casablanca.Controllers {
 			return Redirect(redirectString);
         }
 
+        [HttpPost] // Backend call of Index page
+        public ActionResult CreateAdvance()
+        {
+            if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+                return Redirect("/Home/Index");
+
+            Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+
+            // Compute year
+            /*string month = Request.Form["monthName"].ToString();
+            int year = DateTime.Now.Year;
+            if (month != DateTime.Now.ToString("MMMM") && month == new CultureInfo("en-US").DateTimeFormat.GetMonthName(12).ToUpper())
+                year = DateTime.Now.Year - 1;
+
+            // Compute month
+            Enum.TryParse(month, out Month m);*/
+
+            // Create the ER
+            int returnedId = dal.CreateAdvance(coll);
+            string redirectString = "/ExpenseReport/UpdateExpenseReport/?id=" + returnedId;
+
+            return Redirect(redirectString);
+        }
         // Changes the status of ER to PENDING_APPROVAL (from Index page)
         public ActionResult SendExpenseReport(int id = 1) {
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)

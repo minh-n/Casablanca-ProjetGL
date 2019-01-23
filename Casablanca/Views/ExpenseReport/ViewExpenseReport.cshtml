@@ -35,6 +35,7 @@
 						<th>Date du frais</th>
 						<th>Justificatif</th>
 						<th>Etape de validation</th>
+                        <th>Avance</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -79,6 +80,17 @@
 									}
 								}
 							</td>
+
+                            <td>
+                                @if (el.IsAdvance)
+                                {
+                                    <text>Oui</text>
+                                }
+                                else
+                                {
+                                    <text>Non</text>
+                                }
+                            </td>
 						</tr>
 					}
 				</tbody>

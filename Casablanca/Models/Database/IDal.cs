@@ -25,6 +25,7 @@ namespace Casablanca.Models.Database {
         ExpenseReport GetExpenseReport(int id);
 		Collaborator Login(string login, string password);
         int CreateExpenseReport(Collaborator coll, Month month, int year);
+        int CreateAdvance(Collaborator coll);
         void ClearExpenseLines(ExpenseReport er);
 
         // Services

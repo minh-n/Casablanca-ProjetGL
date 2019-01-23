@@ -26,7 +26,8 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model) {
+            @foreach (var item in Model)
+            {
                 <tr>
                     <td>
 
@@ -37,16 +38,18 @@
                     <td>@item.TotalCost</td>
                     <td>@item.NbLines</td>
                     <td>
-						@HelperModel.ToString(item.Status)
+                        @HelperModel.ToString(item.Status)
                     </td>
 
                     @*Un bouton pour accéder à la note de frais en cours*@
                     <td>
 
-                        @if (item.Status == ExpenseReportStatus.UNSENT || item.Status == ExpenseReportStatus.REFUSED) {
+                        @if (item.Status == ExpenseReportStatus.UNSENT || item.Status == ExpenseReportStatus.REFUSED)
+                        {
                             <div>@Html.ActionLink("Modifier", "UpdateExpenseReport", "ExpenseReport", new { id = item.Id }, null) | @Html.ActionLink("Envoyer", "SendExpenseReport", "ExpenseReport", new { id = item.Id }, null)</div>
                         }
-                        else {
+                        else
+                        {
                             @Html.ActionLink("Voir", "ViewExpenseReport", "ExpenseReport", new { ERId = item.Id }, null)
                         }
                     </td>
@@ -67,17 +70,23 @@ previous_month,
 current_month
 };
 
-    foreach (ExpenseReport er in Model) {
-        if (er.Year == current_year) {
-            if (er.Month.ToString() == current_month) {
+    foreach (ExpenseReport er in Model)
+    {
+        if (er.Year == current_year)
+        {
+            if (er.Month.ToString() == current_month)
+            {
                 months.Remove(current_month);
             }
-            if (er.Month.ToString() == previous_month) {
+            if (er.Month.ToString() == previous_month)
+            {
                 months.Remove(previous_month);
             }
         }
-        else {
-            if (er.Month.ToString() == previous_month) {
+        else
+        {
+            if (er.Month.ToString() == previous_month)
+            {
                 months.Remove(previous_month);
             }
         }
@@ -88,11 +97,14 @@ current_month
     Collaborator coll = dal.GetCollaborator(User.Identity.Name);
 }
 <!-- Create a dropdownlist to select which ER to create -->
-@if (coll.Missions.Count == 0) {
+@if (coll.Missions.Count == 0)
+{
     <div style="padding:15px; font-size:16px">Vous ne possédez pas de missions, vous ne pouvez donc pas avoir de note de frais.</div>
 }
-else if (months.Count != 0) {
-    using (Html.BeginForm("CreateExpenseReport", "ExpenseReport", FormMethod.Post)) {
+else if (months.Count != 0)
+{
+    using (Html.BeginForm("CreateExpenseReport", "ExpenseReport", FormMethod.Post))
+    {
         <div style="padding:15px">
             <button class="btn btn-primary" type="submit" style="margin-right:10px">Créer une note de frais pour le mois de</button>
             @Html.DropDownList("monthName", months.Select(month => new SelectListItem {
@@ -100,8 +112,18 @@ else if (months.Count != 0) {
                                                                    Value = month
                                                                }	))
             @Html.ValidationSummary("")
+
+
         </div>
     }
+
+    using (Html.BeginForm("CreateAdvance", "ExpenseReport", FormMethod.Post))
+    {
+        <div style="margin-left:15px">
+            <button class="btn btn-primary" type="submit" style="margin-right:10px">Créer une avance de note de frais</button>
+        </div>
+    }
+
 }
 
 @section Scripts {

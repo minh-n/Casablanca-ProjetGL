@@ -14,7 +14,15 @@
 }
 
 <div class="container">
-    <h2 class="text-left">Effectuer une demande de notes de frais </h2>
+    @if (!Model.ExpenseReport.IsAdvance)
+    {
+        <h2 class="text-left">Effectuer une demande de notes de frais </h2>
+    }
+    else
+    {
+        <h2 class="text-left">Effectuer une avance de notes de frais </h2>
+    }
+
 
     <div style="padding:15px">
         <button class="btn btn-primary table-add">Ajouter une ligne de frais</button>

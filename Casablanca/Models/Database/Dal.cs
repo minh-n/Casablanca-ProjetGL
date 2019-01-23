@@ -347,6 +347,15 @@ namespace Casablanca.Models.Database
 			return tempER.Id;
         }
 
+        //Case for advances
+        public int CreateAdvance(Collaborator coll)
+        {
+            ExpenseReport tempER = new ExpenseReport(coll);
+            Db.ExpenseReports.Add(tempER);
+            Db.SaveChanges();
+            return tempER.Id;
+        }
+
         public void ClearExpenseLines(ExpenseReport er) {
             List<ExpenseLine> ELs = new List<ExpenseLine>();
 
