@@ -178,7 +178,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AdminController.cs" />
-    <Compile Include="Controllers\AvanceController.cs" />
+    <Compile Include="Controllers\AdvanceController.cs" />
     <Compile Include="Controllers\ExpenseReportController.cs" />
     <Compile Include="Controllers\LeaveController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -397,7 +397,6 @@
     <Content Include="Views\Leave\ViewLeave.cshtml" />
     <Content Include="Views\Leave\ProcessCDS.cshtml" />
     <Content Include="Views\Leave\ProcessRH.cshtml" />
-    <Content Include="Views\Advance\Index.cshtml" />
     <Content Include="Views\Advance\OneStepProcess.cshtml" />
     <Content Include="Views\Advance\ProcessCDS.cshtml" />
     <Content Include="Views\Advance\ProcessCompta.cshtml" />

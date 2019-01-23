@@ -11,7 +11,6 @@ namespace Casablanca.Models.ExpenseReports {
         RESTAURANT,
         HOTEL,
         TAXI,
-        ADVANCE,
         OTHER
     }
 
@@ -50,6 +49,9 @@ namespace Casablanca.Models.ExpenseReports {
 		public Treatment Treated { get; set; }      // Has been treated by the CDS or the compta
 		public bool FinalValidation { get; set; }   // Is validated by the compta
 
+		// Advance
+		public bool IsAdvance { get; set; }
+
         public ExpenseLine() {
             Mission = null;
             ChiefValidator = "";
@@ -58,6 +60,7 @@ namespace Casablanca.Models.ExpenseReports {
             Cost = 0;
             Date = new DateTime();
             Justificatory = "";
+			IsAdvance = false;
         }
 
 		public ExpenseLine(Mission mission, LineType type, string chiefValidator, string description, float cost, DateTime date, string justificatory)
@@ -69,7 +72,8 @@ namespace Casablanca.Models.ExpenseReports {
 			Cost = cost;
 			Date = date;
 			Justificatory = justificatory;
-        }
+			IsAdvance = false;
+		}
 
 		public ExpenseLine(Mission mission, LineType type, string description, float cost, DateTime date, string justificatory) {
             this.Mission = mission;
@@ -78,7 +82,8 @@ namespace Casablanca.Models.ExpenseReports {
             this.Cost = cost;
             this.Date = date;
             this.Justificatory = justificatory;
-        }
+			this.IsAdvance = false;
+		}
 
         public bool Equals(ExpenseLine other) {
 
@@ -87,7 +92,8 @@ namespace Casablanca.Models.ExpenseReports {
                     this.Description == other.Description &&
                     this.Cost == other.Cost &&
                     this.Date == other.Date &&
-                    this.Justificatory == other.Justificatory);
+                    this.Justificatory == other.Justificatory &&
+					this.IsAdvance == other.IsAdvance);
         }
 
         public void ComputeValidator(Processing parent) {
@@ -107,8 +113,6 @@ namespace Casablanca.Models.ExpenseReports {
                     ChiefValidator = "PDG";
                     break;
             }
-
-            //dal.SaveChanges();
         }
     }
 }

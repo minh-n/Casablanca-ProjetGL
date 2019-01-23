@@ -412,12 +412,12 @@ namespace Casablanca.Models.Database
 			return Db.Leaves.SingleOrDefault(s => s.Id == id);
 		}
 
-		public int CreateLeave(Collaborator collaborator, LeaveType type)
+		public void CreateLeave(Leave temp)
 		{
-			Leave tempLeave = new Leave(LeaveStatus.PENDING_APPROVAL_1, type, collaborator, DateTime.Now, DateTime.Now);
-			Db.Leaves.Add(tempLeave);
+
+			Db.Leaves.Add(temp);
+		
 			Db.SaveChanges();
-			return tempLeave.Id;
 		}
 
 		// Helper

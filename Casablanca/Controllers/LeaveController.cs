@@ -99,46 +99,62 @@ namespace Casablanca.Controllers
 			//------------Background identity check-------------//
 			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
 				return Redirect("/Home/Index");
+
 			Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
 			//--------------------------------------------------//
 
 			// Create the ER
-			int returnedId = dal.CreateLeave(coll, LeaveType.RTT); //temporary OTHER, TODO
-			string redirectString = "/Leave/UpdateLeave/?id=" + returnedId;
+			Leave tempLeave = new Leave(LeaveStatus.PENDING_APPROVAL_1, LeaveType.RTT, coll, DateTime.Now, DateTime.Now);
 
-			return Redirect(redirectString);
+			//string redirectString = "/Leave/UpdateLeave/?id=" + tempLeave.Id;
+
+			return View("UpdateLeave", tempLeave);
 		}
 
-		public ActionResult UpdateLeave(int id)
+		//public ActionResult UpdateLeave()
+		//{
+		//	//------------Background identity check-------------//
+		//	if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+		//		return Redirect("/Home/Index");
+
+		//	Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+		//	//--------------------------------------------------//
+
+
+		//	return View();
+		//}
+
+		[HttpPost] // Backend call of UpdateLeave page
+		public ActionResult UpdateLeave(Leave model)
 		{
 			//------------Background identity check-------------//
 			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
 				return Redirect("/Home/Index");
 
 			Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
-			//--------------------------------------------------//
-
-			return View(dal.GetLeave(id));
-		}
-
-		[HttpPost] // Backend call of UpdateLeave page
-		public ActionResult UpdateLeave(Leave leave, int id)
-		{
-			//------------Background identity check-------------//
-			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
-				return Redirect("/Home/Index");
-			//Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
 			//--------------------------------------------------//
 
 
 			// Create the leave. TODO : check model state validity ?
 
-			dal.GetLeave(id).Type = leave.Type;
-			dal.GetLeave(id).EventName = leave.EventName;
-			dal.GetLeave(id).EndDate = leave.EndDate;
-			dal.GetLeave(id).StartDate = leave.StartDate;
+			if(!ModelState.IsValid)
+			{
+				return View(model);
+			}
 
+			Leave tempToDb = new Leave
+			{
+				Collaborator = coll,
+				Type = model.Type,
+				EventName = model.EventName,
+				EndDate = model.EndDate,
+				StartDate = model.StartDate
+			};
+
+
+			dal.CreateLeave(tempToDb);
 			dal.SaveChanges();
+			
 
 			return Redirect("/Leave/Index");
 		}
