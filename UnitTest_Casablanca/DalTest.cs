@@ -17,12 +17,15 @@ namespace UnitTest_Casablanca
                 // TODO : Modify
                 //dal.ResetCollaborators();
                 //dal.CreateCollaborator("Minh", "Nguyen");
-                //List<Collaborator> collaborators = dal.GetCollaborators();
+                List<Collaborator> collaborators = dal.GetCollaborators();
 
-                //Assert.IsNotNull(collaborators);
-                //Assert.AreEqual(1, collaborators.Count);
-                //Assert.AreEqual("Minh", collaborators[0].FirstName);
-                //Assert.AreEqual("Nguyen", collaborators[0].LastName);
+                Assert.IsNotNull(collaborators);
+                Assert.AreEqual(10, collaborators.Count);
+                Assert.AreEqual("Minh", collaborators[0].FirstName);
+                Assert.AreEqual("NGUYEN", collaborators[0].LastName);
+                
+
+
             }
         }
     }
