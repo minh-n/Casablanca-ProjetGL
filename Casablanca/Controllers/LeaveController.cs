@@ -108,7 +108,29 @@ namespace Casablanca.Controllers
 
 			return View("UpdateLeave", tempLeave);
 		}
-		
+
+
+
+		public ActionResult RemoveLeave(int id)
+		{
+			//------------Background identity check-------------//
+			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+				return Redirect("/Home/Index");
+
+			Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+			//--------------------------------------------------//
+
+			// Remove the ER
+
+
+			dal.GetLeave(id).Status = LeaveStatus.CANCELED;
+
+			dal.SaveChanges();
+
+			return Redirect("/Leave/Index");
+		}
+
+
 
 
 		[HttpPost] // Backend call of UpdateLeave page
@@ -215,6 +237,8 @@ namespace Casablanca.Controllers
 							}
 						}
 					}
+
+
 					else
 					{ // The ER needs to be treated specifically
 						if (e.Status == LeaveStatus.PENDING_APPROVAL_1) // please do not put pending2 in DAL for those leaves
@@ -259,6 +283,16 @@ namespace Casablanca.Controllers
 			else
 			{
 				l.Status = LeaveStatus.APPROVED;
+				switch(l.Type)
+				{
+					case LeaveType.PAID:
+						l.Collaborator.NbPaid -= l.ComputeLengthLeave();
+						break;
+					case LeaveType.RTT:
+						l.Collaborator.NbRTT -= l.ComputeLengthLeave();
+						break;
+				}
+				
 			}
 			dal.SaveChanges();
 			return Redirect("/Leave/ProcessList");
@@ -276,6 +310,15 @@ namespace Casablanca.Controllers
 		{
 			Leave l = dal.GetLeave(id);
 			l.Status = LeaveStatus.APPROVED;
+			switch (l.Type)
+			{
+				case LeaveType.PAID:
+					l.Collaborator.NbPaid -= l.ComputeLengthLeave();
+					break;
+				case LeaveType.RTT:
+					l.Collaborator.NbRTT -= l.ComputeLengthLeave();
+					break;
+			}
 			dal.SaveChanges();
 			return Redirect("/Leave/ProcessList");
 		}
