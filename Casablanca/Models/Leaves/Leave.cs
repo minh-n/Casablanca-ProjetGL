@@ -26,6 +26,7 @@ namespace Casablanca.Models.Leaves {
         public int Id { get; set; }
 
         public string Description { get; set; }
+
 		public LeaveStatus Status { get; set; }
 		public string Color { get; set; }
 
@@ -37,10 +38,49 @@ namespace Casablanca.Models.Leaves {
 		public DateTime StartDate { get; set; }
 		public DateTime EndDate { get; set; }
 
-		public bool StartMorningOrAfternoon { get; set; } //TODO: true for leave starting on Morning, false for on Afternoon
-		public bool EndMorningOrAfternoon { get; set; } //TODO: true for leave ending on Morning, false for on Afternoon
+		[Display(Name = "Commencer le congé le matin ou l'après-midi ?")]
+		public string StartMorningOrAfternoon { get; set; }
 
-		public Leave(LeaveStatus status, LeaveType type, Collaborator collaborator, DateTime startDate, DateTime endDate)
+		[Display(Name = "Terminer le congé le matin ou l'après-midi ?")]
+		public string EndMorningOrAfternoon { get; set; }
+
+		#region Helper
+
+		public int ComputeLengthLeave()
+		{
+
+
+			int weekendDays = 0;
+
+			for (DateTime date = StartDate; date.Date <= EndDate.Date; date = date.AddDays(1))
+			{
+				if ((date.DayOfWeek == DayOfWeek.Saturday) || (date.DayOfWeek == DayOfWeek.Sunday))
+				{
+					weekendDays++;
+				}
+			}
+
+			weekendDays *= 2;
+
+			int totalHalfDays = (this.EndDate - this.StartDate).Days * 2;
+
+			if(StartMorningOrAfternoon.Contains("Après-midi"))
+			{
+				--totalHalfDays;
+			}
+			if(EndMorningOrAfternoon.Contains("Après-midi"))
+			{
+				++totalHalfDays;
+			}
+			return totalHalfDays - weekendDays;
+
+		}
+		#endregion
+
+
+		#region Constructor
+
+		public Leave(LeaveStatus status, LeaveType type, Collaborator collaborator, DateTime startDate, DateTime endDate, string Start, string End)
 		{
 
 			Description = collaborator.FirstName + " " + collaborator.LastName + " (" + collaborator.Service.Name + ")"; //generer un nom du type "NomPrenom (Service) - nbDemiJournées"
@@ -49,6 +89,8 @@ namespace Casablanca.Models.Leaves {
 			Collaborator = collaborator;
 			StartDate = startDate;
 			EndDate = endDate;
+			StartMorningOrAfternoon = Start;
+			EndMorningOrAfternoon = End;
 
 			Treatment = HelperModel.ComputeTreatmentLeave(Collaborator);
 
@@ -74,6 +116,7 @@ namespace Casablanca.Models.Leaves {
 		{
 		}
 
-		
+		#endregion
+
 	}
 }

@@ -40,6 +40,7 @@
 
 		<dd>
 			@Model.StartDate.ToString("dd/MM/yyyy")
+			@Model.StartMorningOrAfternoon
 		</dd>
 
 		<dt>
@@ -48,9 +49,16 @@
 
 		<dd>
 			@Model.EndDate.ToString("dd/MM/yyyy")
+			@Model.EndMorningOrAfternoon
 		</dd>
 
+		<dt>
+			Nombre de demi-journées
+		</dt>
 
+		<dd>
+			@Model.ComputeLengthLeave()
+		</dd>
 
 	</dl>
 </div>

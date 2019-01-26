@@ -44,6 +44,7 @@
 							<th scope="col" data-field="type" data-sortable="true">Type</th>
 							<th scope="col" data-field="debut" data-sortable="true">Date de début</th>
 							<th scope="col" data-field="fin" data-sortable="true">Date de fin</th>
+							<th scope="col" data-field="nb" data-sortable="true">Nb demi-journées</th>
 							<th scope="col" data-field="statut" data-sortable="true">Statut</th>
 							<th>Traitement</th>
 						</tr>
@@ -51,53 +52,56 @@
 					<tbody>
 						@foreach (Leave item in Model)
 						{
-							<tr>
-								<td>@item.Collaborator.FirstName @item.Collaborator.LastName</td>
-								<td>
-									@item.Description
-								</td>
-								<td>
-									@HelperModel.ToString(item.Type)
-								</td>
-								<td>
-									@item.StartDate.ToString("dd-MM-yyyy")
-								</td>
-								<td>
-									@item.EndDate.ToString("dd-MM-yyyy")
+						<tr>
+							<td>@item.Collaborator.FirstName @item.Collaborator.LastName</td>
+							<td>
+								@item.Description
+							</td>
+							<td>
+								@HelperModel.ToString(item.Type)
+							</td>
+							<td>
+								@item.StartDate.ToString("dd-MM-yyyy")
+							</td>
+							<td>
+								@item.EndDate.ToString("dd-MM-yyyy")
+							</td>
 
-								</td>
+							<td>
+								@item.ComputeLengthLeave()
+							</td>
 
-								<td>
-									@HelperModel.ToString(item.Status, item.Treatment)
-								</td>
+							<td>
+								@HelperModel.ToString(item.Status, item.Treatment)
+							</td>
 
-								<!--traiter-->
-								<td>
+							<!--traiter-->
+							<td>
 
-									@if (item.Treatment == Processing.HR | item.Treatment == Processing.DHR | item.Treatment == Processing.CEO)
+								@if (item.Treatment == Processing.HR | item.Treatment == Processing.DHR | item.Treatment == Processing.CEO)
+								{
+									<div>
+
+										@Html.ActionLink("Valider spécialement", "AcceptLeaveDHR", "Leave", new { id = item.Id }, null) | @Html.ActionLink("Refuser", "RefuseLeaveDHR", "Leave", new { id = item.Id }, null)
+									</div>
+								}
+
+								else if (item.Treatment == Processing.CLASSIC)
+								{
+									if (item.Status == LeaveStatus.PENDING_APPROVAL_1 | item.Status == LeaveStatus.PENDING_APPROVAL_2)
 									{
+
 										<div>
-
-											@Html.ActionLink("Valider spécialement", "AcceptLeaveDHR", "Leave", new { id = item.Id }, null) | @Html.ActionLink("Refuser", "RefuseLeaveDHR", "Leave", new { id = item.Id }, null)
+											@Html.ActionLink("Valider", "AcceptLeave", "Leave", new { id = item.Id }, null) | @Html.ActionLink("Refuser", "RefuseLeave", "Leave", new { id = item.Id }, null)
 										</div>
+
+
 									}
-									
-									else if (item.Treatment == Processing.CLASSIC)
-									{
-										if (item.Status == LeaveStatus.PENDING_APPROVAL_1 | item.Status == LeaveStatus.PENDING_APPROVAL_2)
-										{
-
-											<div>
-												@Html.ActionLink("Valider", "AcceptLeave", "Leave", new { id = item.Id }, null) | @Html.ActionLink("Refuser", "RefuseLeave", "Leave", new { id = item.Id }, null)
-											</div>
+								}
 
 
-										}
-									}
-
-
-								</td>
-							</tr>
+							</td>
+						</tr>
 						}
 					</tbody>
 				}

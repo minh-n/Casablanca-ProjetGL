@@ -31,8 +31,8 @@
                        {  
 							title: data.Title,  
 							description: data.Desc,  
-							start: moment(data.Start_Date).format('YYYY-MM-DD'),  
-							end: moment(data.End_Date).format('YYYY-MM-DD'),  
+							start: moment(data.Start_Date).format('YYYY-MM-DD HH:mm'),  
+							end: moment(data.End_Date).format('YYYY-MM-DD HH:mm'),  
 							backgroundColor: data.Color,  
 							borderColor: data.Color
                        });  

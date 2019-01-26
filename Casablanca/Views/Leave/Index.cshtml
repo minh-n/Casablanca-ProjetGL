@@ -14,7 +14,10 @@
 <div class="row">
 
 	<div class="col-lg-6">
+
 		<div id="calendar"></div> <!-- FULL CALENDAR -->
+
+
 
 		<p style="padding:20px">TODO : légende des couleurs.</p>
 	</div>
@@ -77,12 +80,14 @@
 							</td>
 							<td>
 								@item.StartDate.ToString("dd/MM/yyyy")
+								@item.StartMorningOrAfternoon
 							</td>
 							<td>
 								@item.EndDate.ToString("dd/MM/yyyy")
+								@item.EndMorningOrAfternoon
 							</td>
 							<td>
-								TODO calcul
+								@item.ComputeLengthLeave()
 							</td>
 							<td>
 								@HelperModel.ToString(item.Status, item.Treatment)

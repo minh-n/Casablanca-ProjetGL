@@ -243,20 +243,20 @@ namespace Casablanca.Models.Database
 
 			List<Leave> leaves = new List<Leave>()
 			{
-				new Leave(LeaveStatus.PENDING_APPROVAL_1, LeaveType.OTHER, GetCollaborator("Morgan", "FEURTE"), new DateTime(2019, 1, 05), new DateTime(2019, 1, 15)),
-				new Leave(LeaveStatus.REFUSED, LeaveType.PAID, GetCollaborator("Oubar", "MAYAKI"), new DateTime(2019, 1, 3), new DateTime(2019, 1, 6)),
-				new Leave(LeaveStatus.APPROVED, LeaveType.PAID, GetCollaborator("Oubar", "MAYAKI"), new DateTime(2019, 1, 4), new DateTime(2019, 1, 12)),
+				//new Leave(LeaveStatus.PENDING_APPROVAL_1, LeaveType.OTHER, GetCollaborator("Morgan", "FEURTE"), new DateTime(2019, 1, 05), new DateTime(2019, 1, 15)),
+				//new Leave(LeaveStatus.REFUSED, LeaveType.PAID, GetCollaborator("Oubar", "MAYAKI"), new DateTime(2019, 1, 3), new DateTime(2019, 1, 6)),
+				//new Leave(LeaveStatus.APPROVED, LeaveType.PAID, GetCollaborator("Oubar", "MAYAKI"), new DateTime(2019, 1, 4), new DateTime(2019, 1, 12)),
 
-				new Leave(LeaveStatus.PENDING_APPROVAL_2, LeaveType.PAID, GetCollaborator("Floriab", "LE PALLEC"), new DateTime(2019, 1, 9), new DateTime(2019, 1, 11)),
-				new Leave(LeaveStatus.APPROVED, LeaveType.PAID, GetCollaborator("Nathon", "BONNARD"), new DateTime(2019, 1, 19), new DateTime(2019, 1, 22)),
-				new Leave(LeaveStatus.PENDING_APPROVAL_1, LeaveType.RTT, GetCollaborator("Nathon", "BONNARD"), new DateTime(2019, 1, 1), new DateTime(2019, 1, 12)),
+				new Leave(LeaveStatus.PENDING_APPROVAL_1, LeaveType.PAID, GetCollaborator("Floriab", "LE PALLEC"), new DateTime(2019, 1, 9), new DateTime(2019, 1, 11), "Matin", "Matin"),
+				new Leave(LeaveStatus.APPROVED, LeaveType.PAID, GetCollaborator("Nathon", "BONNARD"), new DateTime(2019, 1, 19), new DateTime(2019, 1, 22), "Matin", "Après-midi"),
+				new Leave(LeaveStatus.PENDING_APPROVAL_1, LeaveType.RTT, GetCollaborator("Nathon", "BONNARD"), new DateTime(2019, 1, 1), new DateTime(2019, 1, 12), "Après-midi", "Après-midi"),
 
-				new Leave(LeaveStatus.PENDING_APPROVAL_2, LeaveType.RTT, GetCollaborator("Momo", "BELDI"), new DateTime(2019, 2, 1), new DateTime(2019, 2, 8)),
-				new Leave(LeaveStatus.APPROVED, LeaveType.PAID, GetCollaborator("Thibal", "WITCZAK"), new DateTime(2019, 1, 05), new DateTime(2019, 2, 15)),
-				new Leave(LeaveStatus.PENDING_APPROVAL_1, LeaveType.PAID, GetCollaborator("Minh", "NGUYEN"), new DateTime(2019, 2, 4), new DateTime(2019, 2, 5)),
+				//new Leave(LeaveStatus.PENDING_APPROVAL_2, LeaveType.RTT, GetCollaborator("Momo", "BELDI"), new DateTime(2019, 2, 1), new DateTime(2019, 2, 8)),
+				//new Leave(LeaveStatus.APPROVED, LeaveType.PAID, GetCollaborator("Thibal", "WITCZAK"), new DateTime(2019, 1, 05), new DateTime(2019, 2, 15)),
+				//new Leave(LeaveStatus.PENDING_APPROVAL_1, LeaveType.PAID, GetCollaborator("Minh", "NGUYEN"), new DateTime(2019, 2, 4), new DateTime(2019, 2, 5)),
 
-				new Leave(LeaveStatus.REFUSED, LeaveType.RTT, GetCollaborator("Thibal", "WITCZAK"), new DateTime(2018, 12, 05), new DateTime(2019, 1, 15)),
-				new Leave(LeaveStatus.APPROVED, LeaveType.PAID, GetCollaborator("Minh", "NGUYEN"), new DateTime(2019, 3, 4), new DateTime(2019, 9, 18)) //je vais au Japon frère
+				new Leave(LeaveStatus.REFUSED, LeaveType.RTT, GetCollaborator("Thibal", "WITCZAK"), new DateTime(2018, 12, 05), new DateTime(2019, 1, 15), "Matin", "Matin"),
+				new Leave(LeaveStatus.APPROVED, LeaveType.PAID, GetCollaborator("Minh", "NGUYEN"), new DateTime(2019, 3, 4), new DateTime(2019, 9, 18), "Après-midi", "Matin") //je vais au Japon frère
 
 			};
 			

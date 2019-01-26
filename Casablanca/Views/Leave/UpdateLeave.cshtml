@@ -1,5 +1,5 @@
 ﻿@using Casablanca.Models.Leaves;
-
+@using Casablanca.Models;
 @{
 	ViewBag.Title = "Modifier une demande de congé";
 }
@@ -27,7 +27,7 @@
 
 				@Html.DropDownListFor(model => Model.Type,
 								(LeaveType.GetValues(typeof(LeaveType))).Cast<LeaveType>().ToList().Select(type => new SelectListItem {
-									Text = type.ToString(),
+									Text = HelperModel.ToString(type),
 									Value = type.ToString(),
 									Selected = (type == Model.Type)
 								}))
@@ -40,11 +40,19 @@
 			<div style="padding:10px">
 				Date de début
 
-
-
 				@Html.TextBoxFor(model => Model.StartDate,
 						  new { @type = "date", @class = "form-control datepicker", @Value = Model.StartDate.ToString("dd-MM-yyyy") })
 
+				<div>
+					@Html.LabelFor(m => m.StartMorningOrAfternoon)
+
+					Commencer le matin
+					@Html.RadioButtonFor(m => m.StartMorningOrAfternoon, "Matin")
+
+					Commencer l'après-midi
+					@Html.RadioButtonFor(m => m.StartMorningOrAfternoon, "Après-midi")
+
+				</div>
 			</div>
 
 
@@ -54,10 +62,16 @@
 			<div style="padding:10px">
 				Date de fin
 
-
-
 				@Html.TextBoxFor(model => Model.EndDate,
 						  new { @type = "date", @class = "form-control datepicker", @Value = Model.EndDate.ToString("dd-MM-yyyy") })
+
+				<div>
+					@Html.LabelFor(m => m.EndMorningOrAfternoon)
+					Terminer le matin
+					@Html.RadioButtonFor(m => m.EndMorningOrAfternoon, "Matin")
+					Terminer l'après-midi
+					@Html.RadioButtonFor(m => m.EndMorningOrAfternoon, "Après-midi")
+				</div>
 
 			</div>
 
@@ -74,8 +88,6 @@
 			</div>
 
 		</div>
-
-
 
 
 		<div style="padding:10px">

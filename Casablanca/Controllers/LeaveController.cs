@@ -91,7 +91,7 @@ namespace Casablanca.Controllers
 
 		#region Create and Edit Leave
 
-		[HttpPost] // Backend call of create page
+		//[HttpPost] // Backend call of create page
 		public ActionResult CreateLeave()
 		{
 			//------------Background identity check-------------//
@@ -102,25 +102,14 @@ namespace Casablanca.Controllers
 			//--------------------------------------------------//
 
 			// Create the ER
-			Leave tempLeave = new Leave(LeaveStatus.PENDING_APPROVAL_1, LeaveType.RTT, coll, DateTime.Now, DateTime.Now);
+			Leave tempLeave = new Leave(LeaveStatus.PENDING_APPROVAL_1, LeaveType.RTT, coll, DateTime.Now, DateTime.Now, "Matin", "Matin");
 
 			//string redirectString = "/Leave/UpdateLeave/?id=" + tempLeave.Id;
 
 			return View("UpdateLeave", tempLeave);
 		}
+		
 
-		//public ActionResult UpdateLeave()
-		//{
-		//	//------------Background identity check-------------//
-		//	if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
-		//		return Redirect("/Home/Index");
-
-		//	Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
-		//	//--------------------------------------------------//
-
-
-		//	return View();
-		//}
 
 		[HttpPost] // Backend call of UpdateLeave page
 		public ActionResult UpdateLeave(Leave model)
@@ -147,6 +136,8 @@ namespace Casablanca.Controllers
 				EndDate = model.EndDate,
 				StartDate = model.StartDate,
 				Status = LeaveStatus.PENDING_APPROVAL_1,
+				StartMorningOrAfternoon = model.StartMorningOrAfternoon,
+				EndMorningOrAfternoon = model.EndMorningOrAfternoon,
 				Treatment = HelperModel.ComputeTreatmentLeave(coll)
 			};
 
@@ -173,7 +164,7 @@ namespace Casablanca.Controllers
 
 			Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
 
-			//not in management OR isCompta = cannot see
+			//not in management = cannot see
 			if ((HelperModel.CheckManagement(coll) == false))
 				return Redirect("/Home/Index");
 			//--------------------------------------------------//
@@ -226,7 +217,7 @@ namespace Casablanca.Controllers
 					}
 					else
 					{ // The ER needs to be treated specifically
-						if (e.Status == LeaveStatus.PENDING_APPROVAL_1)
+						if (e.Status == LeaveStatus.PENDING_APPROVAL_1) // please do not put pending2 in DAL for those leaves
 						{
 							switch (e.Treatment)
 							{
