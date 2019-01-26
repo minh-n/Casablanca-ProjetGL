@@ -111,27 +111,6 @@ namespace Casablanca.Controllers
 
 
 
-		public ActionResult RemoveLeave(int id)
-		{
-			//------------Background identity check-------------//
-			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
-				return Redirect("/Home/Index");
-
-			Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
-			//--------------------------------------------------//
-
-			// Remove the ER
-
-
-			dal.GetLeave(id).Status = LeaveStatus.CANCELED;
-
-			dal.SaveChanges();
-
-			return Redirect("/Leave/Index");
-		}
-
-
-
 
 		[HttpPost] // Backend call of UpdateLeave page
 		public ActionResult UpdateLeave(Leave model)
@@ -150,6 +129,7 @@ namespace Casablanca.Controllers
 				return View(model);
 			}
 
+			// Create the temp leave
 			Leave tempToDb = new Leave
 			{
 				Collaborator = coll,
@@ -163,17 +143,33 @@ namespace Casablanca.Controllers
 				Treatment = HelperModel.ComputeTreatmentLeave(coll)
 			};
 
-
-			dal.CreateLeave(tempToDb);
-			dal.SaveChanges();
-			
+			int leaveLength = tempToDb.ComputeLengthLeave();
+			//if leave length inferior to available leave (for RTT and for PAID), allow the creation
+			if ((leaveLength <= coll.NbPaid) && tempToDb.Type == LeaveType.PAID)
+			{
+				coll.NbPaid -= leaveLength;
+				dal.CreateLeave(tempToDb);
+				dal.SaveChanges();
+			}
+			else if((leaveLength <= coll.NbRTT) && tempToDb.Type == LeaveType.RTT)
+			{
+				coll.NbRTT -= leaveLength;
+				dal.CreateLeave(tempToDb);
+				dal.SaveChanges();
+			}
+			else
+			{
+				// Error alert to the coll. The leave is not saved into the database. 
+				TempData["alertMessage"] = "Vous n'avez pas assez de demi-journ&#233es disponibles.";
+				return View(model);
+			}
 
 			return Redirect("/Leave/Index");
+
 		}
 
 
 		#endregion
-
 
 
 		#region Process Leaves
@@ -273,6 +269,10 @@ namespace Casablanca.Controllers
 			
 		}
 
+		#endregion
+
+		#region Accept or refuse leave
+
 		public ActionResult AcceptLeave(int id = 1)
 		{
 			Leave l = dal.GetLeave(id);
@@ -283,15 +283,15 @@ namespace Casablanca.Controllers
 			else
 			{
 				l.Status = LeaveStatus.APPROVED;
-				switch(l.Type)
-				{
-					case LeaveType.PAID:
-						l.Collaborator.NbPaid -= l.ComputeLengthLeave();
-						break;
-					case LeaveType.RTT:
-						l.Collaborator.NbRTT -= l.ComputeLengthLeave();
-						break;
-				}
+				//switch(l.Type)
+				//{
+				//	case LeaveType.PAID:
+				//		l.Collaborator.NbPaid -= l.ComputeLengthLeave();
+				//		break;
+				//	case LeaveType.RTT:
+				//		l.Collaborator.NbRTT -= l.ComputeLengthLeave();
+				//		break;
+				//}
 				
 			}
 			dal.SaveChanges();
@@ -310,15 +310,15 @@ namespace Casablanca.Controllers
 		{
 			Leave l = dal.GetLeave(id);
 			l.Status = LeaveStatus.APPROVED;
-			switch (l.Type)
-			{
-				case LeaveType.PAID:
-					l.Collaborator.NbPaid -= l.ComputeLengthLeave();
-					break;
-				case LeaveType.RTT:
-					l.Collaborator.NbRTT -= l.ComputeLengthLeave();
-					break;
-			}
+			//switch (l.Type)
+			//{
+			//	case LeaveType.PAID:
+			//		l.Collaborator.NbPaid -= l.ComputeLengthLeave();
+			//		break;
+			//	case LeaveType.RTT:
+			//		l.Collaborator.NbRTT -= l.ComputeLengthLeave();
+			//		break;
+			//}
 			dal.SaveChanges();
 			return Redirect("/Leave/ProcessList");
 		}
@@ -330,6 +330,39 @@ namespace Casablanca.Controllers
 			dal.SaveChanges();
 			return Redirect("/Leave/ProcessList");
 		}
+
+
+
+		public ActionResult RemoveLeave(int id)
+		{
+			//------------Background identity check-------------//
+			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+				return Redirect("/Home/Index");
+
+			Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+			//--------------------------------------------------//
+
+			Leave currentLeave = dal.GetLeave(id);
+
+			// Transfer the leave days into the collab's available days
+			if (currentLeave.Type == LeaveType.RTT)
+			{
+				coll.NbRTT = currentLeave.ComputeLengthLeave();
+			}
+			else if(currentLeave.Type == LeaveType.PAID)
+			{
+				coll.NbPaid = currentLeave.ComputeLengthLeave();
+			}
+
+
+			// Remove the ER
+			dal.GetLeave(id).Status = LeaveStatus.CANCELED;
+
+			dal.SaveChanges();
+
+			return Redirect("/Leave/Index");
+		}
+
 
 
 		#endregion

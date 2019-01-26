@@ -101,3 +101,11 @@
 	}
 
 </div>
+
+@if (null != TempData["alertMessage"])
+{
+	<script type="text/javascript">
+
+		alert("Vous n'avez pas assez de jour de congé. \nPar conséquent, le congé n'a pas pu être créé.");
+	</script>
+}
