@@ -160,7 +160,7 @@ namespace Casablanca.Controllers
 			else
 			{
 				// Error alert to the coll. The leave is not saved into the database. 
-				TempData["alertMessage"] = "Vous n'avez pas assez de demi-journ&#233es disponibles.";
+				TempData["alertMessage"] = "Vous n'avez pas assez de jour de congé. \nPar conséquent, le congé n'a pas pu être créé.";
 				return View(model);
 			}
 
