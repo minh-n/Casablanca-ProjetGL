@@ -41,8 +41,14 @@ namespace Casablanca.Models.Database {
 		Leave GetLeave(int id);
 		void CreateLeave(Leave temp);
 
-		// Helper
-		string EncodeMD5(string password);
+        // Notifications
+        List<Notification> GetNotifications();
+        Notification GetNotifications(int id);
+        List<Notification> GetNotifications(Collaborator receiver);
+        void AddNotification(Notification not);
+
+        // Helper
+        string EncodeMD5(string password);
         void SaveChanges();
 		//bool CheckChiefValidator(Collaborator chief, Mission mission);
 		//can't implement because static

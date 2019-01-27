@@ -184,16 +184,50 @@ namespace Casablanca.Models
 			return "Debug: StatutER";
 		}
 
-		#endregion
+        public static string ToString(NotificationType type)
+        {
+            switch (type)
+            {
+                case NotificationType.EXPENSE: return "Frais";
+                case NotificationType.LEAVE: return "Congé";
+                case NotificationType.ADVANCE: return "Avance";
+                case NotificationType.INFORMATION: return "Information";
+            }
+            return "Debug: TypeNotification";
+        }
 
-		//public enum Treatment
-		//{
-		//	NOT_TREATED,
-		//	CDS,
-		//	COMPTA
-		//}
-		//true if the coll is in a management role (RH, Compta or Chief)
-		public static bool CheckManagement(Collaborator coll)
+        public static string ToString(NotificationResult type)
+        {
+            switch (type)
+            {
+                case NotificationResult.VALIDATION: return "Validation";
+                case NotificationResult.REFUSAL: return "Refus";
+                case NotificationResult.RECALL: return "Rappel";
+                case NotificationResult.TREATMENT: return "Traitement";
+            }
+            return "Debug: ResultNotification";
+        }
+
+        public static string ToString(NotificationStatus type)
+        {
+            switch (type)
+            {
+                case NotificationStatus.READ: return "Lu";
+                case NotificationStatus.UNREAD: return "Non lu";
+            }
+            return "Debug: StatusNotification";
+        }
+
+        #endregion
+
+        //public enum Treatment
+        //{
+        //	NOT_TREATED,
+        //	CDS,
+        //	COMPTA
+        //}
+        //true if the coll is in a management role (RH, Compta or Chief)
+        public static bool CheckManagement(Collaborator coll)
 		{
 			return (CheckCompta (coll) || CheckRH(coll) || CheckDirection(coll)) || CheckCDS(coll) ? true : false;
 		}

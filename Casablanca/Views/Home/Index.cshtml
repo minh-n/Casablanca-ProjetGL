@@ -9,148 +9,188 @@
 
 
 @{
-	ViewBag.Title = "Casablanca";
-	Dal dal = new Dal();
+    ViewBag.Title = "Casablanca";
+    Dal dal = new Dal();
 
-	List<Leave> leaves = dal.GetLeaves();
-	
-
+    List<Leave> leaves = dal.GetLeaves();
+    List<Notification> notifications = dal.GetNotifications();
 }
 
 @model Collaborator
 
 <div class="jumbotron">
 
-	@{
-		if (@HttpContext.Current.User.Identity.IsAuthenticated != false)
-		{
-			<h2>Bienvenue sur l'intranet, @Model.FirstName @Model.LastName !</h2>
-		}
-		else
-		{
-			<h2>Bienvenue sur Pops1819. Veuillez vous connecter !</h2>
-		}
-	}
+    @{
+        if (@HttpContext.Current.User.Identity.IsAuthenticated != false)
+        {
+            <h2>Bienvenue sur l'intranet, @Model.FirstName @Model.LastName !</h2>
+        }
+        else
+        {
+            <h2>Bienvenue sur Pops1819. Veuillez vous connecter !</h2>
+        }
+    }
 
 
 </div>
 
 <div class="row">
-	<div class="col-md-4">
-		@if (Model != null)
-		{
-			<h3>Notes de frais</h3>
-			<p>
-				<div class="table-responsive">
-					<table class="table">
-						<thead>
-							<tr>
-								<th>Mois</th>
-								<th>Statut</th>
-								<th>Action</th>
-							</tr>
-						</thead>
-						<tbody>
-							@foreach (var item in Model.ExpenseReports)
-							{
-								<tr>
-									<td>
-										@HelperModel.FirstCharToUpper(DateTime.ParseExact(item.Month.ToString(), "MMMM", new CultureInfo("en-US")).ToString("MMMM"))
-										@item.Year
-									</td>
-									<td>
-										@HelperModel.ToString(item.Status)
-									</td>
+    <div class="col-md-4">
+        @if (Model != null)
+        {
+            <h3>Notes de frais</h3>
+            <p>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Mois</th>
+                                <th>Statut</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.ExpenseReports)
+                            {
+                                <tr>
+                                    <td>
+                                        @HelperModel.FirstCharToUpper(DateTime.ParseExact(item.Month.ToString(), "MMMM", new CultureInfo("en-US")).ToString("MMMM"))
+                                        @item.Year
+                                    </td>
+                                    <td>
+                                        @HelperModel.ToString(item.Status)
+                                    </td>
 
-									@*Un bouton pour accéder à la note de frais en cours*@
-									<td>
-										@if (item.Status == ExpenseReportStatus.UNSENT || item.Status == ExpenseReportStatus.REFUSED)
-										{
-											<div>
-												@Html.ActionLink("Modifier", "UpdateExpenseReport", "ExpenseReport", new { id = item.Id }, null) | @Html.ActionLink("Envoyer", "SendExpenseReport", "ExpenseReport", new { id = item.Id }, null)
-											</div>
-										}
-										else
-										{
-											@Html.ActionLink("Voir", "ViewExpenseReport", "ExpenseReport", new { ERId = item.Id }, null)
-										}
-									</td>
-								</tr>
-							}
-						</tbody>
-					</table>
-				</div>
+                                    @*Un bouton pour accéder à la note de frais en cours*@
+                                    <td>
+                                        @if (item.Status == ExpenseReportStatus.UNSENT || item.Status == ExpenseReportStatus.REFUSED)
+                                        {
+                                            <div>
+                                                @Html.ActionLink("Modifier", "UpdateExpenseReport", "ExpenseReport", new { id = item.Id }, null) | @Html.ActionLink("Envoyer", "SendExpenseReport", "ExpenseReport", new { id = item.Id }, null)
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            @Html.ActionLink("Voir", "ViewExpenseReport", "ExpenseReport", new { ERId = item.Id }, null)
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
 
-			</p>
-		}
-	</div>
-	<div class="col-md-4">
-		@if (Model != null)
-		{
-			<h3>Demandes de congé</h3>
-			<p>
-				<div class="table-responsive">
-					<table class="table">
-						<thead>
-							<tr>
-								<th>Type</th>
-								<th>Début</th>
-								<th>Fin</th>
-								<th>Statut</th>
-								
-							</tr>
-						</thead>
-						<tbody>
+            </p>
+        }
+    </div>
+    <div class="col-md-4">
+        @if (Model != null)
+        {
+            <h3>Demandes de congé</h3>
+            <p>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Début</th>
+                                <th>Fin</th>
+                                <th>Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody>
 
-							@{ 
-								List<Leave> leavesColl = new List<Leave>();
+                            @{
+                                List<Leave> leavesColl = new List<Leave>();
 
-								Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+                                Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
 
-								foreach (Leave l in leaves)
-								{
-									if (l.Collaborator.Id == coll.Id)
-									{
-										leavesColl.Add(l);
-									}
-								}
-							}
-							
-							@foreach (var item in leavesColl)
-							{
-								<tr>
-									<td>
-										@HelperModel.ToString(item.Type)
-									</td>
-									<td>
-										@item.StartDate.ToString("dd/MM/yyyy")
-									</td>
-									<td>
-										@item.EndDate.ToString("dd/MM/yyyy")
-									</td>
-									<td>
-										@HelperModel.ToString(item.Status, item.Treatment)
-									</td>
+                                foreach (Leave l in leaves)
+                                {
+                                    if (l.Collaborator.Id == coll.Id)
+                                    {
+                                        leavesColl.Add(l);
+                                    }
+                                }
+                            }
 
-									@*
-									<td>
-									
-										@Html.ActionLink("Voir", "ViewLeave", "Leave", new { id = item.Id }, null)
-										
-									</td>*@
-								</tr>
-							}
-						</tbody>
-					</table>
-				</div>
+                            @foreach (var item in leavesColl)
+                            {
+                                <tr>
+                                    <td>
+                                        @HelperModel.ToString(item.Type)
+                                    </td>
+                                    <td>
+                                        @item.StartDate.ToString("dd/MM/yyyy")
+                                    </td>
+                                    <td>
+                                        @item.EndDate.ToString("dd/MM/yyyy")
+                                    </td>
+                                    <td>
+                                        @HelperModel.ToString(item.Status, item.Treatment)
+                                    </td>
 
-			</p>
-		}
-	</div>
-	<div class="col-md-4">
-		<h3>Notifications</h3>
-		<p>
-			ddddddd
-		</p>
-	</div>
+                                    @*
+                                        <td>
+
+                                            @Html.ActionLink("Voir", "ViewLeave", "Leave", new { id = item.Id }, null)
+
+                                        </td>*@
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            </p>
+        }
+    </div>
+    <div class="col-md-4">
+        @if (Model != null)
+        {
+            <h3>Notifications</h3>
+            <div id="notificationsTable">
+                <p>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr><th>Type</th><th>Statut</th><th>Message</th></tr>
+                            </thead>
+                            <tbody>
+
+                                @{
+                                    List<Notification> notifsColl = dal.GetNotifications(dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name));
+                                }
+
+                                @foreach (Notification item in notifsColl)
+                                {
+                                    <tr>
+                                        <td>
+                                            @HelperModel.ToString(item.NotifType)
+                                        </td>
+                                        <td>
+                                            @HelperModel.ToString(item.NotifResult)
+                                        </td>
+                                        <td>
+                                            @item.NotifContent
+                                        </td>                                       
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </p>
+            </div>            
+        }
+    </div>    
 </div>
+
+@section scripts {
+    <!--Script references. -->
+    <!--Reference the SignalR library. -->
+    <script src="~/Scripts/jquery.signalR-2.4.0.min.js"></script>
+    <!--Reference the autogenerated SignalR hub script. -->
+    <script src="~/signalr/hubs"></script>
+    <!--Reference the NotificationsTicker script. -->
+    <script src="~/Scripts/Notification/NotificationsTicker.js"></script>    
+}

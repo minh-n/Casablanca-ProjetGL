@@ -86,6 +86,65 @@ namespace Casablanca.Controllers {
 
             // Change the status of the ER
             er.Status = ExpenseReportStatus.PENDING_APPROVAL_1;
+
+            //send a notification
+            switch (er.Collaborator.Role)
+            {
+                case Roles.USER:
+                    if (coll.Service.Name.Contains("Compta"))
+                    {
+                        dal.AddNotification(new Notification(coll, dal.GetCollaborator(coll.Service.GetChiefFromService()), NotificationType.EXPENSE));
+                    }
+                    else
+                    {
+                        List<Collaborator> tmp = new List<Collaborator>();
+
+                        foreach(ExpenseLine expenseLine in er.ExpenseLines)
+                        {
+                            if(!tmp.Contains(dal.GetCollaborator(expenseLine.Mission.ChiefId)))
+                                tmp.Add(dal.GetCollaborator(expenseLine.Mission.ChiefId));
+                        }
+
+                        foreach(Collaborator c in tmp)
+                        {
+                            dal.AddNotification(new Notification(coll, c, NotificationType.EXPENSE));
+                        }                        
+                    }                        
+                    break;
+                case Roles.CHIEF:
+                    if (coll.Service.Name.Contains("Compta"))
+                    {
+                        foreach (Collaborator c in dal.GetCollaborators())
+                        {
+                            if (c.Role == Roles.CHIEF && c.Service.Name.Contains("Direction"))
+                            {
+                                dal.AddNotification(new Notification(coll, c, NotificationType.EXPENSE));
+                            }
+                        }
+                    }
+                    else if (coll.Service.Name.Contains("Direction"))
+                    {
+                        foreach (Collaborator c in dal.GetCollaborators())
+                        {
+                            if (c.Role == Roles.CHIEF && c.Service.Name.Contains("Compta"))
+                            {
+                                dal.AddNotification(new Notification(coll, c, NotificationType.EXPENSE));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (Collaborator c in dal.GetCollaborators())
+                        {
+                            if (c.Role != Roles.CHIEF && c.Service.Name.Contains("Compta"))
+                            {
+                                dal.AddNotification(new Notification(coll, c, NotificationType.EXPENSE));
+                            }
+                        }
+                    }
+                    break;
+            }
+
             dal.SaveChanges();
 
             return Redirect("/ExpenseReport/Index");
@@ -360,10 +419,26 @@ namespace Casablanca.Controllers {
 
                 // If all EL are validated, switch to next status
                 if (allValidated)
+                {
                     er.Status = ExpenseReportStatus.PENDING_APPROVAL_2;
+
+                    //send notifications
+                    dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.EXPENSE, NotificationResult.VALIDATION, "Votre note de frais est validée par le(s) chef(s) de service concerné(s)"));
+
+                    foreach (Collaborator c in dal.GetCollaborators())
+                    {
+                        if (c.Role != Roles.CHIEF && c.Service.Name.Contains("Compta"))
+                        {
+                            dal.AddNotification(new Notification(coll, c, NotificationType.EXPENSE));
+                        }
+                    }
+                }                    
             }
             else {
-                er.Status = ExpenseReportStatus.REFUSED; // We refused one or several lines
+                er.Status = ExpenseReportStatus.REFUSED; // We refused one or several lines     
+
+                //send a notification
+                dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.EXPENSE, NotificationResult.REFUSAL));
             }
 
             dal.SaveChanges();
@@ -423,9 +498,17 @@ namespace Casablanca.Controllers {
             }
 
             if (allValidated)
+            {
                 er.Status = ExpenseReportStatus.APPROVED;
+                //send a notification
+                dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.EXPENSE, NotificationResult.VALIDATION));
+            }
             else
-                er.Status = ExpenseReportStatus.REFUSED; // We refused one or several lines
+            {
+                er.Status = ExpenseReportStatus.REFUSED;    // We refused one or several lines 
+                //send a notification
+                dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.EXPENSE, NotificationResult.REFUSAL));
+            }
 
             dal.SaveChanges();
 
@@ -520,9 +603,17 @@ namespace Casablanca.Controllers {
             }
 
             if (allValidated)
+            {
                 er.Status = ExpenseReportStatus.APPROVED;
+                //send a notification
+                dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.EXPENSE, NotificationResult.VALIDATION));
+            }                
             else
-                er.Status = ExpenseReportStatus.REFUSED; // We refused one or several lines
+            {
+                er.Status = ExpenseReportStatus.REFUSED;    // We refused one or several lines 
+                //send a notification
+                dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.EXPENSE, NotificationResult.REFUSAL));
+            }                 
 
             dal.SaveChanges();
 

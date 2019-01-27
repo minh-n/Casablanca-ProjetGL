@@ -8,6 +8,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Diagnostics;
 using Casablanca.Models.Leaves;
+using System.Collections.Concurrent;
 
 namespace Casablanca.Models.Database
 {
@@ -20,6 +21,7 @@ namespace Casablanca.Models.Database
         private List<Mission> Missions { get; set; }
         private List<ExpenseReport> ExpenseReports { get; set; }
         private List<ExpenseLine> ExpenseLines { get; set; }
+        private ConcurrentBag<Notification> Notifications { get; set; }
 
         public Dal()
         {
@@ -118,10 +120,22 @@ namespace Casablanca.Models.Database
 			Collaborators[16].Role = Roles.CHIEF; //KVN is now CDS Digital
 			Collaborators[10].Role = Roles.CHIEF; //Momo is DRH
 
-			#endregion
+            #endregion
 
-			#region Create missions
-			Missions = new List<Mission> {
+            #region Initialize notifications
+            Notifications = new ConcurrentBag<Notification>()
+            {
+                new Notification(Collaborators[2], Collaborators[2], NotificationType.INFORMATION, NotificationResult.VALIDATION),
+                new Notification(Collaborators[1], Collaborators[2], NotificationType.INFORMATION, NotificationResult.REFUSAL),
+                new Notification(Collaborators[3], Collaborators[1], NotificationType.INFORMATION, NotificationResult.VALIDATION),
+                new Notification(Collaborators[4], Collaborators[4], NotificationType.INFORMATION, NotificationResult.VALIDATION),
+                new Notification(Collaborators[5], Collaborators[5], NotificationType.INFORMATION, NotificationResult.VALIDATION)
+            };
+
+            #endregion
+
+            #region Create missions
+            Missions = new List<Mission> {
 				new Mission("Mission A", DateTime.Today, new DateTime(2019, 5, 1), MissionStatus.IN_PROGRESS),
 				new Mission("Mission B", new DateTime(2019, 2, 9), new DateTime(2019, 3, 1), MissionStatus.PLANNED),
 				new Mission("Mission C", new DateTime(2018, 12, 25), new DateTime(2018, 12, 26), MissionStatus.CANCELED),
@@ -146,6 +160,11 @@ namespace Casablanca.Models.Database
 
             foreach (Mission m in Missions) {
                 Db.Missions.Add(m);
+            }
+
+            foreach (Notification n in Notifications)
+            {
+                Db.Notifications.Add(n);
             }
 
             Db.SaveChanges();
@@ -420,8 +439,39 @@ namespace Casablanca.Models.Database
 			Db.SaveChanges();
 		}
 
-		// Helper
-		public string EncodeMD5(string pass) {
+        // Notifications
+        public List<Notification> GetNotifications()
+        {
+            return Db.Notifications.ToList();
+        }
+
+        public Notification GetNotifications(int id)
+        {
+            return Db.Notifications.SingleOrDefault(c => c.Id == id);
+        }
+
+        public List<Notification> GetNotifications(Collaborator receiver)
+        {
+            List<Notification> r = new List<Notification>();
+            foreach (Notification n in Db.Notifications)
+            {
+                if(n.Receiver != null)
+                {
+                    if (n.Receiver.Id == receiver.Id)
+                        r.Add(n);
+                }                
+            }
+            return r;
+        }
+
+        public void AddNotification(Notification not)
+        {
+            Db.Notifications.Add(not);
+            Db.SaveChanges();
+        }
+
+        // Helper
+        public string EncodeMD5(string pass) {
             string passSalt = "ChevalDeMetal" + pass + "Casablanca";
             return BitConverter.ToString(new MD5CryptoServiceProvider().ComputeHash(ASCIIEncoding.Default.GetBytes(passSalt)));
         }

@@ -49,11 +49,13 @@ namespace Casablanca.Models {
 		public int NbPaid { get; set; }
 		public int NbOther { get; set; }
 
-		#endregion
+        public HashSet<string> ConnectionIds { get; set; }
 
-		#region Constructors 
+        #endregion
 
-		public Collaborator(string firstName, string lastName, Mission mission) {
+        #region Constructors 
+
+        public Collaborator(string firstName, string lastName, Mission mission) {
             this.Login = "default";
             this.Password = "default";
             this.FirstName = firstName;
