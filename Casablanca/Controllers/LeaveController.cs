@@ -143,19 +143,21 @@ namespace Casablanca.Controllers
 				Treatment = HelperModel.ComputeTreatmentLeave(coll)
 			};
 
-			int leaveLength = tempToDb.ComputeLengthLeave();
+            int leaveLength = tempToDb.ComputeLengthLeave();
 			//if leave length inferior to available leave (for RTT and for PAID), allow the creation
 			if ((leaveLength <= coll.NbPaid) && tempToDb.Type == LeaveType.PAID)
 			{
 				coll.NbPaid -= leaveLength;
 				dal.CreateLeave(tempToDb);
-				dal.SaveChanges();
+                SendNotificationHelp(tempToDb);
+                dal.SaveChanges();
 			}
 			else if((leaveLength <= coll.NbRTT) && tempToDb.Type == LeaveType.RTT)
 			{
 				coll.NbRTT -= leaveLength;
 				dal.CreateLeave(tempToDb);
-				dal.SaveChanges();
+                SendNotificationHelp(tempToDb);
+                dal.SaveChanges();
 			}
 			else
 			{
@@ -276,25 +278,38 @@ namespace Casablanca.Controllers
 		public ActionResult AcceptLeave(int id = 1)
 		{
 			Leave l = dal.GetLeave(id);
-			if (l.Status == LeaveStatus.PENDING_APPROVAL_1)
+            Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+
+            if (l.Status == LeaveStatus.PENDING_APPROVAL_1)
 			{
-				l.Status = LeaveStatus.PENDING_APPROVAL_2;
-			}
+                foreach (Collaborator c in dal.GetCollaborators())
+                {
+                    if (c.Role != Roles.CHIEF && c.Service.Name.Contains("RH"))
+                        dal.AddNotification(new Notification(l.Collaborator, c, NotificationType.LEAVE));
+                }
+                l.Status = LeaveStatus.PENDING_APPROVAL_2;
+
+                //send a notification
+                dal.AddNotification(new Notification(coll, l.Collaborator, NotificationType.LEAVE, NotificationResult.VALIDATION));
+            }
 			else
 			{
 				l.Status = LeaveStatus.APPROVED;
-				//switch(l.Type)
-				//{
-				//	case LeaveType.PAID:
-				//		l.Collaborator.NbPaid -= l.ComputeLengthLeave();
-				//		break;
-				//	case LeaveType.RTT:
-				//		l.Collaborator.NbRTT -= l.ComputeLengthLeave();
-				//		break;
-				//}
-				
-			}
-			dal.SaveChanges();
+                //switch(l.Type)
+                //{
+                //	case LeaveType.PAID:
+                //		l.Collaborator.NbPaid -= l.ComputeLengthLeave();
+                //		break;
+                //	case LeaveType.RTT:
+                //		l.Collaborator.NbRTT -= l.ComputeLengthLeave();
+                //		break;
+                //}
+
+                //send a notification                
+                dal.AddNotification(new Notification(coll, l.Collaborator, NotificationType.LEAVE, NotificationResult.VALIDATION));
+            }
+            
+            dal.SaveChanges();
 			return Redirect("/Leave/ProcessList");
 		}
 
@@ -302,7 +317,12 @@ namespace Casablanca.Controllers
 		{
 			Leave l = dal.GetLeave(id);
 			l.Status = LeaveStatus.REFUSED;
-			dal.SaveChanges();
+
+            //send a notification
+            Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+            dal.AddNotification(new Notification(coll, l.Collaborator, NotificationType.LEAVE, NotificationResult.REFUSAL));
+
+            dal.SaveChanges();
 			return Redirect("/Leave/ProcessList");
 		}
 
@@ -310,16 +330,21 @@ namespace Casablanca.Controllers
 		{
 			Leave l = dal.GetLeave(id);
 			l.Status = LeaveStatus.APPROVED;
-			//switch (l.Type)
-			//{
-			//	case LeaveType.PAID:
-			//		l.Collaborator.NbPaid -= l.ComputeLengthLeave();
-			//		break;
-			//	case LeaveType.RTT:
-			//		l.Collaborator.NbRTT -= l.ComputeLengthLeave();
-			//		break;
-			//}
-			dal.SaveChanges();
+            //switch (l.Type)
+            //{
+            //	case LeaveType.PAID:
+            //		l.Collaborator.NbPaid -= l.ComputeLengthLeave();
+            //		break;
+            //	case LeaveType.RTT:
+            //		l.Collaborator.NbRTT -= l.ComputeLengthLeave();
+            //		break;
+            //}
+
+            //send a notification
+            Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+            dal.AddNotification(new Notification(coll, l.Collaborator, NotificationType.LEAVE, NotificationResult.VALIDATION));
+
+            dal.SaveChanges();
 			return Redirect("/Leave/ProcessList");
 		}
 
@@ -327,7 +352,12 @@ namespace Casablanca.Controllers
 		{
 			Leave l = dal.GetLeave(id);
 			l.Status = LeaveStatus.REFUSED;
-			dal.SaveChanges();
+
+            //send a notification
+            Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+            dal.AddNotification(new Notification(coll, l.Collaborator, NotificationType.LEAVE, NotificationResult.REFUSAL));
+
+            dal.SaveChanges();
 			return Redirect("/Leave/ProcessList");
 		}
 
@@ -366,5 +396,48 @@ namespace Casablanca.Controllers
 
 
 		#endregion
+
+
+        public void SendNotificationHelp(Leave tempToDb)
+        {
+            switch (tempToDb.Collaborator.Role)
+            {
+                case Roles.USER:
+                    dal.AddNotification(new Notification(tempToDb.Collaborator, dal.GetCollaborator(tempToDb.Collaborator.Service.GetChiefFromService()), NotificationType.LEAVE));
+                    break;
+                case Roles.CHIEF:
+                    if (tempToDb.Collaborator.Service.Name.Contains("RH"))
+                    {
+                        foreach (Collaborator c in dal.GetCollaborators())
+                        {
+                            if (c.Role == Roles.CHIEF && c.Service.Name.Contains("Direction"))
+                            {
+                                dal.AddNotification(new Notification(tempToDb.Collaborator, c, NotificationType.LEAVE));
+                            }
+                        }
+                    }
+                    else if (tempToDb.Collaborator.Service.Name.Contains("Direction"))
+                    {
+                        foreach (Collaborator c in dal.GetCollaborators())
+                        {
+                            if (c.Role == Roles.CHIEF && c.Service.Name.Contains("RH"))
+                            {
+                                dal.AddNotification(new Notification(tempToDb.Collaborator, c, NotificationType.LEAVE));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (Collaborator c in dal.GetCollaborators())
+                        {
+                            if (c.Role != Roles.CHIEF && c.Service.Name.Contains("RH"))
+                            {
+                                dal.AddNotification(new Notification(tempToDb.Collaborator, c, NotificationType.LEAVE));
+                            }
+                        }
+                    }
+                    break;
+            }
+        }
 	}
 }
