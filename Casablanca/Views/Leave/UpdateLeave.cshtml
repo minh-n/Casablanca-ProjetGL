@@ -16,16 +16,17 @@
 		<hr />
 		<div>
 			<div style="padding:10px">
-				Description du congé
-
-				@Html.TextBoxFor(model => model.Description, new { style = "width:500px;" })
+				<b>Description du congé</b>
+				<br>
+				@Html.TextAreaFor(model => model.Description, new { style = "width:500px; height:50px" })
 			</div>
+
 
 
 			<!-- Type -->
 			<div style="padding:10px">
-				Type du congé
-
+				<b>Type du congé</b>
+				<br />
 				@Html.DropDownListFor(model => Model.Type,
 								(LeaveType.GetValues(typeof(LeaveType))).Cast<LeaveType>().ToList().Select(type => new SelectListItem {
 									Text = HelperModel.ToString(type),
@@ -35,20 +36,19 @@
 			</div>
 
 
-
 			<!-- StartDate -->
 
 			<div style="padding:10px">
-				Date de début
+				<b>Date de début</b>
 
 				@Html.TextBoxFor(model => Model.StartDate,
 						  new { @type = "date", @class = "form-control datepicker", @Value = Model.StartDate.ToString("dd-MM-yyyy") })
-
+				<br />
 				<div>
-					@Html.LabelFor(m => m.StartMorningOrAfternoon)
+					@Html.LabelFor(m => m.StartMorningOrAfternoon)<br />
 
 					Commencer le matin
-					@Html.RadioButtonFor(m => m.StartMorningOrAfternoon, "Matin")
+					@Html.RadioButtonFor(m => m.StartMorningOrAfternoon, "Matin")<br />
 
 					Commencer l'après-midi
 					@Html.RadioButtonFor(m => m.StartMorningOrAfternoon, "Après-midi")
@@ -61,15 +61,15 @@
 			<!-- EndDate -->
 
 			<div style="padding:10px">
-				Date de fin
+				<b>Date de fin</b>
 
 				@Html.TextBoxFor(model => Model.EndDate,
 						  new { @type = "date", @class = "form-control datepicker", @Value = Model.EndDate.ToString("dd-MM-yyyy") })
-
+				<br />
 				<div>
-					@Html.LabelFor(m => m.EndMorningOrAfternoon)
-					Terminer le matin
-					@Html.RadioButtonFor(m => m.EndMorningOrAfternoon, "Matin")
+					@Html.LabelFor(m => m.EndMorningOrAfternoon) <br />
+					Terminer le matin 
+					@Html.RadioButtonFor(m => m.EndMorningOrAfternoon, "Matin") <br />
 					Terminer l'après-midi
 					@Html.RadioButtonFor(m => m.EndMorningOrAfternoon, "Après-midi")
 				</div>
@@ -77,22 +77,11 @@
 			</div>
 
 
-
-
-
-
-			<!-- Displaying status -->
-			<div style="padding:10px">
-				(DEBUG) Statut du congé
-
-				@Html.DisplayFor(model => model.Status)
-			</div>
-
 		</div>
 
 
 		<div style="padding:10px">
-			<input type="submit" value="Sauvegarder" />
+			<input type="submit" value="Sauvegarder la demande" />
 		</div>
 
 

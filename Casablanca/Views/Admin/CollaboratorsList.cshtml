@@ -7,7 +7,7 @@
 @model  List<Collaborator>
 
 <!-- Bootstrap Table Style -->
-@Styles.Render("//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/bootstrap-table.min.css")
+@Styles.Render("~/Content/bootstrap-table.min.css")
 
 <h2>Admin/Liste des Collaborateurs</h2>
 
@@ -22,42 +22,50 @@
     }
     else {
         <thead>
-            <tr>
-                <th scope="col" data-field="select" data-sortable="true">Sélectionner ?</th>
+			<tr>
 
-                <th scope="col" data-field="prenom" data-sortable="true">Prénom</th>
-                <th scope="col" data-field="nom" data-sortable="true">Nom</th>
-                <th scope="col" data-field="service" data-sortable="true">Service</th>
-                <th scope="col" data-field="mission" data-sortable="true">Mission</th>
+				<th scope="col" data-field="prenom" data-sortable="true">Prénom</th>
+				<th scope="col" data-field="nom" data-sortable="true">Nom</th>
+				<th scope="col" data-field="service" data-sortable="true">Service</th>
+				<th scope="col" data-field="mission" data-sortable="true">Mission</th>
+				<th scope="col" data-field="action" data-sortable="true">Action</th>
 
-            </tr>
+			</tr>
         </thead>
         <tbody>
             @foreach (var item in Model) {
-                <tr>
-                    <td>Insérer checkbox ici ici ?</td>
-                    <td>@item.FirstName</td>
-                    <td>@item.LastName</td>
-                    @if (item.Service != null) {
-                        <td>@item.Service.Name</td>
-                    }
-                    else {
-                        <td>Aucun service</td>
-                    }
+			<tr>
+				<td>@item.FirstName</td>
+				<td>@item.LastName</td>
+				@if (item.Service != null)
+				{
+					<td>@item.Service.Name</td>
+				}
+				else
+				{
+					<td>Aucun service</td>
+				}
 
-                    <td>
-                        @if (item.Missions.Count != 0) {
+				<td>
+					@if (item.Missions.Count != 0)
+					{
 
-                            foreach (var mission in item.Missions) {
-                                @mission.Name <text> ,</text>
-                            }
+						foreach (var mission in item.Missions)
+						{
+							@mission.Name <text> ,</text>
+						}
 
-                        }
-                        else {
-                            <text>Aucune mission</text>
-                        }
-                    </td>
-                </tr>
+					}
+					else
+					{
+						<text>Aucune mission</text>
+					}
+				</td>
+				<td> 
+					Voir TODO
+				</td>
+
+			</tr>
             }
         </tbody>
     }

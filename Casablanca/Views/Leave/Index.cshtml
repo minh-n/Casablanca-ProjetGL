@@ -23,14 +23,12 @@
 		<div id="calendar"></div> <!-- FULL CALENDAR -->
 
 
-
 		<p style="padding:20px">TODO : légende des couleurs.</p>
 	</div>
 
 
 	<div class="col-lg-6">
 		<div class="jumbotron">
-
 
 
 			<b>Demi-journées de RTT restants : </b> @currentColl.NbRTT
@@ -49,7 +47,6 @@
 			<br>
 			<b>Demi-journées de congés payés déjà pris : </b> @HelperModel.GetNumberLeave(currentColl, LeaveStatus.APPROVED, LeaveType.PAID)
 			<br>
-
 
 		</div>
 		@using (Html.BeginForm("CreateLeave", "Leave", FormMethod.Post))

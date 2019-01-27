@@ -144,7 +144,7 @@ namespace Casablanca.Controllers
 			};
 
             int leaveLength = tempToDb.ComputeLengthLeave();
-			//if leave length inferior to available leave (for RTT and for PAID), allow the creation
+			// if leave length inferior to available leave (for RTT and for PAID), allow the creation
 			if ((leaveLength <= coll.NbPaid) && tempToDb.Type == LeaveType.PAID)
 			{
 				coll.NbPaid -= leaveLength;
@@ -159,7 +159,13 @@ namespace Casablanca.Controllers
                 SendNotificationHelp(tempToDb);
                 dal.SaveChanges();
 			}
-			else
+			else if (tempToDb.Type == LeaveType.OTHER) //in that case, we don't check the number of remaining days (sick leave etc)
+			{
+				dal.CreateLeave(tempToDb);
+				SendNotificationHelp(tempToDb);
+				dal.SaveChanges();
+			}
+			else // the user doesn't have enough leave days available, either for RTT or PAID
 			{
 				// Error alert to the coll. The leave is not saved into the database. 
 				TempData["alertMessage"] = "Vous n'avez pas assez de jour de congé. \nPar conséquent, le congé n'a pas pu être créé.";
