@@ -429,7 +429,7 @@ namespace Casablanca.Controllers {
                     {
                         if (c.Role != Roles.CHIEF && c.Service.Name.Contains("Compta"))
                         {
-                            dal.AddNotification(new Notification(coll, c, NotificationType.EXPENSE));
+                            dal.AddNotification(new Notification(er.Collaborator, c, NotificationType.EXPENSE));
                         }
                     }
                 }                    
