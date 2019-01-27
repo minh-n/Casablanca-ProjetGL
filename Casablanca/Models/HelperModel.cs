@@ -186,6 +186,105 @@ namespace Casablanca.Models
 		}
 
 
+		public static int GetNumberERToProcess(Collaborator coll)
+		{
+
+			int number = 0;
+			
+			Dal dal = new Dal();
+			List<ExpenseReport> AllERList = dal.GetExpenseReports();
+
+			// for each Expense Report, check if they meet the following criterias
+			// if yes, add them to the list returned to the View
+			foreach (ExpenseReport e in AllERList)
+			{
+				if (e.Collaborator != coll) // a coll cannot validate his own ER
+				{
+					// If the ER needs to be treated the classic way
+					if (e.Treatment == Processing.CLASSIC)
+					{
+						if (HelperModel.CheckCDSCompta(coll)) // CDS Compta
+						{
+							if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_2)
+							{
+								++number;
+							}
+							if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_1)
+							{
+								// in order to know if the Chief needs to see the ER, check if coll is the chief of a mission in ELs
+								foreach (ExpenseLine el in e.ExpenseLines)
+								{
+									if (dal.GetCollaborator(el.Mission.ChiefId).Id == coll.Id)
+									{
+										++number;
+										break;
+									}
+								}
+							}
+						}
+						else if (HelperModel.CheckCompta(coll)) // Compta
+						{
+							if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_2)
+								++number;
+						}
+						else if (HelperModel.CheckCDS(coll)) // CDS
+						{
+							if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_1)
+							{
+								// in order to know if the Chief needs to see the ER
+								foreach (ExpenseLine el in e.ExpenseLines)
+								{
+									if (dal.GetCollaborator(el.Mission.ChiefId).Id == coll.Id)
+									{
+										++number;
+										break;
+									}
+								}
+							}
+						}
+					}
+					else
+					{ // The ER needs to be treated specifically
+						if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_1)
+						{
+							switch (e.Treatment)
+							{
+								case Processing.COMPTA:
+									if (HelperModel.CheckCompta(coll))
+									{
+										++number;
+									}
+									break;
+								case Processing.FINANCIAL_DIRECTOR:
+									if (HelperModel.CheckCDSCompta(coll))
+									{
+										++number;
+									}
+									break;
+								case Processing.CEO:
+									if (HelperModel.CheckPDG(coll))
+									{
+										++number;
+									}
+									break;
+							}
+						}
+					}
+				}
+			}
+
+			return number;
+		}
+
+
+		public static int GetNumberLeaveToProcess(Collaborator coll)
+		{
+			int number = 0;
+
+
+			return number;
+		}
+
 		#region ToString
 
 		public static string ToString(LeaveType type)
