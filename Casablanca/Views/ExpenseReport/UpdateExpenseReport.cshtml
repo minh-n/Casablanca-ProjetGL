@@ -202,12 +202,14 @@
         var table = $TABLE.find('table').find('tbody');
         var toRemove = @toRemove;
 
-        $('.table-add').click(function () {
-            // Add a line to the view and update line numbers
-            var $clone = $("#additionnalrow").find('tr.hide').clone(true).removeClass('hide table-line');
-            $TABLE.find('table').append($clone);
-            replaceIds();
-        });
+		var AddLine = function () {
+			// Add a line to the view and update line numbers
+			var $clone = $("#additionnalrow").find('tr.hide').clone(true).removeClass('hide table-line');
+			$TABLE.find('table').append($clone);
+			replaceIds();
+		}
+
+		$('.table-add').click(AddLine);
 
         $('.table-remove').click(function () {
             // Remove a line and update line numbers
@@ -257,6 +259,10 @@
         };
 
         // Start-up scripts
-        computeTotalAmount();
+		computeTotalAmount();
+
+		if (@nbEL == 0) {
+			AddLine();
+		}
     </script>
 }

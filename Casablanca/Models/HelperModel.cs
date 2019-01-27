@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using Casablanca.Models.ExpenseReports;
 using Casablanca.Models.Leaves;
+using Casablanca.Models.Database;
 
 namespace Casablanca.Models
 {
@@ -119,6 +120,71 @@ namespace Casablanca.Models
 		}
 
 
+		public static int GetNumberLeave(Collaborator coll, LeaveStatus status, LeaveType type)
+		{
+			Dal dal = new Dal();
+			int number = 0;
+
+			foreach(Leave l in dal.GetLeaves())
+			{
+				if((l.Collaborator.Id == coll.Id)  && CheckIfDateIsCurrentYear(l.StartDate))
+				{
+					if((l.Status == status) && l.Type == type)
+					{
+						number += l.ComputeLengthLeave();
+					}
+				}
+			}
+			return number;
+		}
+
+		public static int GetNumberLeave(Collaborator coll, LeaveStatus status1, LeaveStatus status2, LeaveType type)
+		{
+			Dal dal = new Dal();
+			int number = 0;
+
+			foreach (Leave l in dal.GetLeaves())
+			{
+				if ((l.Collaborator.Id == coll.Id) && CheckIfDateIsCurrentYear(l.StartDate))
+				{
+					if ((l.Status == status1 | l.Status == status2) && l.Type == type)
+					{
+						number += l.ComputeLengthLeave();
+					}
+				}
+			}
+			return number;
+		}
+
+		public static bool CheckIfDateIsCurrentYear(DateTime date)
+		{
+
+			if((date.Year == DateTime.Now.Year) && (date.Month < 4) && (DateTime.Now.Month < 4))
+			{
+				return true;
+			}
+			else if ((date.Year == DateTime.Now.Year - 1 ) && (date.Month >= 4) && (DateTime.Now.Month < 4))
+			{
+				return true;
+			}
+			else if ((date.Year == DateTime.Now.Year) && (date.Month > 4) && (DateTime.Now.Month > 4))
+			{
+				return true;
+			}
+			return false;
+
+		}
+
+		public static bool AllowCancelLeave(Leave l)
+		{
+			if (l.Status == LeaveStatus.APPROVED)
+				return (l.StartDate - DateTime.Now).Days <= 7 ? false : true;
+			else if (l.Status == LeaveStatus.CANCELED)
+				return false;
+			else
+				return true;
+		}
+
 
 		#region ToString
 
@@ -143,19 +209,49 @@ namespace Casablanca.Models
 					case LeaveStatus.PENDING_APPROVAL_1: return "Traitement CDS";
 					case LeaveStatus.PENDING_APPROVAL_2: return "Traitement RH";
 					case LeaveStatus.REFUSED: return "Refusée";
+					case LeaveStatus.CANCELED: return "Annulée";
+
 				}
 			}
 			else
 			{
-				switch (status)
+				if(status == LeaveStatus.APPROVED)
+					return "Approuvée";
+						
+				else if(status == LeaveStatus.PENDING_APPROVAL_1 | status ==LeaveStatus.PENDING_APPROVAL_2)
 				{
-					case LeaveStatus.APPROVED: return "Approuvée";
-					case LeaveStatus.PENDING_APPROVAL_1: return "Traitement spécial";
-					case LeaveStatus.PENDING_APPROVAL_2: return "Traitement spécial";
-					case LeaveStatus.REFUSED: return "Refusée";
+					if (process == Processing.CEO)
+					{
+						return "Traitement PDG";
+					}
+					else if (process == Processing.COMPTA)
+					{
+						return "Traitement Compta";
+					}
+					else if (process == Processing.DHR)
+					{
+						return "Traitement DRH";
+					}
+					else if (process == Processing.FINANCIAL_DIRECTOR)
+					{
+						return "Traitement D.Financier";
+					}
+					else if (process == Processing.HR)
+					{
+						return "Traitement RH";
+					}
+					else
+					{
+						return "Debug: Traitement spécial";
+					}
 				}
+					
+				else if(status == LeaveStatus.REFUSED)
+					return "Refusée";
+				else if (status == LeaveStatus.CANCELED)
+					return "Annulée";
 			}
-			
+	
 			return "Debug: StatutCongé";
 		}
 
@@ -173,6 +269,9 @@ namespace Casablanca.Models
 
 		public static string ToString(ExpenseReportStatus status)
 		{
+
+			//TODO if status == process.CEO etc comme les leaves
+
 			switch (status)
 			{
 				case ExpenseReportStatus.UNSENT: return "Non envoyée";

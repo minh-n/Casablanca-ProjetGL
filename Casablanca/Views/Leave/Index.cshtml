@@ -1,8 +1,13 @@
 ﻿@using Casablanca.Models
 @using Casablanca.Models.Leaves
 
+@using Casablanca.Models.Database
+
 @{
 	ViewBag.Title = "Congés";
+	Dal dal = new Dal();
+	Collaborator currentColl = dal.GetCollaborator(User.Identity.Name);
+
 }
 
 @model  List<Leave>
@@ -25,12 +30,27 @@
 
 	<div class="col-lg-6">
 		<div class="jumbotron">
-			<b>Jours de congés restants : </b> 5TODO
+
+
+
+			<b>Demi-journées de RTT restants : </b> @currentColl.NbRTT
 			<br>
-			<b>Jours de congés en attente : </b> 9TODO
+			<b>Demi-journées de congés payés restants : </b> @currentColl.NbPaid
 			<br>
-			<b>Jours de congés déjà pris : </b> 176TODO
 			<br>
+
+			<b>Demi-journées de RTT en attente : </b> @HelperModel.GetNumberLeave(currentColl, LeaveStatus.PENDING_APPROVAL_1, LeaveStatus.PENDING_APPROVAL_2, LeaveType.RTT)
+			<br>
+			<b>Demi-journées de congés payés en attente : </b> @HelperModel.GetNumberLeave(currentColl, LeaveStatus.PENDING_APPROVAL_1, LeaveStatus.PENDING_APPROVAL_2, LeaveType.PAID)
+			<br>
+			<br>
+
+			<b>Demi-journées de RTT déjà pris : </b> @HelperModel.GetNumberLeave(currentColl, LeaveStatus.APPROVED, LeaveType.RTT)
+			<br>
+			<b>Demi-journées de congés payés déjà pris : </b> @HelperModel.GetNumberLeave(currentColl, LeaveStatus.APPROVED, LeaveType.PAID)
+			<br>
+
+
 		</div>
 		@using (Html.BeginForm("CreateLeave", "Leave", FormMethod.Post))
 		{
@@ -95,7 +115,14 @@
 
 							<!--traiter-->
 							<td>
-								@Html.ActionLink("Voir", "ViewLeave", "Leave", new { id = item.Id }, null) 
+								@Html.ActionLink("Voir", "ViewLeave", "Leave", new { id = item.Id }, null)
+
+
+								@if (HelperModel.AllowCancelLeave(item))
+								{
+									@Html.ActionLink("Annuler", "RemoveLeave", "Leave", new { id = item.Id }, null)
+								}
+
 								<!--TODO ! Modifier ou supprimer la note ?-->
 								@*@if ((item.Status == LeaveStatus.PENDING_APPROVAL_1) | (item.Status == LeaveStatus.PENDING_APPROVAL_2))*@
 

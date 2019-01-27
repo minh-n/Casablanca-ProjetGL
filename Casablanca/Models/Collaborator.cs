@@ -47,7 +47,6 @@ namespace Casablanca.Models {
 		// TODO : Autres attributs ? Jour de congés restants par exemple
 		public int NbRTT { get; set; }
 		public int NbPaid { get; set; }
-		public int NbOther { get; set; }
 
         public HashSet<string> ConnectionIds { get; set; }
 
@@ -68,10 +67,9 @@ namespace Casablanca.Models {
 			this.Role = Roles.USER;
 			this.NbPaid = 0;
 			this.NbRTT = 0;
-			this.NbOther = 0;
 		}
 
-		public Collaborator(string firstName, string lastName, Mission mission, int paid, int rtt, int other)
+		public Collaborator(string firstName, string lastName, Mission mission, int paid, int rtt)
 		{
 			this.Login = "default";
 			this.Password = "default";
@@ -85,7 +83,6 @@ namespace Casablanca.Models {
 			this.Role = Roles.USER;
 			this.NbPaid = paid;
 			this.NbRTT = rtt;
-			this.NbOther = other;
 		}
 
 		public Collaborator(string firstName, string lastName) {
@@ -100,7 +97,6 @@ namespace Casablanca.Models {
 			this.Role = Roles.USER;
 			this.NbPaid = 0;
 			this.NbRTT = 0;
-			this.NbOther = 0;
 		}
 
         public Collaborator(string firstName, string lastName, string log, string pass) {
@@ -115,7 +111,6 @@ namespace Casablanca.Models {
 			this.Role = Roles.USER;
 			this.NbPaid = 0;
 			this.NbRTT = 0;
-			this.NbOther = 0;
 		}
 
         public Collaborator() {
@@ -130,7 +125,6 @@ namespace Casablanca.Models {
 			this.Role = Roles.USER;
 			this.NbPaid = 0;
 			this.NbRTT = 0;
-			this.NbOther = 0;
 		}
 		#endregion
 	}

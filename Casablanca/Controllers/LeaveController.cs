@@ -108,7 +108,8 @@ namespace Casablanca.Controllers
 
 			return View("UpdateLeave", tempLeave);
 		}
-		
+
+
 
 
 		[HttpPost] // Backend call of UpdateLeave page
@@ -128,6 +129,7 @@ namespace Casablanca.Controllers
 				return View(model);
 			}
 
+			// Create the temp leave
 			Leave tempToDb = new Leave
 			{
 				Collaborator = coll,
@@ -141,55 +143,33 @@ namespace Casablanca.Controllers
 				Treatment = HelperModel.ComputeTreatmentLeave(coll)
 			};
 
-            switch(tempToDb.Collaborator.Role)
-            {
-                case Roles.USER:
-                    dal.AddNotification(new Notification(coll, dal.GetCollaborator(coll.Service.GetChiefFromService()), NotificationType.LEAVE));
-                    break;
-                case Roles.CHIEF:
-                    if (coll.Service.Name.Contains("RH"))
-                    {
-                        foreach (Collaborator c in dal.GetCollaborators())
-                        {
-                            if (c.Role == Roles.CHIEF && c.Service.Name.Contains("Direction"))
-                            {
-                                    dal.AddNotification(new Notification(coll, c, NotificationType.LEAVE));
-                            }
-                        }
-                    }
-                    else if(coll.Service.Name.Contains("Direction"))
-                    {
-                        foreach (Collaborator c in dal.GetCollaborators())
-                        {
-                            if (c.Role == Roles.CHIEF && c.Service.Name.Contains("RH"))
-                            {
-                                dal.AddNotification(new Notification(coll, c, NotificationType.LEAVE));
-                            }
-                        }
-                    }
-                    else
-                    {
-                        foreach (Collaborator c in dal.GetCollaborators())
-                        {
-                            if (c.Role != Roles.CHIEF && c.Service.Name.Contains("RH"))
-                            {
-                                dal.AddNotification(new Notification(coll, c, NotificationType.LEAVE));
-                            }
-                        }
-                    }
-                    break;   
-            }
-            
-
-            dal.CreateLeave(tempToDb);
-			dal.SaveChanges();			
+			int leaveLength = tempToDb.ComputeLengthLeave();
+			//if leave length inferior to available leave (for RTT and for PAID), allow the creation
+			if ((leaveLength <= coll.NbPaid) && tempToDb.Type == LeaveType.PAID)
+			{
+				coll.NbPaid -= leaveLength;
+				dal.CreateLeave(tempToDb);
+				dal.SaveChanges();
+			}
+			else if((leaveLength <= coll.NbRTT) && tempToDb.Type == LeaveType.RTT)
+			{
+				coll.NbRTT -= leaveLength;
+				dal.CreateLeave(tempToDb);
+				dal.SaveChanges();
+			}
+			else
+			{
+				// Error alert to the coll. The leave is not saved into the database. 
+				TempData["alertMessage"] = "Vous n'avez pas assez de jour de congé. \nPar conséquent, le congé n'a pas pu être créé.";
+				return View(model);
+			}
 
 			return Redirect("/Leave/Index");
+
 		}
 
 
 		#endregion
-
 
 
 		#region Process Leaves
@@ -223,8 +203,8 @@ namespace Casablanca.Controllers
 						if (HelperModel.CheckCDSRH(coll)) // CDS RH
 						{
 							if (e.Status == LeaveStatus.PENDING_APPROVAL_2)
-							{                                
-                                LeaveListToBeReturnedAsModel.Add(e);
+							{
+								LeaveListToBeReturnedAsModel.Add(e);
 							}
 							if (e.Status == LeaveStatus.PENDING_APPROVAL_1)
 							{								
@@ -253,6 +233,8 @@ namespace Casablanca.Controllers
 							}
 						}
 					}
+
+
 					else
 					{ // The ER needs to be treated specifically
 						if (e.Status == LeaveStatus.PENDING_APPROVAL_1) // please do not put pending2 in DAL for those leaves
@@ -287,41 +269,40 @@ namespace Casablanca.Controllers
 			
 		}
 
+		#endregion
+
+		#region Accept or refuse leave
+
 		public ActionResult AcceptLeave(int id = 1)
 		{
-			Leave l = dal.GetLeave(id);            
-            if (l.Status == LeaveStatus.PENDING_APPROVAL_1)
+			Leave l = dal.GetLeave(id);
+			if (l.Status == LeaveStatus.PENDING_APPROVAL_1)
 			{
-                foreach(Collaborator c in dal.GetCollaborators())
-                {
-                    if(c.Role != Roles.CHIEF && c.Service.Name.Contains("RH"))
-                        dal.AddNotification(new Notification(l.Collaborator, c, NotificationType.LEAVE));
-                }                
-                l.Status = LeaveStatus.PENDING_APPROVAL_2;
+				l.Status = LeaveStatus.PENDING_APPROVAL_2;
 			}
 			else
 			{
 				l.Status = LeaveStatus.APPROVED;
+				//switch(l.Type)
+				//{
+				//	case LeaveType.PAID:
+				//		l.Collaborator.NbPaid -= l.ComputeLengthLeave();
+				//		break;
+				//	case LeaveType.RTT:
+				//		l.Collaborator.NbRTT -= l.ComputeLengthLeave();
+				//		break;
+				//}
+				
 			}
-
-            //send a notification
-            Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
-            dal.AddNotification(new Notification(coll, l.Collaborator, NotificationType.LEAVE, NotificationResult.VALIDATION));
-
-            dal.SaveChanges();
+			dal.SaveChanges();
 			return Redirect("/Leave/ProcessList");
 		}
 
 		public ActionResult RefuseLeave(int id = 1)
 		{
-			Leave l = dal.GetLeave(id);            
-            l.Status = LeaveStatus.REFUSED;
-
-            //send a notification
-            Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
-            dal.AddNotification(new Notification(coll, l.Collaborator, NotificationType.LEAVE, NotificationResult.REFUSAL));
-
-            dal.SaveChanges();
+			Leave l = dal.GetLeave(id);
+			l.Status = LeaveStatus.REFUSED;
+			dal.SaveChanges();
 			return Redirect("/Leave/ProcessList");
 		}
 
@@ -329,12 +310,16 @@ namespace Casablanca.Controllers
 		{
 			Leave l = dal.GetLeave(id);
 			l.Status = LeaveStatus.APPROVED;
-
-            //send a notification
-            Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
-            dal.AddNotification(new Notification(coll, l.Collaborator, NotificationType.LEAVE, NotificationResult.VALIDATION));
-
-            dal.SaveChanges();
+			//switch (l.Type)
+			//{
+			//	case LeaveType.PAID:
+			//		l.Collaborator.NbPaid -= l.ComputeLengthLeave();
+			//		break;
+			//	case LeaveType.RTT:
+			//		l.Collaborator.NbRTT -= l.ComputeLengthLeave();
+			//		break;
+			//}
+			dal.SaveChanges();
 			return Redirect("/Leave/ProcessList");
 		}
 
@@ -342,14 +327,44 @@ namespace Casablanca.Controllers
 		{
 			Leave l = dal.GetLeave(id);
 			l.Status = LeaveStatus.REFUSED;
-
-            //send a notification
-            Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
-            dal.AddNotification(new Notification(coll, l.Collaborator, NotificationType.LEAVE, NotificationResult.REFUSAL));
-
-            dal.SaveChanges();
+			dal.SaveChanges();
 			return Redirect("/Leave/ProcessList");
 		}
+
+
+
+		public ActionResult RemoveLeave(int id)
+		{
+			//------------Background identity check-------------//
+			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+				return Redirect("/Home/Index");
+
+			Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+			//--------------------------------------------------//
+
+			Leave currentLeave = dal.GetLeave(id);
+
+			// Transfer the leave days into the collab's available days
+			if (currentLeave.Type == LeaveType.RTT)
+			{
+				coll.NbRTT = currentLeave.ComputeLengthLeave();
+			}
+			else if(currentLeave.Type == LeaveType.PAID)
+			{
+				coll.NbPaid = currentLeave.ComputeLengthLeave();
+			}
+
+
+			// Remove the ER
+			dal.GetLeave(id).Status = LeaveStatus.CANCELED;
+
+			dal.SaveChanges();
+
+			return Redirect("/Leave/Index");
+		}
+
+
+
 		#endregion
 	}
 }

@@ -11,7 +11,8 @@ namespace Casablanca.Models.Leaves {
         APPROVED,
         PENDING_APPROVAL_1,
 		PENDING_APPROVAL_2,
-		REFUSED
+		REFUSED,
+		CANCELED
 	}
 
 	public enum LeaveType
