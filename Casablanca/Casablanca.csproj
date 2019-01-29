@@ -199,6 +199,7 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\AdvanceController.cs" />
     <Compile Include="Controllers\ExpenseReportController.cs" />
+    <Compile Include="Controllers\ServiceController.cs" />
     <Compile Include="Controllers\Hubs\NotificationHub.cs" />
     <Compile Include="Controllers\LeaveController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -394,7 +395,6 @@
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Home\CollaboratorList.cshtml" />
-    <Content Include="Views\Home\CollaboratorView.cshtml" />
     <Content Include="Views\ExpenseReport\Index.cshtml" />
     <Content Include="Views\ExpenseReport\UpdateExpenseReport.cshtml" />
     <Content Include="Views\Login\Index.cshtml" />
@@ -430,6 +430,8 @@
     <Content Include="Views\Advance\ProcessList.cshtml" />
     <Content Include="Views\Advance\UpdateAdvance.cshtml" />
     <Content Include="Views\Advance\ViewAdvance.cshtml" />
+    <Content Include="Views\Mission\ViewMission.cshtml" />
+    <Content Include="Views\Service\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

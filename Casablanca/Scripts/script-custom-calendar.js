@@ -42,7 +42,7 @@
                 }  
             });  
         },  
-  
+		
         eventRender: function (event, element)  
         {  
             element.qtip(  
@@ -50,7 +50,7 @@
                 content: event.description  
             });  
         },  
-  
+		displayEventTime: false,
         editable: false  
     });  
 });  

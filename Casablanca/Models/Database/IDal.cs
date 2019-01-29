@@ -13,6 +13,7 @@ namespace Casablanca.Models.Database {
         Collaborator GetCollaborator(string idString);
         Collaborator GetCollaborator(string firstname, string lastname);
         void CreateCollaborator(string firstname, string lastname, string login, string password);
+		void RemoveCollaborator(int id);
 
 		// Missions 
 		void AddMission(Mission miss);

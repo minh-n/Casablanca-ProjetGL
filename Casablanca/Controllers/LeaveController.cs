@@ -59,7 +59,7 @@ namespace Casablanca.Controllers
 			return this.View();
 		}
 
-		public ActionResult GetCalendarData()
+		public ActionResult GetCalendarData() //is called in the script?
 		{
 			// Initialization
 			JsonResult result = new JsonResult();
@@ -79,10 +79,30 @@ namespace Casablanca.Controllers
 		public List<CalendarVM> ConvertLeavesIntoCalendarVM()
 		{
 			List<CalendarVM> leaves = new List<CalendarVM>();
+			Collaborator coll = dal.GetCollaborator(User.Identity.Name);
+
+			bool isManager = false;
+			if(HelperModel.CheckManagement(coll))
+			{
+				isManager = true;
+			}
 
 			foreach (Leave l in dal.GetLeaves())
 			{				
-				leaves.Add(new CalendarVM(l));
+
+				if(!isManager)
+				{
+					if(l.Collaborator.Id == coll.Id)
+					{
+						leaves.Add(new CalendarVM(l));
+					}
+				}
+				else
+				{
+					leaves.Add(new CalendarVM(l));
+				}
+				
+
 			}
 			return leaves;
 		}

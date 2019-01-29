@@ -321,6 +321,14 @@ namespace Casablanca.Models.Database
             Db.SaveChanges();
         }
 
+		public void RemoveCollaborator(int id)
+		{
+			Db.Collaborators.Remove(GetCollaborator(id));
+			Db.SaveChanges();
+
+		}
+
+
 		// Missions
 
 		public void AddMission(Mission miss)

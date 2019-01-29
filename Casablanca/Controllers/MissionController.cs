@@ -104,5 +104,15 @@ namespace Casablanca.Controllers
 			return Redirect(redirectString);
 		}
 
+		public ActionResult ViewMission(int id)
+		{
+			//------------Background identity check-------------//
+			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+				return Redirect("/Home/Index");
+			//--------------------------------------------------//
+
+			return View(dal.GetMission(id));
+		}
+
 	}
 }

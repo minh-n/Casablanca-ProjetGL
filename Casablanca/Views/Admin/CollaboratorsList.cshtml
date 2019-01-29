@@ -50,19 +50,25 @@
 					@if (item.Missions.Count != 0)
 					{
 
-						foreach (var mission in item.Missions)
+						if (item.Missions.Count > 1)
 						{
-							@mission.Name <text> ,</text>
+							foreach (var mission in item.Missions)
+							{
+								<text>@mission.Name, </text>
+							}
 						}
-
+						else
+						{
+							<text>@item.Missions[0].Name</text>
+						}
 					}
 					else
 					{
 						<text>Aucune mission</text>
 					}
 				</td>
-				<td> 
-					Voir TODO
+				<td>
+					@Html.ActionLink("Profil", "UserProfile", "Home", new { id = item.Id }, null)
 				</td>
 
 			</tr>

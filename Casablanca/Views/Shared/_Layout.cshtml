@@ -75,8 +75,7 @@
 					<!-- GESTION -->
 					@if (@User.Identity.IsAuthenticated)
 					{
-						<!-- TODO : Check if not Admin, because Admin see an empty list?????????????????????-->
-						if (HelperModel.CheckManagement(coll))
+						if (HelperModel.CheckManagement(coll) && !HelperModel.CheckAdmin(coll))
 						{
 							<li class="nav-item dropdown">
 								<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -101,6 +100,8 @@
 									{
 										<div class="dropdown-divider"></div>
 										@Html.ActionLink("Gérer les missions", "Index", "Mission", null, new { @class = "btn" })
+										<div class="dropdown-divider"></div>
+										@Html.ActionLink("Gérer le service", "Index", "Service", null, new { @class = "btn" })
 									}
 
 								</div>
@@ -115,7 +116,7 @@
 								@coll.FirstName @coll.LastName
 							</a>
 							<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-								@Html.ActionLink("Mon profil", "UserProfile", "Home", null, new { @class = "btn" })
+								@Html.ActionLink("Mon profil", "UserProfile", "Home", new {  id = dal.GetCollaborator(User.Identity.Name).Id }, new { @class = "btn" })
 								<div class="dropdown-divider"></div>
 								@Html.ActionLink("Déconnexion", "Disconnect", "Login", null, new { @class = "btn" })
 							</div>

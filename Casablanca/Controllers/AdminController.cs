@@ -76,6 +76,26 @@ namespace Casablanca.Controllers
 			return View(model);
 		}
 
+		// Get: account creation
+		public ActionResult DeleteUser(int id)
+		{
+			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+				return Redirect("/Home/Index");
+
+			// Check admin privilege
+			Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+			if (!HelperModel.CheckAdmin(coll))
+				return Redirect("/Home/Index");
+
+
+
+			dal.RemoveCollaborator(id);
+
+
+			return Redirect("/Home/Index");
+		}
+
+
 		// Coll List
 		public ActionResult CollaboratorsList()
 		{

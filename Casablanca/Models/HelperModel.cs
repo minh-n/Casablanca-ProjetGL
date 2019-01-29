@@ -119,7 +119,6 @@ namespace Casablanca.Models
 			}
 		}
 
-
 		public static int GetNumberLeave(Collaborator coll, LeaveStatus status, LeaveType type)
 		{
 			Dal dal = new Dal();
@@ -184,7 +183,6 @@ namespace Casablanca.Models
 			else
 				return true;
 		}
-
 
 		public static int GetNumberERToProcess(Collaborator coll)
 		{
@@ -276,14 +274,138 @@ namespace Casablanca.Models
 			return number;
 		}
 
-
 		public static int GetNumberLeaveToProcess(Collaborator coll)
 		{
 			int number = 0;
 
+			Dal dal = new Dal();
+
+			List<Leave> LeaveListToBeReturnedAsModel = new List<Leave>();
+
+			List<Leave> allLeaves = dal.GetLeaves();
+
+			// for each Leave, check if they meet the following criterias
+			// if yes, ++number;
+			foreach (Leave e in allLeaves)
+			{
+				if (e.Collaborator != coll) // a coll cannot validate his own ER
+				{
+					// If the ER needs to be treated the classic way
+					if (e.Treatment == Processing.CLASSIC)
+					{
+						if (HelperModel.CheckCDSRH(coll)) // CDS RH
+						{
+							if (e.Status == LeaveStatus.PENDING_APPROVAL_2)
+							{
+								++number;
+							}
+							if (e.Status == LeaveStatus.PENDING_APPROVAL_1)
+							{
+								if (e.Collaborator.Service.GetChiefFromService() == coll.Id)
+								{
+									++number;
+								}
+							}
+						}
+						else if (HelperModel.CheckRH(coll)) // RH
+						{
+							if (e.Status == LeaveStatus.PENDING_APPROVAL_2)
+								++number;
+						}
+						else if (HelperModel.CheckCDS(coll)) // CDS
+						{
+							if (e.Status == LeaveStatus.PENDING_APPROVAL_1)
+							{
+								// in order to know if the Chief needs to see the leave
+
+								if (e.Collaborator.Service.GetChiefFromService() == coll.Id)
+								{
+									++number;
+								}
+
+							}
+						}
+					}
+
+
+					else
+					{ // The ER needs to be treated specifically
+						if (e.Status == LeaveStatus.PENDING_APPROVAL_1) // please do not put pending2 in DAL for those leaves
+						{
+							switch (e.Treatment)
+							{
+								case Processing.DHR:
+									if (HelperModel.CheckCDSRH(coll)) //si le coll traiteur est un CDSRH
+									{
+										++number;
+									}
+									break;
+								case Processing.HR:
+									if (HelperModel.CheckRH(coll))
+									{
+										++number;
+									}
+									break;
+								case Processing.CEO:
+									if (HelperModel.CheckPDG(coll))
+									{
+										++number;
+									}
+									break;
+							}
+						}
+					}
+				}
+			}
 
 			return number;
 		}
+
+		public static int GetNumberNotifications(Collaborator coll) //TODO
+		{
+
+			//TODO 
+
+			return 0;
+		}
+
+
+
+		public static List<Collaborator> GetAllCollaboratorsFromAService(Service s)
+		{
+
+			List<Collaborator> list = new List<Collaborator>();
+
+			Dal dal = new Dal();
+			foreach(Collaborator coll in dal.GetCollaborators())
+			{
+				if(coll.Service.Id == s.Id)
+				{
+					list.Add(coll);
+				}
+			}
+
+			return list;
+		}
+
+
+		public static List<Mission> GetAllMissionsFromAService(Collaborator coll)
+		{
+
+			List<Mission> list = new List<Mission>();
+
+			Dal dal = new Dal();
+			foreach (Mission miss in dal.GetMissions())
+			{
+				if (miss.ChiefId == coll.Id)
+				{
+					list.Add(miss);
+				}
+			}
+
+			return list;
+		}
+
 
 		#region ToString
 
@@ -416,16 +538,17 @@ namespace Casablanca.Models
             return "Debug: StatusNotification";
         }
 
-        #endregion
+		#endregion
 
-        //public enum Treatment
-        //{
-        //	NOT_TREATED,
-        //	CDS,
-        //	COMPTA
-        //}
-        //true if the coll is in a management role (RH, Compta or Chief)
-        public static bool CheckManagement(Collaborator coll)
+		#region CheckManagement..
+		//public enum Treatment
+		//{
+		//	NOT_TREATED,
+		//	CDS,
+		//	COMPTA
+		//}
+		//true if the coll is in a management role (RH, Compta or Chief)
+		public static bool CheckManagement(Collaborator coll)
 		{
 			return (CheckCompta (coll) || CheckRH(coll) || CheckDirection(coll)) || CheckCDS(coll) ? true : false;
 		}
@@ -475,6 +598,9 @@ namespace Casablanca.Models
 		{
 			return coll.Role == Casablanca.Models.Roles.ADMIN ? true : false;
 		}
+
+		#endregion 
+
 
 		public static string FirstCharToUpper(string input)
 		{
