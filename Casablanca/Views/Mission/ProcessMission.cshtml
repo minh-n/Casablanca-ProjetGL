@@ -2,7 +2,11 @@
 @using Casablanca.Models.Database;
 
 @{
-	ViewBag.Title = "ProcessMission";
+	ViewBag.Title = "Modifier une mission";
+
+
+	Dal dal = new Dal();
+	
 }
 
 @model Mission
@@ -46,20 +50,27 @@
 			</div>
 		</div>
 
+		<br />
+
 		<!-- pick des collabo TODO -->
 		<div>
 
-			?????????????????????
-			??????????
-			?
-			searchable drop down list. On click, add the selected coll to the list
+			@{ 
+				HelperModel.GetCollaboratorsList(Model);
+				<text>todo</text>
+			}
 
-			Try this : https://stackoverflow.com/a/33154580
+		
 
-			or this ? https://stackoverflow.com/questions/18144124/how-to-search-a-list-of-products-using-controller-by-name-or-id
+
 
 		</div>
 
+		@*searchable drop down list. On click, add the selected coll to the list
+
+			Try this : https://stackoverflow.com/a/33154580
+
+			or this ? https://stackoverflow.com/questions/18144124/how-to-search-a-list-of-products-using-controller-by-name-or-id*@
 
 		<div style="padding:10px">
 			<input type="submit" value="Sauvegarder" />

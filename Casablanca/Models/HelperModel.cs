@@ -6,6 +6,7 @@ using System.Web;
 using Casablanca.Models.ExpenseReports;
 using Casablanca.Models.Leaves;
 using Casablanca.Models.Database;
+using System.Web.Mvc;
 
 namespace Casablanca.Models
 {
@@ -611,6 +612,26 @@ namespace Casablanca.Models
 				default: return input.First().ToString().ToUpper() + input.Substring(1);
 			}
 		}
+
+
+
+		public static IEnumerable<SelectListItem> GetCollaboratorsList(Mission currentMission)
+		{
+			var returnedColls = new List<SelectListItem>();
+
+			Dal dal = new Dal();
+
+			foreach (var coll in dal.GetCollaborators())
+			{
+				if (!coll.Missions.Contains(currentMission))
+				{
+					var collSelect = new SelectListItem { Value = coll.Id.ToString(), Text = coll.FirstName + " " + coll.LastName };
+					returnedColls.Add(collSelect);
+				}
+			}
+			return returnedColls;
+		}
+
 
 	}
 }
