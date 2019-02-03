@@ -86,10 +86,21 @@
                             </td>
 
                             <!-- Date de la ligne de frais -->
-                            <td>
-                                @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Date,
-                                    new { @type = "date", @class = "form-control datepicker", @Value = Model.ExpenseReport.ExpenseLines[i].Date.ToString("yyyy-MM-dd") })
-                            </td>
+							<td>
+
+								@{
+									@Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Date,
+									new {
+										@type = "date", @class = "form-control datepicker",
+										@Value = Model.ExpenseReport.ExpenseLines[i].Date.ToString("dd-MM-yyyy"),
+										@min = Model.ExpenseReport.ExpenseLines[i].Mission.StartDate.ToString("dd-MM-yyyy"),
+										@max = Model.ExpenseReport.ExpenseLines[i].Mission.EndDate.ToString("dd-MM-yyyy")
+									})
+									
+								}
+
+
+							</td>
 
                             <!-- Justificatif TODO -->
                             <td>
@@ -165,21 +176,39 @@
             <td>
                 @*@Html.DropDownListFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Mission.Id, Model.CollaboratorMissions)*@
                 @Html.DropDownListFor(
-                                    m => Model.ExpenseReport.ExpenseLines[nbEL].Mission.Id,
-                                    Model.CollaboratorMissions.Select(mission => new SelectListItem {
-                                        Text = mission.Text, Value = mission.Value, Selected = (mission.Value == Model.CollaboratorMissions.FirstOrDefault().Value)
-                                    }))
+									m => Model.ExpenseReport.ExpenseLines[nbEL].Mission.Id,
+									Model.CollaboratorMissions.Select
+									(mission =>
+										new SelectListItem {
+											Text = mission.Text,
+											Value = mission.Value,
+											Selected = (mission.Value == Model.CollaboratorMissions.FirstOrDefault().Value)
+										}
+									),
+										new
+										{
+											onchange = @"form.submit();" //ca ca refresh bien
+											//onchange = @"function(){myScript}"
+
+										}
+				)
             </td>
-            <td>
-                @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Date,
-                    new { @type = "date", @class = "form-control datepicker", @Value = "" })
-            </td>
+			<td>
+				@{
+					@Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Date,
+					new {
+						@type = "date", @class = "form-control datepicker",
+						@Value = DateTime.Now.ToString("dd-MM-yyyy")
+					})
+
+				}
+			</td>
             <td>
                 @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Justificatory, new { type = "file", @Value = "", accept = ".pdf" })
             </td>
             @if (Model.ExpenseReport.Status == ExpenseReportStatus.REFUSED) {
                 <td>
-                    <text> </text>
+                    <text> TODO ???</text>
                 </td>
             }
             <td>
@@ -197,6 +226,9 @@
 
 @section Scripts {
     <script>
+		
+
+
         // Script to add lines to the ER
         var $TABLE = $('#table');
         var table = $TABLE.find('table').find('tbody');

@@ -28,11 +28,11 @@
 				<b>Type du congé</b>
 				<br />
 				@Html.DropDownListFor(model => Model.Type,
-								(LeaveType.GetValues(typeof(LeaveType))).Cast<LeaveType>().ToList().Select(type => new SelectListItem {
-									Text = HelperModel.ToString(type),
-									Value = type.ToString(),
-									Selected = (type == Model.Type)
-								}))
+					 (LeaveType.GetValues(typeof(LeaveType))).Cast<LeaveType>().ToList().Select(type => new SelectListItem {
+						 Text = HelperModel.ToString(type),
+						 Value = type.ToString(),
+						 Selected = (type == Model.Type)
+					 }))
 			</div>
 
 
@@ -41,8 +41,19 @@
 			<div style="padding:10px">
 				<b>Date de début</b>
 
-				@Html.TextBoxFor(model => Model.StartDate,
-						  new { @type = "date", @class = "form-control datepicker", @Value = Model.StartDate.ToString("dd-MM-yyyy") })
+				@{
+					if (Model.StartDate == new DateTime(0001, 01, 01))
+					{
+						@Html.TextBoxFor(model => Model.StartDate,
+						  new { @type = "date", @class = "form-control datepicker", @Value = DateTime.Now, @min = DateTime.Now.ToString("yyyy-MM-dd") })
+					}
+					else
+					{
+						@Html.TextBoxFor(model => Model.StartDate,
+						  new { @type = "date", @class = "form-control datepicker", @Value = Model.StartDate.ToString("dd-MM-yyyy"), @min = DateTime.Now.ToString("yyyy-MM-dd") })
+					}
+				}
+
 				<br />
 				<div>
 					@Html.LabelFor(m => m.StartMorningOrAfternoon)<br />
