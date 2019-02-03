@@ -134,7 +134,7 @@ namespace Casablanca.Models.Database
 
             #endregion
 
-            #region Create missions
+            #region Create some missions
             Missions = new List<Mission> {
 				new Mission("Mission A", DateTime.Today, new DateTime(2019, 5, 1), MissionStatus.IN_PROGRESS),
 				new Mission("Mission B", new DateTime(2019, 2, 9), new DateTime(2019, 3, 1), MissionStatus.PLANNED),

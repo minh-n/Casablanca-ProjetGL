@@ -5,7 +5,7 @@
 @model Collaborator
 
 @{
-	ViewBag.Title = "Profil";
+	ViewBag.Title = "Profil de l'utilisateur";
 	Dal dal = new Dal();
 
 	Collaborator coll = dal.GetCollaborator(User.Identity.Name);
@@ -22,13 +22,12 @@
 @if(canManage)
 {
 <div>
+
 	@Html.ActionLink("Supprimer l'utilisateur", "DeleteUser", "Admin", new { id = Model.Id }, new { @class = "btn" })
 
 	@Html.ActionLink("Changer l'utilisateur de service", "ChangeServiceTODO", "Admin", new { id = Model.Id }, new { @class = "btn" })
 
 	@Html.ActionLink("Changer info user", "EditUser", "Admin", new { id = Model.Id }, new { @class = "btn" })
-
-
 
 </div>
 }

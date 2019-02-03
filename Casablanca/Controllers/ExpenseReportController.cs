@@ -515,7 +515,7 @@ namespace Casablanca.Controllers {
             return Redirect("/ExpenseReport/ProcessList");
         }
 
-        // Displays the ER a comptaboy needs to process
+        // Displays the ER a compta coll needs to process
         public ActionResult OneStepProcess(int ERId = 1) {
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                 return Redirect("/Home/Index");
@@ -628,9 +628,12 @@ namespace Casablanca.Controllers {
 
         private static IEnumerable<SelectListItem> GetMissionsList(Collaborator coll) {
             var missions = new List<SelectListItem>();
-            foreach (var s in coll.Missions.ToList()) {
-                var miss = new SelectListItem { Value = s.Id.ToString(), Text = s.Name };
-                missions.Add(miss);
+            foreach (var collMission in coll.Missions.ToList()) {
+				if(collMission.Status != MissionStatus.CANCELED)
+				{
+					var miss = new SelectListItem { Value = collMission.Id.ToString(), Text = collMission.Name };
+					missions.Add(miss);
+				}
             }
             return missions;
         }
