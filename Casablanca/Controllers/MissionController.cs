@@ -22,6 +22,17 @@ namespace Casablanca.Controllers
 			this.dal = dal;
 		}
 
+
+		private MultiSelectList GetMultiCollaborators(string[] selectedValues)
+		{
+
+			List<Collaborator> CollaboratorsList = dal.GetCollaborators();
+
+			return new MultiSelectList(CollaboratorsList, "Id", "FirstName", selectedValues);
+
+		}
+
+
 		// GET: Mission
 		public ActionResult Index()
         {
@@ -55,7 +66,16 @@ namespace Casablanca.Controllers
 			if ((HelperModel.CheckCDS(coll) == false)) //if not CDS
 				return Redirect("/Home/Index");
 			//--------------------------------------------------//
-			
+
+			string[] collId = new string[dal.GetMission(id).CollList.Count];
+			int i = 0;
+			foreach (Collaborator c in dal.GetMission(id).CollList)
+			{
+				collId[i++] = c.Id.ToString();
+			}
+
+			ViewBag.Collablist = GetMultiCollaborators(collId);
+
 			return View(dal.GetMission(id));
 		}
 
@@ -71,11 +91,27 @@ namespace Casablanca.Controllers
 				return Redirect("/Home/Index");
 			//--------------------------------------------------//
 
+			string selectedValues = Request.Form["Collabos"];
+			string[] selectedCollaboratorsId = selectedValues.Split(',');
+
+			List<Collaborator> collList = new List<Collaborator>();
+
+			foreach (string i in selectedCollaboratorsId)
+			{
+				int.TryParse(i, out int collId);
+
+				collList.Add(dal.GetCollaborator(collId));
+			}
+
+			//ViewBag.Countrieslist = GetMultiCollaborators(selectedValues.Split(','));
+
+
 
 			//TODO : check model state validity ?
 			dal.GetMission(id).Name = model.Name;
 			dal.GetMission(id).StartDate = model.StartDate;
 			dal.GetMission(id).EndDate = model.EndDate;
+			dal.GetMission(id).CollList = collList;
 
 			dal.SaveChanges();
 

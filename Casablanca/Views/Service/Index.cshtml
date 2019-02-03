@@ -50,7 +50,7 @@
 						<th scope="col" data-field="status" data-sortable="true">Statut</th>
 						<th scope="col" data-field="coll" data-sortable="true">Collaborateurs</th>
 
-						<th scope="col" data-field="traiter" data-sortable="false">Traiter</th>
+						<th scope="col" data-field="traiter" data-sortable="false">Modifier</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -83,7 +83,7 @@
 						<!--traiter-->
 						<td>
 
-							@Html.ActionLink("Traiter", "ProcessMission", "Mission", new { id = item.Id }, null)
+							@Html.ActionLink("Modifier", "ProcessMission", "Mission", new { id = item.Id }, null)
 
 						</td>
 					</tr>

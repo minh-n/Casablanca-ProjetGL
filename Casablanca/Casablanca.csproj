@@ -242,6 +242,7 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Calendar.css" />
+    <Content Include="Content\CSSSelect.css" />
     <Content Include="Content\files\PublicHoliday.txt" />
     <Content Include="Content\font-awesome.min.css" />
     <Content Include="Content\fullcalendar.css" />
@@ -297,6 +298,7 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Scripts\bootstrap-multiselect.js" />
     <Content Include="Scripts\bootstrap-table.js" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />

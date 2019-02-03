@@ -615,7 +615,7 @@ namespace Casablanca.Models
 
 
 
-		public static IEnumerable<SelectListItem> GetCollaboratorsList(Mission currentMission)
+		public static IEnumerable<SelectListItem> GetCollaboratorsList(Mission currentMission) //most likely useless
 		{
 			var returnedColls = new List<SelectListItem>();
 
