@@ -79,33 +79,55 @@ namespace Casablanca.Controllers
 		public List<CalendarVM> ConvertLeavesIntoCalendarVM()
 		{
 			List<CalendarVM> leaves = new List<CalendarVM>();
-			Collaborator coll = dal.GetCollaborator(User.Identity.Name);
+			Collaborator currentColl = dal.GetCollaborator(User.Identity.Name);
 
-			bool isManager = false;
-			if(HelperModel.CheckManagement(coll))
-			{
-				isManager = true;
-			}
+
+			/* Groups :
+			 *  1 : own leaves
+			 *  2 : own service's leaves (only accepted)
+			 *  3 : own service's leaves (every states)
+			 *	
+			 *  4 : every other leaves
+			 */
+
 
 			foreach (Leave l in dal.GetLeaves())
 			{				
 
-				if(!isManager)
+				if(!HelperModel.CheckManagement(currentColl)) //si pas manager, il ne peut voir que les congés validés, de son propre service
 				{
-					if(l.Collaborator.Id == coll.Id)
+					if(l.Collaborator.Id == currentColl.Id)
 					{
-						leaves.Add(new CalendarVM(l));
+						leaves.Add(new CalendarVM(l, '1')); 
+					}
+					else if((l.Collaborator.Service.Id == currentColl.Service.Id) && (l.Status == LeaveStatus.APPROVED))
+					{
+						leaves.Add(new CalendarVM(l, '2')); //group = 1 : can only see own leaves and own service's approved leaves
 					}
 				}
-				else
+				else //is Manager
 				{
-					leaves.Add(new CalendarVM(l));
+					if (l.Collaborator.Id == currentColl.Id)
+					{
+						leaves.Add(new CalendarVM(l, '1'));
+					}
+
+					else if ((l.Collaborator.Service.Id == currentColl.Service.Id))
+					{
+						leaves.Add(new CalendarVM(l, '3')); //group 3 : can see every leaves in own's service
+					}
+
+					if(HelperModel.CheckRH(currentColl)) //if RH, can also see the other leaves
+					{
+						leaves.Add(new CalendarVM(l, '4')); // group 4 : every other leaves
+					}
 				}
 				
 
 			}
 			return leaves;
 		}
+
 		#endregion
 
 

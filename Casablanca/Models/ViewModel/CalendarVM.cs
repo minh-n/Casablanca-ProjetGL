@@ -13,16 +13,19 @@ namespace Casablanca.Models.ViewModel
 		public string Start_Date { get; set; }
 		public string End_Date { get; set; }
 		public string Color { get; set; }
+		public char Group { get; set; }
 
-		public CalendarVM(string title, string desc, string start_Date, string end_Date)
+
+		public CalendarVM(string title, string desc, string start_Date, string end_Date, char gr)
 		{
 			Title = title;
 			Desc = desc;
 			Start_Date = start_Date;
 			End_Date = end_Date;
+			Group = gr;
 		}
 
-		public CalendarVM(Leave leave)
+		public CalendarVM(Leave leave, char gr)
 		{
 			Title =  leave.Collaborator.LastName + " ("+  leave.Collaborator.Service.Name +  ") - " + leave.Type.ToString(); //Name (Service) - LeaveType
 			Desc = "Du " + leave.StartDate.ToString("dd/MM/yyyy") + " au " + leave.EndDate.ToString("dd/MM/yyyy") +
@@ -40,7 +43,7 @@ namespace Casablanca.Models.ViewModel
 				End_Date = leave.EndDate.ToString("yyyy-MM-dd");
 			}
 
-
+			Group = gr;
 			Color = leave.Color;
 		}
 	}

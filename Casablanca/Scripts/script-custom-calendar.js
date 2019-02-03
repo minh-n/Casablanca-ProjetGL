@@ -34,7 +34,8 @@
 							start: moment(data.Start_Date).format('YYYY-MM-DD HH:mm'),  
 							end: moment(data.End_Date).format('YYYY-MM-DD HH:mm'),  
 							backgroundColor: data.Color,  
-							borderColor: data.Color
+							borderColor: data.Color,
+							group: data.Group
                        });  
                     });  
   
@@ -43,12 +44,14 @@
             });  
         },  
 		
-        eventRender: function (event, element)  
+        eventRender: function (event, element, view)  
         {  
             element.qtip(  
             {  
                 content: event.description  
-            });  
+			});
+			return ['all', event.group].indexOf($('#cal_selector').val()) >= 0
+
         },  
 		displayEventTime: false,
         editable: false  
