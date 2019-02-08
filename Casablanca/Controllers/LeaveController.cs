@@ -133,7 +133,6 @@ namespace Casablanca.Controllers
 
 		#region Create and Edit Leave
 
-		//[HttpPost] // Backend call of create page
 		public ActionResult CreateLeave()
 		{
 			//------------Background identity check-------------//
@@ -150,9 +149,6 @@ namespace Casablanca.Controllers
 
 			return View("UpdateLeave", tempLeave);
 		}
-
-
-
 
 		[HttpPost] // Backend call of UpdateLeave page
 		public ActionResult UpdateLeave(Leave model)
@@ -187,21 +183,21 @@ namespace Casablanca.Controllers
 
             int leaveLength = tempToDb.ComputeLengthLeave();
 			// if leave length inferior to available leave (for RTT and for PAID), allow the creation
-			if ((leaveLength <= coll.NbPaid) && tempToDb.Type == LeaveType.PAID)
+			if ((leaveLength <= coll.NbPaid) && tempToDb.Type == LeaveType.PAID && leaveLength > 0)
 			{
 				coll.NbPaid -= leaveLength;
 				dal.CreateLeave(tempToDb);
-                SendNotificationHelp(tempToDb);
-                dal.SaveChanges();
+				SendNotificationHelp(tempToDb);
+				dal.SaveChanges();
 			}
-			else if((leaveLength <= coll.NbRTT) && tempToDb.Type == LeaveType.RTT)
+			else if ((leaveLength <= coll.NbRTT) && tempToDb.Type == LeaveType.RTT && leaveLength > 0)
 			{
 				coll.NbRTT -= leaveLength;
 				dal.CreateLeave(tempToDb);
-                SendNotificationHelp(tempToDb);
-                dal.SaveChanges();
+				SendNotificationHelp(tempToDb);
+				dal.SaveChanges();
 			}
-			else if (tempToDb.Type == LeaveType.OTHER) //in that case, we don't check the number of remaining days (sick leave etc)
+			else if (tempToDb.Type == LeaveType.OTHER && leaveLength > 0) //in that case, we don't check the number of remaining days (sick leave etc)
 			{
 				dal.CreateLeave(tempToDb);
 				SendNotificationHelp(tempToDb);
@@ -210,7 +206,7 @@ namespace Casablanca.Controllers
 			else // the user doesn't have enough leave days available, either for RTT or PAID
 			{
 				// Error alert to the coll. The leave is not saved into the database. 
-				TempData["alertMessage"] = "Vous n'avez pas assez de jour de congé. \nPar conséquent, le congé n'a pas pu être créé.";
+				TempData["alertMessage"] = "Le congé n'a pas pu être créé.";
 				return View(model);
 			}
 
@@ -220,7 +216,6 @@ namespace Casablanca.Controllers
 
 
 		#endregion
-
 
 		#region Process Leaves
 

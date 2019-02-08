@@ -74,12 +74,23 @@
 			<div style="padding:10px">
 				<b>Date de fin</b>
 
-				@Html.TextBoxFor(model => Model.EndDate,
-						  new { @type = "date", @class = "form-control datepicker", @Value = Model.EndDate.ToString("dd-MM-yyyy") })
+				@{
+					if (Model.StartDate == new DateTime(0001, 01, 01))
+					{
+						@Html.TextBoxFor(model => Model.EndDate,
+						  new { @type = "date", @class = "form-control datepicker", @Value = DateTime.Now, @min = DateTime.Now.ToString("yyyy-MM-dd") })
+					}
+					else
+					{
+						@Html.TextBoxFor(model => Model.EndDate,
+						  new { @type = "date", @class = "form-control datepicker", @Value = Model.EndDate.ToString("dd-MM-yyyy"), @min = DateTime.Now.ToString("yyyy-MM-dd") })
+					}
+				}
+
 				<br />
 				<div>
 					@Html.LabelFor(m => m.EndMorningOrAfternoon) <br />
-					Terminer le matin 
+					Terminer le matin
 					@Html.RadioButtonFor(m => m.EndMorningOrAfternoon, "Matin") <br />
 					Terminer l'après-midi
 					@Html.RadioButtonFor(m => m.EndMorningOrAfternoon, "Après-midi")
