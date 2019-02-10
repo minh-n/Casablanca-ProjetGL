@@ -436,6 +436,7 @@
     <Content Include="Views\Mission\ViewMission.cshtml" />
     <Content Include="Views\Service\Index.cshtml" />
     <Content Include="Views\Admin\CreateService.cshtml" />
+    <Content Include="Views\ExpenseReport\HistoryList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

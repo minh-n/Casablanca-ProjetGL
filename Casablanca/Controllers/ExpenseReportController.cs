@@ -245,8 +245,8 @@ namespace Casablanca.Controllers {
             Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
             ExpenseReport model = dal.GetExpenseReport(ERId);
 
-            // if it is not our own ER = cannot see
-            if (!coll.ExpenseReports.Contains(model))
+            // if it is not our own ER = cannot see TODO : maybe only CDS can see an employee's ER
+            if((!HelperModel.CheckManagement(coll)) | (!coll.ExpenseReports.Contains(model)))
                 return Redirect("/Home/Index");
 
             return View(model);
@@ -637,5 +637,97 @@ namespace Casablanca.Controllers {
             }
             return missions;
         }
-    }
+
+
+
+		//HISTORY
+
+
+
+		// Displays the ER list management already processed
+		public ActionResult HistoryList()
+		{
+			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+				return Redirect("/Home/Index");
+
+			Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+
+			//not in management OR isRH = cannot see
+			if ((HelperModel.CheckManagement(coll) == false) || HelperModel.CheckRH(coll))
+				return Redirect("/Home/Index");
+
+			List<ExpenseReport> AllERList = dal.GetExpenseReports();
+			List<ExpenseReport> ERListToBeReturnedAsModel = new List<ExpenseReport>();
+
+			// for each Expense Report, check if they meet the following criterias
+			// if yes, add them to the list returned to the View
+			foreach (ExpenseReport e in AllERList)
+			{
+				if (e.Collaborator != coll) // a coll cannot validate his own ER
+				{
+					// If the ER needs to be treated the classic way
+					if (e.Treatment == Processing.CLASSIC)
+					{
+						if (HelperModel.CheckCompta(coll)) // CDS Compta et Compta
+						{
+							if ((e.Status == ExpenseReportStatus.APPROVED) | (e.Status == ExpenseReportStatus.REFUSED))
+							{
+								ERListToBeReturnedAsModel.Add(e);
+							}
+						}
+						else if (HelperModel.CheckCDS(coll)) // CDS
+						{
+							if ((e.Status == ExpenseReportStatus.APPROVED) | (e.Status == ExpenseReportStatus.REFUSED))
+							{
+								// in order to know if the Chief needs to see the ER
+								foreach (ExpenseLine el in e.ExpenseLines)
+								{
+									if (dal.GetCollaborator(el.Mission.ChiefId).Id == coll.Id)
+									{
+										ERListToBeReturnedAsModel.Add(e);
+										break;
+									}
+								}
+							}
+						}
+					}
+					else
+					{ // The ER needs to be treated specifically
+						if ((e.Status == ExpenseReportStatus.APPROVED) | (e.Status == ExpenseReportStatus.REFUSED))
+						{
+							switch (e.Treatment)
+							{
+								case Processing.COMPTA:
+									if (HelperModel.CheckCompta(coll))
+									{
+										ERListToBeReturnedAsModel.Add(e);
+									}
+									break;
+								case Processing.FINANCIAL_DIRECTOR:
+									if (HelperModel.CheckCDSCompta(coll))
+									{
+										ERListToBeReturnedAsModel.Add(e);
+									}
+									break;
+								case Processing.CEO:
+									if (HelperModel.CheckPDG(coll))
+									{
+										ERListToBeReturnedAsModel.Add(e);
+									}
+									break;
+							}
+						}
+					}
+				}
+			}
+
+			return View(ERListToBeReturnedAsModel);
+		}
+
+
+
+
+
+
+	}
 }

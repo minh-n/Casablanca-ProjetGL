@@ -15,6 +15,8 @@
 
 <h2 class="text-left">Notes de frais à traiter</h2>
 
+@Html.ActionLink("Historique des notes de frais traitées", "HistoryList", "ExpenseReport", null)
+
 <div class="table-responsive">
 	<table id="table"
 		   class="table"
@@ -51,33 +53,40 @@
 						<td>@item.NbLines</td>
 						<td>
 							@HelperModel.ToString(item.Status)
-							
+
 						</td>
 
 						<!--traiter-->
-                        <td>
+						<td>
 
-                            @if (item.Treatment == Processing.CLASSIC) {
-                                if (HelperModel.CheckCDSCompta(coll)) {
-                                    if (item.Status == ExpenseReportStatus.PENDING_APPROVAL_1) {
-                                        @Html.ActionLink("Traiter", "ProcessCDS", "ExpenseReport", new { ERId = item.Id }, null)
-                                    }
-                                    else if (item.Status == ExpenseReportStatus.PENDING_APPROVAL_2) {
-                                        @Html.ActionLink("Traiter", "ProcessCompta", "ExpenseReport", new { ERId = item.Id }, null)
-                                    }
-                                }
-                                else if (HelperModel.CheckCDS(coll)) {
-                                    @Html.ActionLink("Traiter", "ProcessCDS", "ExpenseReport", new { ERId = item.Id }, null)
+							@if (item.Treatment == Processing.CLASSIC)
+							{
+								if (HelperModel.CheckCDSCompta(coll))
+								{
+									if (item.Status == ExpenseReportStatus.PENDING_APPROVAL_1)
+									{
+										@Html.ActionLink("Traiter", "ProcessCDS", "ExpenseReport", new { ERId = item.Id }, null)
+									}
+									else if (item.Status == ExpenseReportStatus.PENDING_APPROVAL_2)
+									{
+										@Html.ActionLink("Traiter", "ProcessCompta", "ExpenseReport", new { ERId = item.Id }, null)
+									}
+								}
+								else if (HelperModel.CheckCDS(coll))
+								{
+									@Html.ActionLink("Traiter", "ProcessCDS", "ExpenseReport", new { ERId = item.Id }, null)
 
-                                }
-                                else if (HelperModel.CheckCompta(coll)) {
-                                    @Html.ActionLink("Traiter", "ProcessCompta", "ExpenseReport", new { ERId = item.Id }, null)
-                                }
-                            }
-                            else {
-                                @Html.ActionLink("Traiter Spécialement", "OneStepProcess", "ExpenseReport", new { ERId = item.Id }, null)
-                            }
-                        </td>
+								}
+								else if (HelperModel.CheckCompta(coll))
+								{
+									@Html.ActionLink("Traiter", "ProcessCompta", "ExpenseReport", new { ERId = item.Id }, null)
+								}
+							}
+							else
+							{
+								@Html.ActionLink("Traiter Spécialement", "OneStepProcess", "ExpenseReport", new { ERId = item.Id }, null)
+							}
+						</td>
 					</tr>
 				}
 			</tbody>
