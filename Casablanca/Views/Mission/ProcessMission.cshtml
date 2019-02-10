@@ -2,126 +2,120 @@
 @using Casablanca.Models.Database;
 
 @{
-	ViewBag.Title = "Modifier une mission";
+    ViewBag.Title = "Modifier une mission";
 
+    Dal dal = new Dal();
 
-	Dal dal = new Dal();
-
+    List<Collaborator> allColl = dal.GetCollaborators();
+    allColl = allColl.Where(f => !Model.CollList.Any(t => t.Id == f.Id)).ToList();
 }
 
 @model Mission
 
-<!-- Include the plugin's CSS and JS: -->
-<script type="text/javascript" src="~/Scripts/bootstrap-multiselect.js"></script>
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/css/bootstrap-multiselect.css" type="text/css" />
+@Styles.Render("~/Content/ProcessMission.css")
 
+<!-- Include the plugin's CSS and JS: -->
+@*<script type="text/javascript" src="~/Scripts/bootstrap-multiselect.js"></script>*@
+@*<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/css/bootstrap-multiselect.css" type="text/css" />*@
 
 <div align="center">
-	<h2>Edition d'une mission</h2>
+    <h2>Edition d'une mission</h2>
 
-	@using (Html.BeginForm())
-	{
+    @using (Html.BeginForm("ProcessMission", "Mission", FormMethod.Post, new { onsubmit = "sub()" })) {
+        @Html.HiddenFor(model => Model.Id)
 
+        <div style="padding:10px">
+            <div> @Html.LabelFor(model => Model.Name) </div>
+            <div> @Html.TextBoxFor(model => Model.Name) </div>
+        </div>
+        <br>
 
+        <div style="padding:10px">
 
-		<div style="padding:10px">
-			<div> @Html.LabelFor(m => m.Name) </div>
-			<div> @Html.TextBoxFor(m => m.Name) </div>
-		</div>
+            <div> @Html.LabelFor(model => Model.Status) </div>
 
-		<br>
+            <div> TODO : drop down list status </div>
 
+        </div>
+        <br>
 
-		<div style="padding:10px">
-			<div> @Html.LabelFor(m => m.Status) </div>
-			<div> TODO : drop down list status </div>
-		</div>
+        <div style="padding:10px">
+            <div>@Html.LabelFor(model => Model.StartDate)</div>
+            <div>
+                @Html.TextBoxFor(model => Model.StartDate,
+                                    new { @type = "date", @class = "form-control datepicker", @Value = Model.StartDate.ToString("yyyy-MM-dd") })
+            </div>
+        </div>
 
+        <div style="padding:10px">
+            TODO: Make this field optional!
+            <div> @Html.LabelFor(model => Model.EndDate) </div>
+            <div>
+                @Html.TextBoxFor(model => Model.EndDate,
+                                    new { @type = "date", @class = "form-control datepicker", @Value = Model.EndDate.ToString("yyyy-MM-dd") })
+            </div>
+        </div>
+        <br>
 
-		<br>
+        <div style="margin-left: auto; margin-right: auto; width: 600px;">
+            <text>Choisir les collaborateurs de la mission</text>
+            @*@Html.ListBox("Collabos", ViewBag.Collablist as MultiSelectList, new { style = "width:500px; height:200px" })*@
+            <div class="row">
+                <select id="left" name="left" multiple="multiple">
+                    @foreach (Collaborator c in allColl) {
+                        <option value="@c.Id">@c.FirstName @c.LastName</option>
+                    }
+                </select>
+                <div class="btns">
+                    <button id="leftbtn" type="button" class="btn btn-primary" onclick="swapSelectedLine(true)">>></button>
+                    <button id="rightbtn" type="button" class="btn btn-primary" onclick="swapSelectedLine(false)"><<</button>
+                </div>
+                <select id="right" name="right" multiple="multiple">
+                    @foreach (Collaborator c in Model.CollList) {
+                        <option value="@c.Id">@c.FirstName @c.LastName</option>
+                    }
+                </select>
+            </div>
+        </div>
 
-		<div style="padding:10px">
-			<div>@Html.LabelFor(m => m.StartDate)</div>
-			<div>
-				@Html.TextBoxFor(model => Model.StartDate,
-								 new { @type = "date", @class = "form-control datepicker", @Value = Model.StartDate.ToString("dd-MM-yyyy") })
-			</div>
-		</div>
+        @*searchable drop down list. On click, add the selected coll to the list
 
-		<div style="padding:10px">
-			TODO: Make this field optional!
-			<div> @Html.LabelFor(m => m.EndDate) </div>
-			<div>
-				@Html.TextBoxFor(model => Model.EndDate,
-								 new { @type = "date", @class = "form-control datepicker", @Value = Model.EndDate.ToString("dd-MM-yyyy") })
-			</div>
-		</div>
+            Try this : https://stackoverflow.com/a/33154580
 
-		<br />
+            or this ? https://stackoverflow.com/questions/18144124/how-to-search-a-list-of-products-using-controller-by-name-or-id*@
 
-		<!-- pick des collabo TODO -->
-		<div>
-			<text>Choisir les collaborateurs de la mission</text>
+        <div style="padding:10px">
+            <input type="submit" value="Sauvegarder"/>
+        </div>
 
-
-
-			<fieldset>
-
-
-				<div class="editor-field">
-
-					@Html.ListBox("Collabos", ViewBag.Collablist as MultiSelectList,
-					new { style = "width:500px; height:200px" }
-
-					)
-
-				</div>
-
-			</fieldset>
-
-
-
-		</div>
-
-		@*searchable drop down list. On click, add the selected coll to the list
-
-			Try this : https://stackoverflow.com/a/33154580
-
-			or this ? https://stackoverflow.com/questions/18144124/how-to-search-a-list-of-products-using-controller-by-name-or-id*@
-
-		<div style="padding:10px">
-			<input type="submit" value="Sauvegarder" />
-		</div>
-
-		@Html.ValidationSummary("");
-	}
+        @Html.ValidationSummary("");
+    }
 </div>
 
 @section Scripts{
-	@*<script>
-		$(document).ready(function () {
-			$('#multiselect').multiselect({
-				buttonWidth: '160px',
-				includeSelectAllOption: true,
-				nonSelectedText: 'Select an Option'
-			});
+    <script>
+        function swapSelectedLine(left) {
+            var selected = $("#" + (left ? "left" : "right")).val();
+            for (var i = 0; i < selected.length; i++) {
+                addLine(left, selected[i]);
+                removeLine(left, selected[i]);
+            }
+        }
 
-		});
+        function removeLine(left, id) {
+            $("#" + (left ? "left" : "right") + " option[value='" + id + "']").remove();
+        }
 
-		function getSelectedValues() {
-			var selectedVal = $("#multiselect").val();
-			for (var i = 0; i < selectedVal.length; i++) {
-				var
-					innerFunc = function innerFunc(i) {
-						setTimeout(function () {
-							location.href = selectedVal[i];
-						}, i * 2000);
-					}; if (window.CP.shouldStopExecution(0)) break;
-				innerFunc(i);
-			} window.CP.exitedLoop(0);
-		}
+        function addLine(left, id) {
+            var text = $("#" + (left ? "left" : "right") + " option[value=" + id + "]").text();
+            $("#" + (left ? "right" : "left")).append("<option value=" + id + ">" + text + "</option>");
+        }
 
-
-	</script>*@
+        function sub() {
+            $("#right option").each(function () {
+                $(this).prop("selected", true);
+            });
+        }
+    </script>
 }
 

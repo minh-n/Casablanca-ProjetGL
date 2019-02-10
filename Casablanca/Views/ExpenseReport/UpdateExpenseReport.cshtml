@@ -51,18 +51,6 @@
                                     Value = type.ToString(),
                                     Selected = (type == Model.ExpenseReport.ExpenseLines[i].Type)
                                 }))
-                                @*<select asp-for="Model.ExpenseReport.ExpenseLines[i].Type">
-                                        <optgroup label="Type de frais">
-                                            @foreach (LineType type in LineType.GetValues(typeof(LineType))) {
-                                                if (type == Model.ExpenseReport.ExpenseLines[i].Type) {
-                                                    <option value="@type" selected>@type</option>
-                                                }
-                                                else {
-                                                    <option value="@type">@type</option>
-                                                }
-                                            }
-                                        </optgroup>
-                                    </select>*@
                             </td>
 
                             <!--Description du frais-->
@@ -92,9 +80,9 @@
 									@Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Date,
 									new {
 										@type = "date", @class = "form-control datepicker",
-										@Value = Model.ExpenseReport.ExpenseLines[i].Date.ToString("dd-MM-yyyy"),
-										@min = Model.ExpenseReport.ExpenseLines[i].Mission.StartDate.ToString("dd-MM-yyyy"),
-										@max = Model.ExpenseReport.ExpenseLines[i].Mission.EndDate.ToString("dd-MM-yyyy")
+										@Value = Model.ExpenseReport.ExpenseLines[i].Date.ToString("yyyy-MM-dd"),
+										@min = Model.ExpenseReport.ExpenseLines[i].Mission.StartDate.ToString("yyyy-MM-dd"),
+										@max = Model.ExpenseReport.ExpenseLines[i].Mission.EndDate.ToString("yyyy-MM-dd")
 									})
 									
 								}

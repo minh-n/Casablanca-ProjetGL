@@ -56,7 +56,7 @@ namespace Casablanca.Controllers
 			return View(model);
         }
 
-		public ActionResult ProcessMission(int id)
+		public ActionResult ProcessMission(int id = 1)
 		{
 			//------------Background identity check-------------//
 			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
@@ -65,22 +65,23 @@ namespace Casablanca.Controllers
 			Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
 			if ((HelperModel.CheckCDS(coll) == false)) //if not CDS
 				return Redirect("/Home/Index");
-			//--------------------------------------------------//
+            //--------------------------------------------------//
+            Mission model = dal.GetMission(id);
 
-			string[] collId = new string[dal.GetMission(id).CollList.Count];
-			int i = 0;
-			foreach (Collaborator c in dal.GetMission(id).CollList)
-			{
-				collId[i++] = c.Id.ToString();
-			}
+			//string[] collId = new string[model.CollList.Count];
+			//int i = 0;
+			//foreach (Collaborator c in dal.GetMission(id).CollList)
+			//{
+			//	collId[i++] = c.Id.ToString();
+			//}
 
-			ViewBag.Collablist = GetMultiCollaborators(collId);
+			//ViewBag.Collablist = GetMultiCollaborators(collId);
 
-			return View(dal.GetMission(id));
+			return View(model);
 		}
 
 		[HttpPost] // Backend call of ProcessMission page
-		public ActionResult ProcessMission(Mission model, int id)
+		public ActionResult ProcessMission(Mission model)
 		{          
 			//------------Background identity check-------------//
 			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
@@ -89,29 +90,28 @@ namespace Casablanca.Controllers
 			Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
 			if ((HelperModel.CheckCDS(coll) == false)) //if not CDS
 				return Redirect("/Home/Index");
-			//--------------------------------------------------//
+            //--------------------------------------------------//
+            List<Collaborator> collList = new List<Collaborator>();
 
-			string selectedValues = Request.Form["Collabos"];
-			string[] selectedCollaboratorsId = selectedValues.Split(',');
+            string selectedValues = Request.Form["right"];
+            if (selectedValues != null) {
+                string[] selectedCollaboratorsId = selectedValues.Split(',');
 
-			List<Collaborator> collList = new List<Collaborator>();
+                collList = new List<Collaborator>();
 
-			foreach (string i in selectedCollaboratorsId)
-			{
-				int.TryParse(i, out int collId);
+                foreach (string i in selectedCollaboratorsId) {
+                    int.TryParse(i, out int collId);
+                    collList.Add(dal.GetCollaborator(collId));
+                }
+            }
 
-				collList.Add(dal.GetCollaborator(collId));
-			}
-
-			//ViewBag.Countrieslist = GetMultiCollaborators(selectedValues.Split(','));
-
-
-
-			//TODO : check model state validity ?
-			dal.GetMission(id).Name = model.Name;
-			dal.GetMission(id).StartDate = model.StartDate;
-			dal.GetMission(id).EndDate = model.EndDate;
-			dal.GetMission(id).CollList = collList;
+            //TODO : check model state validity ?
+            Mission m = dal.GetMission(model.Id);
+			m.Name = model.Name;
+			m.StartDate = model.StartDate;
+			m.EndDate = model.EndDate;
+            m.CollList.Clear();
+			m.CollList = collList;
 
 			dal.SaveChanges();
 
