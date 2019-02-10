@@ -270,7 +270,7 @@ namespace Casablanca.Models.Database
 
 				//new Leave(LeaveStatus.PENDING_APPROVAL_2, LeaveType.RTT, GetCollaborator("Momo", "BELDI"), new DateTime(2019, 2, 1), new DateTime(2019, 2, 8)),
 				//new Leave(LeaveStatus.APPROVED, LeaveType.PAID, GetCollaborator("Thibal", "WITCZAK"), new DateTime(2019, 1, 05), new DateTime(2019, 2, 15)),
-				//new Leave(LeaveStatus.PENDING_APPROVAL_1, LeaveType.PAID, GetCollaborator("Minh", "NGUYEN"), new DateTime(2019, 2, 4), new DateTime(2019, 2, 5)),
+				new Leave(LeaveStatus.PENDING_APPROVAL_1, LeaveType.PAID, GetCollaborator("Coronton", "MONSCOUR"), new DateTime(2019, 2, 14), new DateTime(2019, 2, 25), "Après-midi", "Après-midi"),
 
 				new Leave(LeaveStatus.REFUSED, LeaveType.RTT, GetCollaborator("Thibal", "WITCZAK"), new DateTime(2018, 12, 05), new DateTime(2019, 1, 15), "Matin", "Matin"),
 				new Leave(LeaveStatus.APPROVED, LeaveType.PAID, GetCollaborator("Minh", "NGUYEN"), new DateTime(2019, 3, 4), new DateTime(2019, 9, 18), "Après-midi", "Matin") 
