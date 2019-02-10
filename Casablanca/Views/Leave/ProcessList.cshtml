@@ -7,7 +7,7 @@
 @{
 	ViewBag.Title = "Traiter les congés";
 	Dal dal = new Dal();
-	//Collaborator coll = dal.GetCollaborator(User.Identity.Name);
+	Collaborator currentColl = dal.GetCollaborator(User.Identity.Name);
 }
 
 @model  List<Leave>
@@ -17,6 +17,27 @@
 	<div class="col-sm-4">
 		<h2 style="text-align:center;">Calendrier des congés actuels</h2>
 		<div id="calendar"></div>
+
+		<div style="padding:10px">
+			<select id="cal_selector">
+				<option value="all">Toutes les demandes </option>
+				<option value="1">Demandes personnelles</option>
+
+				@if (!HelperModel.CheckManagement(currentColl))
+				{
+					<option value="2"> Demandes validées de mon service</option>
+				}
+
+				@if (HelperModel.CheckCDS(currentColl) && !HelperModel.CheckRH(currentColl))
+				{
+					<option value="3">Toutes les demandes de mon service</option>
+				}
+			</select>
+		</div>
+
+		<p style="padding:20px">TODO : légende des couleurs.</p>
+
+
 	</div>
 
 
@@ -42,9 +63,9 @@
 							<th scope="col" data-field="collaborateur" data-sortable="true">Collaborateur</th>
 							<th scope="col" data-field="desc" data-sortable="true">Description</th>
 							<th scope="col" data-field="type" data-sortable="true">Type</th>
-							<th scope="col" data-field="debut" data-sortable="true">Date de début</th>
-							<th scope="col" data-field="fin" data-sortable="true">Date de fin</th>
-							<th scope="col" data-field="nb" data-sortable="true">Nb demi-journées</th>
+							<th scope="col" data-field="debut" data-sortable="true">Début</th>
+							<th scope="col" data-field="fin" data-sortable="true">Fin</th>
+							<th scope="col" data-field="nb" data-sortable="true">Longueur</th>
 							<th scope="col" data-field="statut" data-sortable="true">Statut</th>
 							<th>Traitement</th>
 						</tr>
@@ -52,56 +73,56 @@
 					<tbody>
 						@foreach (Leave item in Model)
 						{
-						<tr>
-							<td>@item.Collaborator.FirstName @item.Collaborator.LastName</td>
-							<td>
-								@item.Description
-							</td>
-							<td>
-								@HelperModel.ToString(item.Type)
-							</td>
-							<td>
-								@item.StartDate.ToString("dd-MM-yyyy")
-							</td>
-							<td>
-								@item.EndDate.ToString("dd-MM-yyyy")
-							</td>
+							<tr>
+								<td>@item.Collaborator.FirstName @item.Collaborator.LastName</td>
+								<td>
+									@item.Description
+								</td>
+								<td>
+									@HelperModel.ToString(item.Type)
+								</td>
+								<td>
+									@item.StartDate.ToString("dd/MM/yyyy")
+								</td>
+								<td>
+									@item.EndDate.ToString("dd/MM/yyyy")
+								</td>
 
-							<td>
-								@item.ComputeLengthLeave()
-							</td>
+								<td>
+									@item.ComputeLengthLeave() demi-j.
+								</td>
 
-							<td>
-								@HelperModel.ToString(item.Status, item.Treatment)
-							</td>
+								<td>
+									@HelperModel.ToString(item.Status, item.Treatment)
+								</td>
 
-							<!--traiter-->
-							<td>
+								<!--traiter-->
+								<td>
 
-								@if (item.Treatment == Processing.HR | item.Treatment == Processing.DHR | item.Treatment == Processing.CEO)
-								{
-									<div>
-
-										@Html.ActionLink("Valider spécialement", "AcceptLeaveDHR", "Leave", new { id = item.Id }, null) | @Html.ActionLink("Refuser", "RefuseLeaveDHR", "Leave", new { id = item.Id }, null)
-									</div>
-								}
-
-								else if (item.Treatment == Processing.CLASSIC)
-								{
-									if (item.Status == LeaveStatus.PENDING_APPROVAL_1 | item.Status == LeaveStatus.PENDING_APPROVAL_2)
+									@if (item.Treatment == Processing.HR | item.Treatment == Processing.DHR | item.Treatment == Processing.CEO)
 									{
-
 										<div>
-											@Html.ActionLink("Valider", "AcceptLeave", "Leave", new { id = item.Id }, null) | @Html.ActionLink("Refuser", "RefuseLeave", "Leave", new { id = item.Id }, null)
+
+											@Html.ActionLink("Valider spécialement", "AcceptLeaveDHR", "Leave", new { id = item.Id }, null) | @Html.ActionLink("Refuser", "RefuseLeaveDHR", "Leave", new { id = item.Id }, null)
 										</div>
-
-
 									}
-								}
+
+									else if (item.Treatment == Processing.CLASSIC)
+									{
+										if (item.Status == LeaveStatus.PENDING_APPROVAL_1 | item.Status == LeaveStatus.PENDING_APPROVAL_2)
+										{
+
+											<div>
+												@Html.ActionLink("Valider", "AcceptLeave", "Leave", new { id = item.Id }, null) | @Html.ActionLink("Refuser", "RefuseLeave", "Leave", new { id = item.Id }, null)
+											</div>
 
 
-							</td>
-						</tr>
+										}
+									}
+
+
+								</td>
+							</tr>
 						}
 					</tbody>
 				}
@@ -120,6 +141,13 @@
 	<!-- Bootstrap table -->
 	<script src="/Scripts/bootstrap-table.js"></script>
 
+	<!-- update calendar on dropdownlist change-->
+	<script>
+
+		$('#cal_selector').on('change', function () {
+			$('#calendar').fullCalendar('rerenderEvents');
+		})
+	</script>
 }
 
 

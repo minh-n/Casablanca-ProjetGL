@@ -221,14 +221,12 @@ namespace Casablanca.Models.Database
 
 			#endregion
 
-			#region Create some expense reports 
+			#region Create expense reports 
 
 			ExpenseReports = new List<ExpenseReport>() {
                 new ExpenseReport(GetCollaborator("Arthur", "BINELLI"), Month.DECEMBER, 2018, ExpenseReportStatus.PENDING_APPROVAL_2),
 				new ExpenseReport(GetCollaborator("Floriab", "LE PALLEC"), Month.DECEMBER, 2018, ExpenseReportStatus.PENDING_APPROVAL_1),
 				new ExpenseReport(GetCollaborator("Oubar", "MAYAKI"), Month.JANUARY, 2019, ExpenseReportStatus.UNSENT),
-                new ExpenseReport(GetCollaborator("Jeffrey", "GONCALVES"), Month.FEBRUARY, 2018, ExpenseReportStatus.PENDING_APPROVAL_2),
-                new ExpenseReport(GetCollaborator("Jeffrey", "GONCALVES"), Month.NOVEMBER, 2018, ExpenseReportStatus.UNSENT)
             };
 
 			Db.SaveChanges();
@@ -248,8 +246,8 @@ namespace Casablanca.Models.Database
 			ExpenseReports[1].AddLine(new ExpenseLine(GetMission(2), LineType.HOTEL, "Pepperoni Florian", 10.0f, new DateTime(2019, 1, 8), "hotelflo.pdf"));
 
 			// Lignes de l'ER 4 (jeffrey). Jeffrey n'a aucune mission à effectuer actuellement
-			ExpenseReports[3].AddLine(new ExpenseLine(GetMission(1), LineType.RESTAURANT, "Jeffrey GONCALVES", "Simon Burger", 10.0f, new DateTime(2019, 1, 5), "trumpburger.pdf"));
-			ExpenseReports[3].AddLine(new ExpenseLine(GetMission(3), LineType.HOTEL, "Minh NGUYEN", "Jafar Hotel", 10.0f, new DateTime(2019, 1, 5), "hotel.pdf"));
+			//ExpenseReports[3].AddLine(new ExpenseLine(GetMission(1), LineType.RESTAURANT, "Jeffrey GONCALVES", "Simon Burger", 10.0f, new DateTime(2019, 1, 5), "trumpburger.pdf"));
+			//ExpenseReports[3].AddLine(new ExpenseLine(GetMission(3), LineType.HOTEL, "Minh NGUYEN", "Jafar Hotel", 10.0f, new DateTime(2019, 1, 5), "hotel.pdf"));
 
 			//foreach (ExpenseReport er in ExpenseReports) {
 			//    Db.ExpenseReports.Add(er);
@@ -262,20 +260,20 @@ namespace Casablanca.Models.Database
 
 			List<Leave> leaves = new List<Leave>()
 			{
-				//new Leave(LeaveStatus.PENDING_APPROVAL_1, LeaveType.OTHER, GetCollaborator("Morgan", "FEURTE"), new DateTime(2019, 1, 05), new DateTime(2019, 1, 15)),
-				//new Leave(LeaveStatus.REFUSED, LeaveType.PAID, GetCollaborator("Oubar", "MAYAKI"), new DateTime(2019, 1, 3), new DateTime(2019, 1, 6)),
+				new Leave(LeaveStatus.PENDING_APPROVAL_1, LeaveType.OTHER, GetCollaborator("Morgan", "FEURTE"), new DateTime(2019, 2, 05), new DateTime(2019, 2, 15), "Matin", "Matin"),
+				new Leave(LeaveStatus.REFUSED, LeaveType.PAID, GetCollaborator("Oubar", "MAYAKI"), new DateTime(2019, 2, 3), new DateTime(2019, 2, 6), "Matin", "Matin"),
 				//new Leave(LeaveStatus.APPROVED, LeaveType.PAID, GetCollaborator("Oubar", "MAYAKI"), new DateTime(2019, 1, 4), new DateTime(2019, 1, 12)),
 
-				new Leave(LeaveStatus.PENDING_APPROVAL_1, LeaveType.PAID, GetCollaborator("Floriab", "LE PALLEC"), new DateTime(2019, 1, 9), new DateTime(2019, 1, 11), "Matin", "Matin"),
-				new Leave(LeaveStatus.APPROVED, LeaveType.PAID, GetCollaborator("Nathon", "BONNARD"), new DateTime(2019, 1, 19), new DateTime(2019, 1, 22), "Matin", "Après-midi"),
-				new Leave(LeaveStatus.PENDING_APPROVAL_1, LeaveType.RTT, GetCollaborator("Nathon", "BONNARD"), new DateTime(2019, 1, 1), new DateTime(2019, 1, 12), "Après-midi", "Après-midi"),
+				new Leave(LeaveStatus.PENDING_APPROVAL_1, LeaveType.PAID, GetCollaborator("Floriab", "LE PALLEC"), new DateTime(2019, 2, 9), new DateTime(2019, 2, 11), "Matin", "Matin"),
+				new Leave(LeaveStatus.APPROVED, LeaveType.PAID, GetCollaborator("Nathon", "BONNARD"), new DateTime(2019, 2, 19), new DateTime(2019, 2, 22), "Matin", "Après-midi"),
+				new Leave(LeaveStatus.PENDING_APPROVAL_1, LeaveType.RTT, GetCollaborator("Nathon", "BONNARD"), new DateTime(2019, 2, 1), new DateTime(2019, 2, 12), "Après-midi", "Après-midi"),
 
 				//new Leave(LeaveStatus.PENDING_APPROVAL_2, LeaveType.RTT, GetCollaborator("Momo", "BELDI"), new DateTime(2019, 2, 1), new DateTime(2019, 2, 8)),
 				//new Leave(LeaveStatus.APPROVED, LeaveType.PAID, GetCollaborator("Thibal", "WITCZAK"), new DateTime(2019, 1, 05), new DateTime(2019, 2, 15)),
-				//new Leave(LeaveStatus.PENDING_APPROVAL_1, LeaveType.PAID, GetCollaborator("Minh", "NGUYEN"), new DateTime(2019, 2, 4), new DateTime(2019, 2, 5)),
+				new Leave(LeaveStatus.PENDING_APPROVAL_1, LeaveType.PAID, GetCollaborator("Coronton", "MONSCOUR"), new DateTime(2019, 2, 14), new DateTime(2019, 2, 25), "Après-midi", "Après-midi"),
 
 				new Leave(LeaveStatus.REFUSED, LeaveType.RTT, GetCollaborator("Thibal", "WITCZAK"), new DateTime(2018, 12, 05), new DateTime(2019, 1, 15), "Matin", "Matin"),
-				new Leave(LeaveStatus.APPROVED, LeaveType.PAID, GetCollaborator("Minh", "NGUYEN"), new DateTime(2019, 3, 4), new DateTime(2019, 9, 18), "Après-midi", "Matin") //je vais au Japon frère
+				new Leave(LeaveStatus.APPROVED, LeaveType.PAID, GetCollaborator("Minh", "NGUYEN"), new DateTime(2019, 3, 4), new DateTime(2019, 9, 18), "Après-midi", "Matin") 
 
 			};
 			
@@ -283,6 +281,23 @@ namespace Casablanca.Models.Database
 			{
 				Db.Leaves.Add(l);
 			}
+
+			GetCollaborator("Thibal", "WITCZAK").NbPaid = 5;
+			GetCollaborator("Thibal", "WITCZAK").NbRTT = 10;
+
+			GetCollaborator("Oubar", "MAYAKI").NbPaid = 15;
+			GetCollaborator("Oubar", "MAYAKI").NbRTT = 18;
+
+			GetCollaborator("Nathon", "BONNARD").NbPaid = 5;
+			GetCollaborator("Nathon", "BONNARD").NbRTT = 5;
+
+			GetCollaborator("Floriab", "LE PALLEC").NbPaid = 11;
+			GetCollaborator("Floriab", "LE PALLEC").NbRTT = 9;
+
+			GetCollaborator("Minh", "NGUYEN").NbPaid = 100;
+			GetCollaborator("Minh", "NGUYEN").NbRTT = 900;
+
+
 			Db.SaveChanges();
 
 			#endregion

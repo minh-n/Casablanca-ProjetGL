@@ -86,41 +86,45 @@ namespace Casablanca.Controllers
 			 *  1 : own leaves
 			 *  2 : own service's leaves (only accepted)
 			 *  3 : own service's leaves (every states)
-			 *	
-			 *  4 : every other leaves
 			 */
-
-
 			foreach (Leave l in dal.GetLeaves())
 			{				
 
-				if(!HelperModel.CheckManagement(currentColl)) //si pas manager, il ne peut voir que les congés validés, de son propre service
+				if(!HelperModel.CheckManagement(currentColl)) //if not manager, can only see own's leaves and approved service leaves
 				{
 					if(l.Collaborator.Id == currentColl.Id)
 					{
-						leaves.Add(new CalendarVM(l, '1')); 
+						leaves.Add(new CalendarVM(l, '1')); // group 1 : own leaves
 					}
 					else if((l.Collaborator.Service.Id == currentColl.Service.Id) && (l.Status == LeaveStatus.APPROVED))
 					{
-						leaves.Add(new CalendarVM(l, '2')); //group = 1 : can only see own leaves and own service's approved leaves
+						leaves.Add(new CalendarVM(l, '2')); //group 2 : can only see own leaves and own service's approved leaves
 					}
 				}
-				else //is Manager
+				else //is in management
 				{
+
 					if (l.Collaborator.Id == currentColl.Id)
 					{
-						leaves.Add(new CalendarVM(l, '1'));
+						leaves.Add(new CalendarVM(l, '1')); // group 1 : own leaves
 					}
 
-					else if ((l.Collaborator.Service.Id == currentColl.Service.Id))
+					else 
 					{
-						leaves.Add(new CalendarVM(l, '3')); //group 3 : can see every leaves in own's service
+						if (HelperModel.CheckRH(currentColl)) //if RH, can also see the other leaves
+						{
+							leaves.Add(new CalendarVM(l, '3')); // group 4 : every other leaves
+						}
+						else //if not RH, can only see own service leaves
+						{
+							if ((l.Collaborator.Service.Id == currentColl.Service.Id))
+							{
+								leaves.Add(new CalendarVM(l, '3')); //group 3 : can see every leaves in own's service
+							}
+						}
+						
 					}
 
-					if(HelperModel.CheckRH(currentColl)) //if RH, can also see the other leaves
-					{
-						leaves.Add(new CalendarVM(l, '4')); // group 4 : every other leaves
-					}
 				}
 				
 
@@ -129,7 +133,6 @@ namespace Casablanca.Controllers
 		}
 
 		#endregion
-
 
 		#region Create and Edit Leave
 

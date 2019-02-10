@@ -38,16 +38,27 @@
 			<select id="cal_selector">
 				<option value="all">Toutes les demandes </option>
 				<option value="1">Demandes personnelles</option>
-				<option value="2">Demandes (validées) du service (TODO : comment inclure nos demandes aussi ?)</option>
-				<option value="3">Toutes demandes du service (TODO restrict this button to CHIEF)</option>
+
+				@if (!HelperModel.CheckManagement(currentColl))
+				{
+					<option value="2"> Demandes validées de mon service</option>
+				}
+				
+				@if (HelperModel.CheckCDS(currentColl) && !HelperModel.CheckRH(currentColl))
+				{
+					<option value="3">Toutes les demandes de mon service</option>
+				}
 			</select>
 		</div>
-		
+
+
 
 
 
 
 		<p style="padding:20px">TODO : légende des couleurs.</p>
+
+
 	</div>
 
 
@@ -111,7 +122,7 @@
 					</thead>
 					<tbody>
 						@foreach (Leave item in Model)
-						{
+				{
 							<tr>
 								<td>
 									@item.Description
@@ -141,7 +152,7 @@
 
 									@if (HelperModel.AllowCancelLeave(item))
 									{
-										@Html.ActionLink("Annuler", "RemoveLeave", "Leave", new { id = item.Id }, null)
+						@Html.ActionLink("Annuler", "RemoveLeave", "Leave", new { id = item.Id }, null)
 									}
 
 									<!--TODO ! Modifier ou supprimer la note ?-->
