@@ -172,7 +172,7 @@
 			//compute weekend days
 			var weekendDays = 0;
 
-			for (var date = new Date(@Model.StartDate.ToString("jj-MM-aaaa")); date.Date <= new Date(@Model.EndDate.ToString("jj-MM-aaaa"); date = date.getDay++)
+			for (var date = new Date(@Model.StartDate.ToString("dd-MM-yyyy")); date.Date <= new Date(@Model.EndDate.ToString("dd-MM-yyyy"); date = date.getDay++)
 			{
 				if ((date.DayOfWeek == DayOfWeek.Saturday) || (date.DayOfWeek == DayOfWeek.Sunday)) {
 					weekendDays++;
@@ -181,7 +181,7 @@
 
 			weekendDays *= 2;
 
-			var totalHalfDays = (this.EndDate - this.StartDate).Days * 2;
+			var totalHalfDays = (new Date(@Model.EndDate.ToString("dd-MM-yyyy") - new Date(@Model.StartDate.ToString("dd-MM-yyyy")).Days * 2;
 
 			if (StartMorningOrAfternoon.Contains("Après-midi")) {
 				--totalHalfDays;
