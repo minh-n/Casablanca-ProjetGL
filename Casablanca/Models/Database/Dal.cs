@@ -221,7 +221,7 @@ namespace Casablanca.Models.Database
 
 			#endregion
 
-			#region Create some expense reports 
+			#region Create expense reports 
 
 			ExpenseReports = new List<ExpenseReport>() {
                 new ExpenseReport(GetCollaborator("Arthur", "BINELLI"), Month.DECEMBER, 2018, ExpenseReportStatus.PENDING_APPROVAL_2),
@@ -248,8 +248,8 @@ namespace Casablanca.Models.Database
 			ExpenseReports[1].AddLine(new ExpenseLine(GetMission(2), LineType.HOTEL, "Pepperoni Florian", 10.0f, new DateTime(2019, 1, 8), "hotelflo.pdf"));
 
 			// Lignes de l'ER 4 (jeffrey). Jeffrey n'a aucune mission à effectuer actuellement
-			ExpenseReports[3].AddLine(new ExpenseLine(GetMission(1), LineType.RESTAURANT, "Jeffrey GONCALVES", "Simon Burger", 10.0f, new DateTime(2019, 1, 5), "trumpburger.pdf"));
-			ExpenseReports[3].AddLine(new ExpenseLine(GetMission(3), LineType.HOTEL, "Minh NGUYEN", "Jafar Hotel", 10.0f, new DateTime(2019, 1, 5), "hotel.pdf"));
+			//ExpenseReports[3].AddLine(new ExpenseLine(GetMission(1), LineType.RESTAURANT, "Jeffrey GONCALVES", "Simon Burger", 10.0f, new DateTime(2019, 1, 5), "trumpburger.pdf"));
+			//ExpenseReports[3].AddLine(new ExpenseLine(GetMission(3), LineType.HOTEL, "Minh NGUYEN", "Jafar Hotel", 10.0f, new DateTime(2019, 1, 5), "hotel.pdf"));
 
 			//foreach (ExpenseReport er in ExpenseReports) {
 			//    Db.ExpenseReports.Add(er);
