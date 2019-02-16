@@ -92,6 +92,7 @@ namespace Casablanca.Controllers
 				return Redirect("/Home/Index");
             //--------------------------------------------------//
             List<Collaborator> collList = new List<Collaborator>();
+            Mission m = dal.GetMission(model.Id);
 
             string selectedValues = Request.Form["right"];
             if (selectedValues != null) {
@@ -101,17 +102,22 @@ namespace Casablanca.Controllers
 
                 foreach (string i in selectedCollaboratorsId) {
                     int.TryParse(i, out int collId);
-                    collList.Add(dal.GetCollaborator(collId));
+                    Collaborator c = dal.GetCollaborator(collId);
+                    collList.Add(c);
+
+                    if(!c.Missions.Contains(m)) {
+                        c.Missions.Add(m);
+                    }
                 }
             }
 
-            //TODO : check model state validity ?
-            Mission m = dal.GetMission(model.Id);
 			m.Name = model.Name;
 			m.StartDate = model.StartDate;
 			m.EndDate = model.EndDate;
             m.CollList.Clear();
 			m.CollList = collList;
+
+            // TODO : affecter la mission aux collaborateurs (check s'ils l'ont pas, on l'ajoute)
 
 			dal.SaveChanges();
 
