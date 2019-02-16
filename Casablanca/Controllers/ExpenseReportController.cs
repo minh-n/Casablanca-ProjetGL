@@ -245,7 +245,7 @@ namespace Casablanca.Controllers {
             Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
             ExpenseReport model = dal.GetExpenseReport(ERId);
 
-            // if it is not our own ER = cannot see TODO : maybe only CDS can see an employee's ER
+            // if it is not our own ER = cannot see 
             if((!HelperModel.CheckManagement(coll)) && (!coll.ExpenseReports.Contains(model)))
                 return Redirect("/Home/Index");
 
@@ -652,8 +652,8 @@ namespace Casablanca.Controllers {
 
 			Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
 
-			//not in management OR isRH = cannot see
-			if ((HelperModel.CheckManagement(coll) == false) || HelperModel.CheckRH(coll))
+            //not in management OR isRH = cannot see
+            if (!HelperModel.CheckManagement(coll) && !HelperModel.CheckRH(coll))
 				return Redirect("/Home/Index");
 
 			List<ExpenseReport> AllERList = dal.GetExpenseReports();
