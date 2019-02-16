@@ -231,7 +231,7 @@ namespace Casablanca.Controllers
 			Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
 
 			//not in management = cannot see
-			if ((HelperModel.CheckManagement(coll) == false))
+			if (!HelperModel.CheckManagement(coll) && !HelperModel.CheckCDS(coll))
 				return Redirect("/Home/Index");
 			//--------------------------------------------------//
 
@@ -281,8 +281,6 @@ namespace Casablanca.Controllers
 							}
 						}
 					}
-
-
 					else
 					{ // The ER needs to be treated specifically
 						if (e.Status == LeaveStatus.PENDING_APPROVAL_1) // please do not put pending2 in DAL for those leaves

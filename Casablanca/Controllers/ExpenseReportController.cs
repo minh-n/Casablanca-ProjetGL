@@ -266,8 +266,8 @@ namespace Casablanca.Controllers {
 
             Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
 
-            //not in management OR isRH = cannot see
-            if ((HelperModel.CheckManagement(coll) == false) || HelperModel.CheckRH(coll))
+            //not in management OR CDS = cannot see
+            if (!HelperModel.CheckManagement(coll) && !HelperModel.CheckCDS(coll))
                 return Redirect("/Home/Index");
 
             List<ExpenseReport> AllERList = dal.GetExpenseReports();
