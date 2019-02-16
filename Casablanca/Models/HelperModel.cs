@@ -632,6 +632,20 @@ namespace Casablanca.Models
 			return returnedColls;
 		}
 
+        public static bool IsERTreated(ExpenseReport er, Collaborator coll) {
+            bool treated = true;
+            if(er.Status == ExpenseReportStatus.PENDING_APPROVAL_1) {
+                foreach (ExpenseLine el in er.ExpenseLines) {
+                    if (el.Mission.ChiefId == coll.Id) {
+                        treated = treated && (el.Treated == Treatment.CDS);
+                    }
+                }
+            }
+            else {
+                treated = false;
+            }
 
-	}
+            return treated;
+        }
+    }
 }

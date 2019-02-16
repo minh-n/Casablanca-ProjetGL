@@ -172,13 +172,7 @@
 											Value = mission.Value,
 											Selected = (mission.Value == Model.CollaboratorMissions.FirstOrDefault().Value)
 										}
-									),
-										new
-										{
-											onchange = @"form.submit();" //ca ca refresh bien
-											//onchange = @"function(){myScript}"
-
-										}
+									)
 				)
             </td>
 			<td>
@@ -214,9 +208,6 @@
 
 @section Scripts {
     <script>
-		
-
-
         // Script to add lines to the ER
         var $TABLE = $('#table');
         var table = $TABLE.find('table').find('tbody');

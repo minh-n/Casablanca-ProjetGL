@@ -246,7 +246,7 @@ namespace Casablanca.Controllers {
             ExpenseReport model = dal.GetExpenseReport(ERId);
 
             // if it is not our own ER = cannot see TODO : maybe only CDS can see an employee's ER
-            if((!HelperModel.CheckManagement(coll)) | (!coll.ExpenseReports.Contains(model)))
+            if((!HelperModel.CheckManagement(coll)) && (!coll.ExpenseReports.Contains(model)))
                 return Redirect("/Home/Index");
 
             return View(model);
