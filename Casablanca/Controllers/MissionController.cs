@@ -114,6 +114,12 @@ namespace Casablanca.Controllers
 			m.Name = model.Name;
 			m.StartDate = model.StartDate;
 			m.EndDate = model.EndDate;
+
+			if((m.EndDate < DateTime.Now) && (m.Status != MissionStatus.CANCELED))
+			{
+				m.Status = MissionStatus.COMPLETED;
+			}
+
             m.CollList.Clear();
 			m.CollList = collList;
 

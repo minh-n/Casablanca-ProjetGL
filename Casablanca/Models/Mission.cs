@@ -1,16 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
+using System.ComponentModel;
 
 namespace Casablanca.Models {
 
     public enum MissionStatus {
-        COMPLETED,
-        IN_PROGRESS,
-        PLANNED,
-        CANCELED
+		[Description("Complétée")]
+		COMPLETED,
+
+		[Description("En cours")]
+		IN_PROGRESS,
+
+		[Description("Planifiée")]
+		PLANNED,
+
+		[Description("Annulée")]
+		CANCELED
     }
 
     public class Mission {
@@ -21,6 +27,8 @@ namespace Casablanca.Models {
 
 		//[DataType(DataType.Date)]
 		//[DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd-MM-yyyy}")]
+		[Required]
+		[Display(Name = "date")]
 		public DateTime StartDate { get; set; }
 
 		//[DataType(DataType.Date)]

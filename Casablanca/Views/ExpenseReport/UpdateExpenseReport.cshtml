@@ -80,7 +80,7 @@
 									@Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Date,
 									new {
 										@type = "date", @class = "form-control datepicker",
-										@value = Model.ExpenseReport.ExpenseLines[i].Date.ToString("dd-MM-yyyy"),
+										@Value = Model.ExpenseReport.ExpenseLines[i].Date.ToString("yyyy-MM-dd")
 										//@min = Model.ExpenseReport.ExpenseLines[i].Mission.StartDate.ToString("yyyy-MM-dd"),
 										//@max = Model.ExpenseReport.ExpenseLines[i].Mission.EndDate.ToString("yyyy-MM-dd")
 									})
@@ -180,7 +180,7 @@
 					@Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Date,
 					new {
 						@type = "date", @class = "form-control datepicker",
-						@value = DateTime.Now.ToString("dd-MM-yyyy")
+						@Value = Model.ExpenseReport.ExpenseLines[nbEL].Date.ToString("yyyy-MM-dd")
 					})
 
 				}
