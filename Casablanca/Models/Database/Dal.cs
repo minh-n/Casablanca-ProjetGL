@@ -533,7 +533,7 @@ namespace Casablanca.Models.Database
             {
                 foreach (ExpenseLine el in er.ExpenseLines.ToList())
                 {
-                    if (el.Validated /*&& el.Mission.Status == MissionStatus.COMPLETED*/)
+                    if (el.Validated && el.Mission.Status == MissionStatus.COMPLETED)
                     {
                         expenseReport.AddLine(el);
                         er.RemoveLine(el);
