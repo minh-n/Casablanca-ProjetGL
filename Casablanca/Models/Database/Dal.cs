@@ -127,6 +127,8 @@ namespace Casablanca.Models.Database
             {
                 new Notification(Collaborators[2], Collaborators[2], NotificationType.INFORMATION, NotificationResult.VALIDATION),
                 new Notification(Collaborators[1], Collaborators[2], NotificationType.INFORMATION, NotificationResult.REFUSAL),
+                new Notification(Collaborators[3], Collaborators[1], NotificationType.LEAVE, NotificationResult.VALIDATION),
+                new Notification(Collaborators[3], Collaborators[1], NotificationType.EXPENSE, NotificationResult.VALIDATION),
                 new Notification(Collaborators[3], Collaborators[1], NotificationType.INFORMATION, NotificationResult.VALIDATION),
                 new Notification(Collaborators[4], Collaborators[4], NotificationType.INFORMATION, NotificationResult.VALIDATION),
                 new Notification(Collaborators[5], Collaborators[5], NotificationType.INFORMATION, NotificationResult.VALIDATION)
@@ -490,6 +492,22 @@ namespace Casablanca.Models.Database
         public void AddNotification(Notification not)
         {
             Db.Notifications.Add(not);
+            Db.SaveChanges();
+        }
+
+        public void DeleteNotification(Notification not)
+        {
+            Db.Notifications.Remove(not);
+            Db.SaveChanges();
+        }
+
+        public void DeleteNotification(List<Notification> notifs)
+        {
+            foreach(Notification not in notifs)
+            {
+                Db.Notifications.Remove(not);
+            }
+            
             Db.SaveChanges();
         }
 

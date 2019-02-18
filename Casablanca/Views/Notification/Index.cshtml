@@ -1,0 +1,114 @@
+﻿@using Casablanca.Models
+@using Casablanca.Models.Database
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model Casablanca.Models.ViewModel.NotificationSelectionVM
+
+@{
+    ViewBag.Title = "Notifications";
+
+    Dal dal = new Dal();
+    List<Notification> notifsColl = dal.GetNotifications(dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name));
+}
+
+<h2>Notifications</h2>
+
+@using (Html.BeginForm())
+{
+    // Add a new checkbox in its own div element:
+    <div>
+        <label for="mydropdown" datalabel="mydropdown">Selection</label>
+        <select name="mydropdown" id="mydropdown">
+            <option value="checkNone">Aucun</option>
+            <option value="checkAll">Tous</option>
+            <option value="checkRead">Lus</option>
+            <option value="checkUnread">Non lus</option>
+        </select>
+    </div>
+
+    <div id="checkboxes">
+        <table class="table">
+            <tr>
+                <th>
+                    Selection
+                </th>
+                <th>
+                    Type
+                </th>
+                <th>
+                    Statut
+                </th>
+                <th>
+                    Message
+                </th>
+                <th></th>
+                <th></th>
+            </tr>
+            @Html.EditorFor(model => model.Notifications)
+        </table>
+    </div>
+    <hr />
+    <br />
+    <p>
+        <input type="submit" value="Marquer comme lu" name="operation" />
+        <input type="submit" value="Marquer comme non lu" name="operation" />
+        <input type="submit" value="Supprimer" name="operation" />
+    </p>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script type="text/javascript">
+
+        function toggleChecked(status) {
+            $("#checkboxes input").each(function () {
+                // Set the checked status of each to match the
+                // checked status of the check all checkbox:
+                $(this).prop("checked", status);
+            });
+        }
+
+        function toggleUnread() {
+            $("#checkboxes input").each(function () {
+                var value = $(this).attr("status");
+                if (value == "unread") {
+                    $(this).prop("checked", true);
+                }                
+            });
+        }
+
+        function toggleRead() {
+            $("#checkboxes input").each(function () {
+                var value = $(this).attr("status");
+
+                if (value == "read") {
+                    $(this).prop("checked", true);
+                }
+            });
+        }
+
+        $(document).ready(function () {
+
+            $('select[name=mydropdown]').change(function () {
+                var value = $('select[name=mydropdown]').val();
+
+                if (value == "checkAll") {
+                    toggleChecked(true);
+                }
+                else if (value == "checkNone") {
+                    toggleChecked(false);
+                }
+                else if (value == "checkRead") {
+                    toggleRead();
+                }
+                else if (value == "checkUnread") {
+                    toggleUnread();
+                }
+            });
+        });
+    </script>
+}

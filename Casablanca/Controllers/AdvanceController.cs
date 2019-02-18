@@ -82,6 +82,19 @@ namespace Casablanca.Controllers {
 
             // Change the status of the ER
             er.Status = ExpenseReportStatus.PENDING_APPROVAL_1;
+
+            //send notifications
+            List<Collaborator> chiefs = new List<Collaborator>();
+            foreach (ExpenseLine el in er.ExpenseLines)
+            {
+                Collaborator chief = dal.GetCollaborator(el.Mission.ChiefId);
+                if(!chiefs.Contains(chief))
+                {
+                    dal.AddNotification(new Notification(coll, chief, NotificationType.ADVANCE));
+                    chiefs.Add(chief);
+                }                    
+            }                        
+
             dal.SaveChanges();
 
             return Redirect("/ExpenseReport/Index");
@@ -356,10 +369,25 @@ namespace Casablanca.Controllers {
 
                 // If all EL are validated, switch to next status
                 if (allValidated)
+                {
                     er.Status = ExpenseReportStatus.PENDING_APPROVAL_2;
+
+                    //send notifications
+                    dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.ADVANCE, NotificationResult.VALIDATION, "Votre demande d'avance est validée par le(s) chef(s) de service concerné(s)"));
+
+                    foreach (Collaborator c in dal.GetCollaborators())
+                    {
+                        if (c.Role != Roles.CHIEF && c.Service.Name.Contains("Compta"))
+                        {
+                            dal.AddNotification(new Notification(er.Collaborator, c, NotificationType.ADVANCE));
+                        }
+                    }
+                }
             }
             else {
                 er.Status = ExpenseReportStatus.REFUSED; // We refused one or several lines
+                //send a notification
+                dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.ADVANCE, NotificationResult.REFUSAL, "Votre demande d'avance a été refusé par au moins un chef de service"));
             }
 
             dal.SaveChanges();
@@ -419,9 +447,17 @@ namespace Casablanca.Controllers {
             }
 
             if (allValidated)
+            {
                 er.Status = ExpenseReportStatus.APPROVED;
+                //send a notification
+                dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.ADVANCE, NotificationResult.VALIDATION));
+            }                
             else
+            {
                 er.Status = ExpenseReportStatus.REFUSED; // We refused one or several lines
+                //send a notification
+                dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.ADVANCE, NotificationResult.REFUSAL));
+            }                
 
             dal.SaveChanges();
 
@@ -516,9 +552,17 @@ namespace Casablanca.Controllers {
             }
 
             if (allValidated)
+            {
                 er.Status = ExpenseReportStatus.APPROVED;
+                //send a notification
+                dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.ADVANCE, NotificationResult.VALIDATION));
+            }                
             else
+            {
                 er.Status = ExpenseReportStatus.REFUSED; // We refused one or several lines
+                //send a notification
+                dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.ADVANCE, NotificationResult.REFUSAL));
+            }               
 
             dal.SaveChanges();
 

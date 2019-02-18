@@ -1,0 +1,42 @@
+﻿@using Casablanca.Models
+
+@model Casablanca.Models.ViewModel.SelectNotificationEditorVM
+
+<tr>
+    <td style="text-align:center">
+        @Html.CheckBoxFor(model => model.Selected)
+    </td>
+    @{
+        if (Model.NotifStatus.Equals("unread"))
+        {
+            <td>
+                <b>@Html.ActionLink(@HelperModel.ToString(Model.NotifType), "Link", "Notification", new { id = Model.Id }, null)</b>
+            </td>
+            <td>
+                <b>@Html.DisplayFor(model => model.NotifResult)</b>
+            </td>
+            <td>
+                <b>@Html.DisplayFor(model => model.NotifContent)</b>
+            </td>
+        }
+        else
+        {
+            <td>
+                @Html.ActionLink(@HelperModel.ToString(Model.NotifType), "Link", "Notification", new { id = Model.Id }, null)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.NotifResult)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.NotifContent)
+            </td>
+        }
+    }
+    <td>
+        @Html.HiddenFor(model => model.Id)
+    </td>
+    <td id="status" value=Model.NotifStatus>
+        
+    </td>
+</tr>
+

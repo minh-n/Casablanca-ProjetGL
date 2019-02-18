@@ -87,7 +87,7 @@ namespace Casablanca.Controllers {
             // Change the status of the ER
             er.Status = ExpenseReportStatus.PENDING_APPROVAL_1;
 
-            //send a notification
+            //send notifications
             switch (er.Collaborator.Role)
             {
                 case Roles.USER:
@@ -438,7 +438,7 @@ namespace Casablanca.Controllers {
                 er.Status = ExpenseReportStatus.REFUSED; // We refused one or several lines     
 
                 //send a notification
-                dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.EXPENSE, NotificationResult.REFUSAL));
+                dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.EXPENSE, NotificationResult.REFUSAL, "Votre note de frais a été refusé par au moins un chef de service"));
             }
 
             dal.SaveChanges();

@@ -47,6 +47,8 @@ namespace Casablanca.Models.Database {
         Notification GetNotifications(int id);
         List<Notification> GetNotifications(Collaborator receiver);
         void AddNotification(Notification not);
+        void DeleteNotification(Notification not);
+        void DeleteNotification(List<Notification> notifs);
 
         // Helper
         string EncodeMD5(string password);

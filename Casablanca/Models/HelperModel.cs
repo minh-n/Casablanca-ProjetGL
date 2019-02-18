@@ -362,12 +362,16 @@ namespace Casablanca.Models
 			return number;
 		}
 
-		public static int GetNumberNotifications(Collaborator coll) //TODO
+		public static int GetNumberNotifications(Dal dal) //TODO
 		{
-
-			//TODO 
-
-			return 0;
+            //TODO 
+            int notifUnread = 0;            
+            foreach(Notification n in dal.GetNotifications(dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name)))
+            {
+                if (n.NotifStatus == NotificationStatus.UNREAD)
+                    notifUnread++;
+            }
+            return notifUnread;
 		}
 
 

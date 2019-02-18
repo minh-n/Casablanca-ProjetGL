@@ -20,53 +20,53 @@
 
 <div class="jumbotron">
 
-	@{
-		if (@HttpContext.Current.User.Identity.IsAuthenticated != false)
-		{
-			<h3>Bienvenue sur l'intranet, <b>@Model.FirstName @Model.LastName</b> !</h3>
-			<text>Nous sommes le <b>@DateTime.Now.ToString("dddd") @DateTime.Now.Day  @DateTime.Now.ToString("MMMM") @DateTime.Now.Year</b>.</text>
+    @{
+        if (@HttpContext.Current.User.Identity.IsAuthenticated != false)
+        {
+            <h3>Bienvenue sur l'intranet, <b>@Model.FirstName @Model.LastName</b> !</h3>
+            <text>Nous sommes le <b>@DateTime.Now.ToString("dddd") @DateTime.Now.Day  @DateTime.Now.ToString("MMMM") @DateTime.Now.Year</b>.</text>
 
-			if (HelperModel.CheckCDSCompta(Model))
-			{
-				<text>Vous êtes connecté en tant que <b>Directeur Financier</b>.</text>
-			}
-			else if (HelperModel.CheckCDSRH(Model))
-			{
-				<text>Vous êtes connecté en tant que <b>Directeur des Ressources Humaines</b>.</text>
-			}
-			else if (HelperModel.CheckPDG(Model))
-			{
-				<text>Vous êtes connecté en tant que <b>PDG</b>.</text>
-			}
-			else if (HelperModel.CheckCDS(Model))
-			{
-				<text>Vous êtes connecté en tant que <b>Chef de service</b>.</text>
-			}
-			else if (HelperModel.CheckAdmin(Model))
-			{
-				<text>Vous êtes connecté en tant qu'<b>Administrateur</b>.</text>
-			}
-			else if (HelperModel.CheckAdmin(Model))
-			{
-				<text>Vous êtes connecté en tant qu'<b>Administrateur</b>.</text>
-			}
-			else
-			{
-				<text>Vous êtes connecté en tant que <b>Collaborateur</b> du service @Model.Service.Name.</text>
-			}
+            if (HelperModel.CheckCDSCompta(Model))
+            {
+                <text>Vous êtes connecté en tant que <b>Directeur Financier</b>.</text>
+            }
+            else if (HelperModel.CheckCDSRH(Model))
+            {
+                <text>Vous êtes connecté en tant que <b>Directeur des Ressources Humaines</b>.</text>
+            }
+            else if (HelperModel.CheckPDG(Model))
+            {
+                <text>Vous êtes connecté en tant que <b>PDG</b>.</text>
+            }
+            else if (HelperModel.CheckCDS(Model))
+            {
+                <text>Vous êtes connecté en tant que <b>Chef de service</b>.</text>
+            }
+            else if (HelperModel.CheckAdmin(Model))
+            {
+                <text>Vous êtes connecté en tant qu'<b>Administrateur</b>.</text>
+            }
+            else if (HelperModel.CheckAdmin(Model))
+            {
+                <text>Vous êtes connecté en tant qu'<b>Administrateur</b>.</text>
+            }
+            else
+            {
+                <text>Vous êtes connecté en tant que <b>Collaborateur</b> du service @Model.Service.Name.</text>
+            }
 
-			<br />
+            <br />
 
-			<text>Vous avez @HelperModel.GetNumberLeaveToProcess(@Model) congé(s),</text>
-			<text>@HelperModel.GetNumberERToProcess(@Model) note de frais(s) et</text>
-			<text>TODO notifications à traiter.</text>
+            <text>Vous avez @HelperModel.GetNumberLeaveToProcess(@Model) congé(s),</text>
+            <text>@HelperModel.GetNumberERToProcess(@Model) note de frais(s) et</text>
+            <text>@HelperModel.GetNumberNotifications(dal) notification(s) à traiter.</text>
 
-		}
-		else
-		{
-			<h3>Bienvenue sur Pops1819. Veuillez vous connecter !</h3>
-		}
-	}
+        }
+        else
+        {
+            <h3>Bienvenue sur Pops1819. Veuillez vous connecter !</h3>
+        }
+    }
 
 
 </div>
@@ -200,27 +200,37 @@
 							<thead>
 								<tr><th>Type</th><th>Statut</th><th>Message</th></tr>
 							</thead>
-							<tbody>
+                            <tbody>
 
-								@{
-									List<Notification> notifsColl = dal.GetNotifications(dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name));
-								}
+                                @{
+                                    List<Notification> notifsColl = dal.GetNotifications(dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name));
+                                    List<Notification> displayNotif = new List<Notification>();
 
-								@foreach (Notification item in notifsColl)
-								{
-									<tr>
-										<td>
-											@HelperModel.ToString(item.NotifType)
-										</td>
-										<td>
-											@HelperModel.ToString(item.NotifResult)
-										</td>
-										<td>
-											@item.NotifContent
-										</td>
-									</tr>
-								}
-							</tbody>
+                                    int i = notifsColl.Count() - 1;
+                                    while (i >= 0 && i > notifsColl.Count() - 5)
+                                    {
+                                        displayNotif.Add(notifsColl.ElementAt(i));
+                                        i--;
+                                    }
+                                }
+
+                                @{
+                                    foreach (Notification item in displayNotif)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.ActionLink(@HelperModel.ToString(item.NotifType), "Link", "Notification", new { id = item.Id }, null)
+                                            </td>
+                                            <td>
+                                                @HelperModel.ToString(item.NotifResult)
+                                            </td>
+                                            <td>
+                                                @item.NotifContent
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
 						</table>
 					</div>
 				</p>
