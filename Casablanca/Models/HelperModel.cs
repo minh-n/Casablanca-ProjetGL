@@ -489,23 +489,58 @@ namespace Casablanca.Models
 			return "Debug: StatutCongé";
 		}
 
-		public static string ToString(ExpenseReportStatus status)
+		public static string ToString(ExpenseReportStatus status, Processing process)
 		{
 
-			//TODO if status == process.CEO etc comme les leaves
-
-			switch (status)
+			if (process == Processing.CLASSIC)
 			{
-				case ExpenseReportStatus.UNSENT: return "Non envoyée";
-				case ExpenseReportStatus.REFUSED: return "Refusée";
-				case ExpenseReportStatus.APPROVED: return "Approuvée";
-				case ExpenseReportStatus.PENDING_APPROVAL_1: return "Validation chef de service en cours ";
-				case ExpenseReportStatus.PENDING_APPROVAL_2: return "Validation compta en cours ";
+				switch (status)
+				{
+					case ExpenseReportStatus.UNSENT: return "Non envoyée";
+					case ExpenseReportStatus.REFUSED: return "Refusée";
+					case ExpenseReportStatus.APPROVED: return "Approuvée";
+					case ExpenseReportStatus.PENDING_APPROVAL_1: return "Validation chef de service en cours ";
+					case ExpenseReportStatus.PENDING_APPROVAL_2: return "Validation compta en cours ";
+
+				}
 			}
+			else
+			{
+				if (status == ExpenseReportStatus.APPROVED)
+					return "Approuvée";
+
+				else if (status == ExpenseReportStatus.PENDING_APPROVAL_1 | status == ExpenseReportStatus.PENDING_APPROVAL_2)
+				{
+					if (process == Processing.CEO)
+					{
+						return "Traitement PDG";
+					}
+					else if (process == Processing.COMPTA)
+					{
+						return "Traitement Compta";
+					}
+					else if (process == Processing.FINANCIAL_DIRECTOR)
+					{
+						return "Traitement D.Financier";
+					}
+					else
+					{
+						return "Debug: Traitement spécial";
+					}
+				}
+				else
+				{
+					return "Non envoyée";
+				}
+			}
+
 			return "Debug: StatutER";
+			
+			
 		}
 
-        public static string ToString(NotificationType type)
+
+		public static string ToString(NotificationType type)
         {
             switch (type)
             {

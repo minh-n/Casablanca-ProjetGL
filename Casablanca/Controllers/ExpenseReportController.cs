@@ -311,7 +311,7 @@ namespace Casablanca.Controllers {
                 if (e.Collaborator != coll) // a coll cannot validate his own ER
                 {
                     // If the ER needs to be treated the classic way
-                    if(e.Treatment ==   Models.ExpenseReports.Processing.CLASSIC) { 
+                    if(e.Treatment ==   Processing.CLASSIC) { 
                         if (HelperModel.CheckCDSCompta(coll)) // CDS Compta
                         {
                             if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_2) {
@@ -348,17 +348,17 @@ namespace Casablanca.Controllers {
                     else { // The ER needs to be treated specifically
                         if(e.Status == ExpenseReportStatus.PENDING_APPROVAL_1) {
                             switch(e.Treatment) {
-                                case Models.ExpenseReports.Processing.COMPTA:
+                                case Processing.COMPTA:
                                     if (HelperModel.CheckCompta(coll)) {
                                         ERListToBeReturnedAsModel.Add(e);
                                     }
                                     break;
-                                case Models.ExpenseReports.Processing.FINANCIAL_DIRECTOR:
+                                case Processing.FINANCIAL_DIRECTOR:
                                     if (HelperModel.CheckCDSCompta(coll)) {
                                         ERListToBeReturnedAsModel.Add(e);
                                     }
                                     break;
-                                case Models.ExpenseReports.Processing.CEO:
+                                case Processing.CEO:
                                     if(HelperModel.CheckPDG(coll)) {
                                         ERListToBeReturnedAsModel.Add(e);
                                     }
