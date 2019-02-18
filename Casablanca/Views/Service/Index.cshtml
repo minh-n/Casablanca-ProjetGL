@@ -1,0 +1,187 @@
+﻿@using Casablanca.Models
+@using Casablanca.Models.Leaves
+@using Casablanca.Models.Database
+@using Casablanca.Models
+@using Casablanca.Models.ExpenseReports
+
+@model Service
+
+@{
+	ViewBag.Title = "Traiter les congés";
+	Dal dal = new Dal();
+	Collaborator currentColl = dal.GetCollaborator(User.Identity.Name); 
+	List<Collaborator> ServiceColls = HelperModel.GetAllCollaboratorsFromAService(Model);
+	List<Mission> ServiceMissions = HelperModel.GetAllMissionsFromAService(currentColl);
+
+
+}
+
+
+
+
+
+<div>
+	<h2>Service @Model.Name</h2>
+	<hr />
+
+
+	<h3>Liste des missions gérées par le chef de service</h3>
+
+	<div class="table-responsive">
+		<table id="table"
+			   class="table"
+			   data-toggle="table"
+			   data-search="true">
+
+			@if (ServiceMissions.Count() == 0)
+			{
+				<tr>
+					<td colspan="10">Aucune mission trouvée.</td>
+				</tr>
+			}
+			else
+			{
+				<thead>
+					<tr>
+						<th scope="col" data-field="name" data-sortable="true">Nom</th>
+
+						<th scope="col" data-field="begin" data-sortable="true">Date de début</th>
+						<th scope="col" data-field="end" data-sortable="true">Date de fin</th>
+						<th scope="col" data-field="status" data-sortable="true">Statut</th>
+						<th scope="col" data-field="coll" data-sortable="true">Collaborateurs</th>
+
+						<th scope="col" data-field="traiter" data-sortable="false">Modifier</th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (Mission item in ServiceMissions)
+					{
+					<tr>
+						<td>
+							@item.Name
+						</td>
+						<td>
+							@item.StartDate.ToString("dd/MM/yyyy")
+						</td>
+						<td>
+							@if (@item.EndDate.Year > 1980)
+							{
+								@item.EndDate.ToString("dd/MM/yyyy")
+							}
+						</td>
+
+						<td>
+							@HelperModel.ToString(@item.Status)
+						</td>
+
+						<td>
+							@foreach (Collaborator c in item.CollList)
+							{
+								<text>@c.FirstName @c.LastName,</text>
+							}
+						</td>
+						<!--traiter-->
+						<td>
+
+							@Html.ActionLink("Modifier", "ProcessMission", "Mission", new { id = item.Id }, null)
+
+						</td>
+					</tr>
+					}
+				</tbody>
+			}
+		</table>
+	</div>
+
+
+
+
+	<hr />
+
+
+
+
+
+
+	<h3>Liste des collaborateurs du service</h3>
+
+	<table id="coll_list"
+		   data-toggle="table"
+		   data-search="true"
+		   class="table">
+		@if (ServiceColls.Count() == 0)
+		{
+			<tr>
+				<td colspan="10">Aucun collaborateur trouvé.</td>
+			</tr>
+		}
+		else
+		{
+			<thead>
+				<tr>
+
+					<th scope="col" data-field="prenom" data-sortable="true">Prénom</th>
+					<th scope="col" data-field="nom" data-sortable="true">Nom</th>
+					<th scope="col" data-field="service" data-sortable="true">Service</th>
+					<th scope="col" data-field="mission" data-sortable="true">Mission</th>
+					<th scope="col" data-field="action" data-sortable="true">Action</th>
+
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in ServiceColls)
+				{
+					<tr>
+						<td>@item.FirstName</td>
+						<td>@item.LastName</td>
+						@if (item.Service != null)
+						{
+							<td>@item.Service.Name</td>
+						}
+						else
+						{
+							<td>Aucun service</td>
+						}
+
+						<td>
+							@if (item.Missions.Count != 0)
+							{
+
+								if (item.Missions.Count > 1)
+								{
+									foreach (var mission in item.Missions)
+									{
+										<text>@mission.Name, </text>
+									}
+								}
+								else
+								{
+									<text>@item.Missions[0].Name</text>
+								}
+							}
+							else
+							{
+								<text>Aucune mission</text>
+							}
+						</td>
+						<td>
+							@Html.ActionLink("Profil", "UserProfile", "Home", new { id = item.Id }, null)
+						</td>
+
+					</tr>
+				}
+			</tbody>
+		}
+	</table>
+
+</div>
+
+
+
+
+@section Scripts {
+	<!-- Bootstrap table -->
+	<script src="~/Scripts/bootstrap-table.js"></script>
+
+}
+

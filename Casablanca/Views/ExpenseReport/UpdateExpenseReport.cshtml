@@ -59,18 +59,6 @@
                                     Value = type.ToString(),
                                     Selected = (type == Model.ExpenseReport.ExpenseLines[i].Type)
                                 }))
-                                @*<select asp-for="Model.ExpenseReport.ExpenseLines[i].Type">
-                                        <optgroup label="Type de frais">
-                                            @foreach (LineType type in LineType.GetValues(typeof(LineType))) {
-                                                if (type == Model.ExpenseReport.ExpenseLines[i].Type) {
-                                                    <option value="@type" selected>@type</option>
-                                                }
-                                                else {
-                                                    <option value="@type">@type</option>
-                                                }
-                                            }
-                                        </optgroup>
-                                    </select>*@
                             </td>
 
                             <!--Description du frais-->
@@ -94,10 +82,21 @@
                             </td>
 
                             <!-- Date de la ligne de frais -->
-                            <td>
-                                @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Date,
-                                    new { @type = "date", @class = "form-control datepicker", @Value = Model.ExpenseReport.ExpenseLines[i].Date.ToString("yyyy-MM-dd") })
-                            </td>
+							<td>
+
+								@{
+									@Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Date,
+									new {
+										@type = "date", @class = "form-control datepicker",
+										@Value = Model.ExpenseReport.ExpenseLines[i].Date.ToString("yyyy-MM-dd")
+										//@min = Model.ExpenseReport.ExpenseLines[i].Mission.StartDate.ToString("yyyy-MM-dd"),
+										//@max = Model.ExpenseReport.ExpenseLines[i].Mission.EndDate.ToString("yyyy-MM-dd")
+									})
+									
+								}
+
+
+							</td>
 
                             <!-- Justificatif TODO -->
                             <td>
@@ -173,21 +172,34 @@
             <td>
                 @*@Html.DropDownListFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Mission.Id, Model.CollaboratorMissions)*@
                 @Html.DropDownListFor(
-                                    m => Model.ExpenseReport.ExpenseLines[nbEL].Mission.Id,
-                                    Model.CollaboratorMissions.Select(mission => new SelectListItem {
-                                        Text = mission.Text, Value = mission.Value, Selected = (mission.Value == Model.CollaboratorMissions.FirstOrDefault().Value)
-                                    }))
+									m => Model.ExpenseReport.ExpenseLines[nbEL].Mission.Id,
+									Model.CollaboratorMissions.Select
+									(mission =>
+										new SelectListItem {
+											Text = mission.Text,
+											Value = mission.Value,
+											Selected = (mission.Value == Model.CollaboratorMissions.FirstOrDefault().Value)
+										}
+									)
+				)
             </td>
+			<td>
+				@{
+					@Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Date,
+					new {
+						@type = "date", @class = "form-control datepicker",
+						@Value = Model.ExpenseReport.ExpenseLines[nbEL].Date.ToString("yyyy-MM-dd")
+					})
+
+				}
+			</td>
             <td>
-                @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Date,
-                    new { @type = "date", @class = "form-control datepicker", @Value = "" })
-            </td>
-            <td>
-                @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Justificatory, new { type = "file", @Value = "", accept = ".pdf" })
+                @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Justificatory, new { type = "file", @Value = "", accept = ".pdf" }) 
+                <!-- by Yao -->
             </td>
             @if (Model.ExpenseReport.Status == ExpenseReportStatus.REFUSED) {
                 <td>
-                    <text> </text>
+                    <text> TODO ???</text>
                 </td>
             }
             <td>
@@ -210,12 +222,14 @@
         var table = $TABLE.find('table').find('tbody');
         var toRemove = @toRemove;
 
-        $('.table-add').click(function () {
-            // Add a line to the view and update line numbers
-            var $clone = $("#additionnalrow").find('tr.hide').clone(true).removeClass('hide table-line');
-            $TABLE.find('table').append($clone);
-            replaceIds();
-        });
+		var AddLine = function () {
+			// Add a line to the view and update line numbers
+			var $clone = $("#additionnalrow").find('tr.hide').clone(true).removeClass('hide table-line');
+			$TABLE.find('table').append($clone);
+			replaceIds();
+		}
+
+		$('.table-add').click(AddLine);
 
         $('.table-remove').click(function () {
             // Remove a line and update line numbers
@@ -265,6 +279,10 @@
         };
 
         // Start-up scripts
-        computeTotalAmount();
+		computeTotalAmount();
+
+		if (@nbEL == 0) {
+			AddLine();
+		}
     </script>
 }

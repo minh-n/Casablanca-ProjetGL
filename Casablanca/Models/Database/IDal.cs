@@ -4,6 +4,7 @@ using Casablanca.Models.ExpenseReports;
 using Casablanca.Models.Leaves;
 
 namespace Casablanca.Models.Database {
+
     interface IDal : IDisposable
     {
         // Collaborators
@@ -12,6 +13,7 @@ namespace Casablanca.Models.Database {
         Collaborator GetCollaborator(string idString);
         Collaborator GetCollaborator(string firstname, string lastname);
         void CreateCollaborator(string firstname, string lastname, string login, string password);
+		void RemoveCollaborator(int id);
 
 		// Missions 
 		void AddMission(Mission miss);
@@ -46,8 +48,14 @@ namespace Casablanca.Models.Database {
 		Leave GetLeave(int id);
 		void CreateLeave(Leave temp);
 
-		// Helper
-		string EncodeMD5(string password);
+        // Notifications
+        List<Notification> GetNotifications();
+        Notification GetNotifications(int id);
+        List<Notification> GetNotifications(Collaborator receiver);
+        void AddNotification(Notification not);
+
+        // Helper
+        string EncodeMD5(string password);
         void SaveChanges();
 		//bool CheckChiefValidator(Collaborator chief, Mission mission);
 		//can't implement because static

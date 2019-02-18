@@ -2,63 +2,123 @@
 @using Casablanca.Models.Database;
 
 @{
-	ViewBag.Title = "ProcessMission";
-	var abccounter = 1;
+    ViewBag.Title = "Modifier une mission";
+
+    Dal dal = new Dal();
+
+    List<Collaborator> allColl = dal.GetCollaborators();
+    allColl = allColl.Where(f => !Model.CollList.Any(t => t.Id == f.Id)).ToList();
 }
 
 @model Mission
 
+@Styles.Render("~/Content/ProcessMission.css")
+
+<!-- Include the plugin's CSS and JS: -->
+@*<script type="text/javascript" src="~/Scripts/bootstrap-multiselect.js"></script>*@
+@*<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/css/bootstrap-multiselect.css" type="text/css" />*@
 
 <div align="center">
-	<h2>Edition d'une mission</h2>
+    <h2>Edition d'une mission</h2>
 
-	@using (Html.BeginForm())
-	{
-		<div style="padding:10px">
-			<div> @Html.LabelFor(m => m.Name) </div>
-			<div> @Html.TextBoxFor(m => m.Name) </div>
-		</div>
-		<div style="padding:10px">
-			<div>@Html.LabelFor(m => m.StartDate)</div>
+    @using (Html.BeginForm("ProcessMission", "Mission", FormMethod.Post, new { onsubmit = "sub()" })) {
+        @Html.HiddenFor(model => Model.Id)
+
+        <div style="padding:10px">
+            <div> Nom de la mission </div>
+            <div> @Html.TextBoxFor(model => Model.Name) </div>
+        </div>
+        <br>
+
+        <div style="padding:10px">
+
+            <div> Statut de la mission </div>
+
 			<div>
-				@Html.TextBoxFor(model => Model.StartDate,
-								 new { @type = "date", @class = "form-control datepicker", @Value = Model.StartDate.ToString("dd-MM-yyyy") })
+				@Html.DropDownListFor(m => m.Status,
+				  new SelectList(Enum.GetValues(typeof(MissionStatus))))
 			</div>
-		</div>
 
-		<div style="padding:10px">
-			TODO: Make this field optional!
-			<div> @Html.LabelFor(m => m.EndDate) </div>
-			<div>
-				@Html.TextBoxFor(model => Model.EndDate,
-								 new { @type = "date", @class = "form-control datepicker", @Value = Model.EndDate.ToString("dd-MM-yyyy") })
-			</div>
-		</div>
+        </div>
+        <br>
 
-		<!-- pick des collabo TODO -->
-		<div>
+        <div style="padding:10px">
+            <div>Date de début</div>
+            <div>
+                @Html.TextBoxFor(model => Model.StartDate,
+                                    new { @type = "date", @class = "form-control datepicker", @Value = Model.StartDate.ToString("yyyy-MM-dd") })
+            </div>
+        </div>
 
-			?????????????????????
-			??????????
-			?
-			searchable drop down list. On click, add the selected coll to the list
+        <div style="padding:10px">
+            
+            <div> Date de fin </div>
+            <div>
+                @Html.TextBoxFor(model => Model.EndDate,
+                                    new { @type = "date", @class = "form-control datepicker", @Value = Model.EndDate.ToString("yyyy-MM-dd") })
+            </div>
+        </div>
+        <br>
 
-			Try this : https://stackoverflow.com/a/33154580
+        <div style="margin-left: auto; margin-right: auto; width: 600px;">
+            <text>Choisir les collaborateurs de la mission</text>
+            @*@Html.ListBox("Collabos", ViewBag.Collablist as MultiSelectList, new { style = "width:500px; height:200px" })*@
+            <div class="row">
+                <select id="left" name="left" multiple="multiple">
+                    @foreach (Collaborator c in allColl) {
+                        <option value="@c.Id">@c.FirstName @c.LastName</option>
+                    }
+                </select>
+                <div class="btns">
+                    <button id="leftbtn" type="button" class="btn btn-primary" onclick="swapSelectedLine(true)">>></button>
+                    <button id="rightbtn" type="button" class="btn btn-primary" onclick="swapSelectedLine(false)"><<</button>
+                </div>
+                <select id="right" name="right" multiple="multiple">
+                    @foreach (Collaborator c in Model.CollList) {
+                        <option value="@c.Id">@c.FirstName @c.LastName</option>
+                    }
+                </select>
+            </div>
+        </div>
 
-			or this ? https://stackoverflow.com/questions/18144124/how-to-search-a-list-of-products-using-controller-by-name-or-id
+        @*searchable drop down list. On click, add the selected coll to the list
 
-		</div>
+            Try this : https://stackoverflow.com/a/33154580
 
+            or this ? https://stackoverflow.com/questions/18144124/how-to-search-a-list-of-products-using-controller-by-name-or-id*@
 
-		<div style="padding:10px">
-			<input type="submit" value="Sauvegarder" />
-		</div>
+        <div style="padding:10px">
+            <input type="submit" value="Sauvegarder"/>
+        </div>
 
-		@Html.ValidationSummary("");
-	}
+        @Html.ValidationSummary("");
+    }
 </div>
 
 @section Scripts{
-	<script>
-	</script>
+    <script>
+        function swapSelectedLine(left) {
+            var selected = $("#" + (left ? "left" : "right")).val();
+            for (var i = 0; i < selected.length; i++) {
+                addLine(left, selected[i]);
+                removeLine(left, selected[i]);
+            }
+        }
+
+        function removeLine(left, id) {
+            $("#" + (left ? "left" : "right") + " option[value='" + id + "']").remove();
+        }
+
+        function addLine(left, id) {
+            var text = $("#" + (left ? "left" : "right") + " option[value=" + id + "]").text();
+            $("#" + (left ? "right" : "left")).append("<option value=" + id + ">" + text + "</option>");
+        }
+
+        function sub() {
+            $("#right option").each(function () {
+                $(this).prop("selected", true);
+            });
+        }
+    </script>
 }
+

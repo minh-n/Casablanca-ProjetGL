@@ -22,5 +22,24 @@ namespace Casablanca.Models {
 
         public Service() {
         }
-    }
+
+
+		public int GetChiefFromService()
+		{
+
+			foreach(Collaborator coll in CollList)
+			{
+				if (coll.Role == Roles.CHIEF)
+				{
+					return coll.Id;
+				}
+			}
+
+			return -1;
+			
+		}
+
+
+
+	}
 }

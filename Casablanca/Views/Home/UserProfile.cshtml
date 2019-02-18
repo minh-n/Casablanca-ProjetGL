@@ -1,17 +1,43 @@
-﻿@using Casablanca.Models
+﻿@using Casablanca.Models.Database
+@using Casablanca.Models
 
-@{
-	ViewBag.Title = "Profil";
-}
 
 @model Collaborator
+
+@{
+	ViewBag.Title = "Profil de l'utilisateur";
+	Dal dal = new Dal();
+
+	Collaborator coll = dal.GetCollaborator(User.Identity.Name);
+	bool canManage = false;
+	if ((coll.Id != Model.Id) && (HelperModel.CheckCDS(coll) | HelperModel.CheckAdmin(coll)))
+	{
+		canManage = true;
+	}
+}
+
+
+<h1>Profil de @Model.FirstName @Model.LastName </h1>
+
+@if(canManage)
+{
+<div>
+
+	@Html.ActionLink("Supprimer l'utilisateur", "DeleteUser", "Admin", new { id = Model.Id }, new { @class = "btn" })
+
+	@Html.ActionLink("Changer l'utilisateur de service", "ChangeServiceTODO", "Admin", new { id = Model.Id }, new { @class = "btn" })
+
+	@Html.ActionLink("Changer info user", "EditUser", "Admin", new { id = Model.Id }, new { @class = "btn" })
+
+</div>
+}
+
 
 <div class="container">
 
 	<div class="row">
 
 		<div class="col-sm-5">
-			<h1>Profil de l'utilisateur </h1>
 
 			<div style="padding:10px">
 				<h3>Informations de base</h3>
@@ -60,7 +86,73 @@
 		<div class="col-sm-5">
 			<div style="padding:10px">
 				<h3>Missions</h3>
-				<div></div>
+
+
+				<!-- MISSION TABLEAU-->
+				<div>
+					<div class="table-responsive">
+						<table id="table"
+							   class="table"
+							   data-toggle="table"
+							   data-search="true">
+
+							@if (Model.Missions.Count() == 0)
+							{
+								<tr>
+									<td colspan="7">Aucune mission trouvée.</td>
+								</tr>
+							}
+							else
+							{
+								<thead>
+									<tr>
+										<th scope="col" data-field="name" data-sortable="true">Nom</th>
+										<th scope="col" data-field="cds" data-sortable="true">Responsable</th>
+										<th scope="col" data-field="begin" data-sortable="true">Date de début</th>
+										<th scope="col" data-field="end" data-sortable="true">Date de fin</th>
+										<th scope="col" data-field="status" data-sortable="true">Statut</th>
+
+										<th scope="col" data-field="traiter" data-sortable="false">Voir</th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach (Mission item in Model.Missions)
+									{
+										<tr>
+											<td>
+												@item.Name
+											</td>
+											<td>
+												@dal.GetCollaborator(@item.ChiefId).FirstName @dal.GetCollaborator(@item.ChiefId).LastName
+											</td>
+											<td>
+												@item.StartDate.ToString("dd/MM/yyyy")
+											</td>
+											<td>
+												@if (@item.EndDate.Year > 1980)
+												{
+													@item.EndDate.ToString("dd/MM/yyyy")
+												}
+											</td>
+
+											<td>
+												@HelperModel.ToString(@item.Status)
+											</td>
+
+											<!--traiter-->
+											<td>
+
+												@Html.ActionLink("Voir", "ViewMission", "Mission", new { id = item.Id }, null)
+
+											</td>
+										</tr>
+									}
+								</tbody>
+							}
+						</table>
+					</div>
+
+				</div>
 			</div>
 		</div>
 

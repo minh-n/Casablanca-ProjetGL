@@ -22,11 +22,20 @@ namespace Casablanca.Controllers
 			return View(dal.GetCollaborator(collId));
         }
 
-		public ActionResult UserProfile()
+		//public ActionResult UserProfile()
+		//{
+		//	int collId;
+		//	int.TryParse(System.Web.HttpContext.Current.User.Identity.Name, out collId);
+		//	return View(dal.GetCollaborator(collId));
+		//}
+
+
+		public ActionResult UserProfile(int id)
 		{
-			int collId;
-			int.TryParse(System.Web.HttpContext.Current.User.Identity.Name, out collId);
-			return View(dal.GetCollaborator(collId));
+			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+				return Redirect("/Home/Index");
+
+			return View(dal.GetCollaborator(id));
 		}
 
 		public ActionResult About()
@@ -34,7 +43,7 @@ namespace Casablanca.Controllers
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                 return Redirect("/Home/Index");
 
-            ViewBag.Message = "Your application description page.";
+            ViewBag.Message = "Description TODO.";
 
             return View();
         }
@@ -44,7 +53,7 @@ namespace Casablanca.Controllers
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                 return Redirect("/Home/Index");
 
-            ViewBag.Message = "Contactez l'administration";
+            ViewBag.Message = "TODOContactez l'administrationTODO";
 
             return View();
         }

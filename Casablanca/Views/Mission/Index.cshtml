@@ -2,7 +2,7 @@
 @using Casablanca.Models.Database;
 
 @{
-	ViewBag.Title = "Mission list view";
+	ViewBag.Title = "LListe  des missions";
 	Dal dal = new Dal();
 }
 
@@ -34,7 +34,7 @@
 					<th scope="col" data-field="end" data-sortable="true">Date de fin</th>
 					<th scope="col" data-field="status" data-sortable="true">Statut</th>
 
-					<th scope="col" data-field="traiter" data-sortable="false">Traiter</th>
+					<th scope="col" data-field="traiter" data-sortable="false">Action</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -64,7 +64,7 @@
 						<!--traiter-->
 						<td>
 
-							@Html.ActionLink("Traiter", "ProcessMission", "Mission", new { id = item.Id }, null)
+							@Html.ActionLink("Modifier", "ProcessMission", "Mission", new { id = item.Id }, null)
 
 						</td>
 					</tr>

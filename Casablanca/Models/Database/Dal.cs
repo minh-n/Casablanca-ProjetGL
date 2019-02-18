@@ -8,6 +8,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Diagnostics;
 using Casablanca.Models.Leaves;
+using System.Collections.Concurrent;
 
 namespace Casablanca.Models.Database
 {
@@ -20,6 +21,7 @@ namespace Casablanca.Models.Database
         private List<Mission> Missions { get; set; }
         private List<ExpenseReport> ExpenseReports { get; set; }
         private List<ExpenseLine> ExpenseLines { get; set; }
+        private ConcurrentBag<Notification> Notifications { get; set; }
 
         public Dal()
         {
@@ -93,7 +95,7 @@ namespace Casablanca.Models.Database
 			AddToService(5, 11); //mathias le cds animaux
 			AddToService(5, 5); //arthur  user animaux
 
-			AddToService(3, 12); //alban user consultation
+			AddToService(4, 12); //alban user consultation
 			AddToService(0, 13); //arno user info
 
 			AddToService(0, 14); //corentin user direction
@@ -120,17 +122,28 @@ namespace Casablanca.Models.Database
 
             #endregion
 
-            #region Create missions
+            #region Initialize notifications
+            Notifications = new ConcurrentBag<Notification>()
+            {
+                new Notification(Collaborators[2], Collaborators[2], NotificationType.INFORMATION, NotificationResult.VALIDATION),
+                new Notification(Collaborators[1], Collaborators[2], NotificationType.INFORMATION, NotificationResult.REFUSAL),
+                new Notification(Collaborators[3], Collaborators[1], NotificationType.INFORMATION, NotificationResult.VALIDATION),
+                new Notification(Collaborators[4], Collaborators[4], NotificationType.INFORMATION, NotificationResult.VALIDATION),
+                new Notification(Collaborators[5], Collaborators[5], NotificationType.INFORMATION, NotificationResult.VALIDATION)
+            };
+
+            #endregion
+
+            #region Create some missions
             Missions = new List<Mission> {
-                new Mission("Mission A", DateTime.Today, new DateTime(2019, 5, 1), MissionStatus.IN_PROGRESS),
-                new Mission("Mission B", new DateTime(2019, 2, 9), new DateTime(2019, 3, 1), MissionStatus.PLANNED),
-                new Mission("Mission C", new DateTime(2018, 12, 25), new DateTime(2018, 12, 26), MissionStatus.CANCELED),
-                new Mission("Mission D", new DateTime(2018, 2, 25), new DateTime(2018, 2, 26), MissionStatus.COMPLETED),
-                new Mission("Mission E", new DateTime(2019, 2, 6), new DateTime(2019, 3, 1), MissionStatus.PLANNED),
-                new Mission("Mission F", new DateTime(2019, 1, 9), new DateTime(2019, 11, 1), MissionStatus.PLANNED),
-                new Mission("Mission G", new DateTime(2019, 1, 2), new DateTime(2019, 1, 4), MissionStatus.IN_PROGRESS),
-                new Mission("Mission H", new DateTime(2019, 2, 11), MissionStatus.IN_PROGRESS),
-                new Mission("Mission I", new DateTime(2019, 2, 16), new DateTime(2019, 2, 17), MissionStatus.PLANNED)
+				new Mission("Mission A", DateTime.Today, new DateTime(2019, 5, 1), MissionStatus.IN_PROGRESS),
+				new Mission("Mission B", new DateTime(2019, 2, 9), new DateTime(2019, 3, 1), MissionStatus.PLANNED),
+				new Mission("Mission C", new DateTime(2018, 12, 25), new DateTime(2018, 12, 26), MissionStatus.CANCELED),
+				new Mission("Mission D", new DateTime(2018, 2, 25), new DateTime(2018, 2, 26), MissionStatus.COMPLETED),
+				new Mission("Mission E", new DateTime(2019, 2, 6), new DateTime(2019, 3, 1), MissionStatus.PLANNED),
+				new Mission("Mission F", new DateTime(2019, 1, 9), new DateTime(2019, 11, 1), MissionStatus.PLANNED),
+				new Mission("Mission G", new DateTime(2019, 1, 2), new DateTime(2019, 1, 4), MissionStatus.IN_PROGRESS),
+				new Mission("Mission H", new DateTime(2019, 2, 11), MissionStatus.IN_PROGRESS)
 
 			};
 			#endregion
@@ -149,6 +162,11 @@ namespace Casablanca.Models.Database
                 Db.Missions.Add(m);
             }
 
+            foreach (Notification n in Notifications)
+            {
+                Db.Notifications.Add(n);
+            }
+
             Db.SaveChanges();
 			#endregion
 
@@ -157,9 +175,8 @@ namespace Casablanca.Models.Database
 			GetCollaborator("Arthur", "BINELLI").Missions.Add(GetMission("Mission A"));
             GetCollaborator("Arthur", "BINELLI").Missions.Add(GetMission("Mission C"));
             GetCollaborator("Arthur", "BINELLI").Missions.Add(GetMission("Mission E"));
-            GetCollaborator("Arthur", "BINELLI").Missions.Add(GetMission("Mission I"));
 
-            GetCollaborator("Jeffrey", "GONCALVES").Missions.Add(GetMission("Mission A"));
+			GetCollaborator("Jeffrey", "GONCALVES").Missions.Add(GetMission("Mission A"));
 			GetCollaborator("Jeffrey", "GONCALVES").Missions.Add(GetMission("Mission F"));
 			
 			GetCollaborator("Nathon", "BONNARD").Missions.Add(GetMission("Mission B"));
@@ -197,43 +214,41 @@ namespace Casablanca.Models.Database
 			Missions[5].ChiefId = GetCollaborator("Oubar", "MAYAKI").Id;
 
 			Missions[6].ChiefId = GetCollaborator("Mathias", "BAZON").Id;
-            Missions[8].ChiefId = GetCollaborator("Mathias", "BAZON").Id;
 
-            Missions[7].ChiefId = GetCollaborator("Momo", "BELDI").Id;
+			Missions[7].ChiefId = GetCollaborator("Momo", "BELDI").Id;
 
 			Db.SaveChanges();
 
 			#endregion
 
-			#region Create some expense reports 
+			#region Create expense reports 
 
 			ExpenseReports = new List<ExpenseReport>() {
                 new ExpenseReport(GetCollaborator("Arthur", "BINELLI"), Month.DECEMBER, 2018, ExpenseReportStatus.PENDING_APPROVAL_2),
 				new ExpenseReport(GetCollaborator("Floriab", "LE PALLEC"), Month.DECEMBER, 2018, ExpenseReportStatus.PENDING_APPROVAL_1),
 				new ExpenseReport(GetCollaborator("Oubar", "MAYAKI"), Month.JANUARY, 2019, ExpenseReportStatus.UNSENT),
-                new ExpenseReport(GetCollaborator("Jeffrey", "GONCALVES"), Month.FEBRUARY, 2018, ExpenseReportStatus.PENDING_APPROVAL_2),
-                new ExpenseReport(GetCollaborator("Jeffrey", "GONCALVES"), Month.NOVEMBER, 2018, ExpenseReportStatus.UNSENT)
             };
 
 			Db.SaveChanges();
 
+            // Yao TO-DO
             ExpenseLines = new List<ExpenseLine>() {
-                new ExpenseLine(GetMission("Mission A"), LineType.HOTEL, "Minh NGUYEN", "T Tower", 1000.0f, new DateTime(2019, 3, 4), "trumptower.pdf"),
-                new ExpenseLine(GetMission("Mission B"), LineType.RESTAURANT, "Jeffrey GONCALVES", "Tower restaurant", 8000.0f, new DateTime(2019, 1, 2), "restau1.pdf"),
-                new ExpenseLine(GetMission("Mission C"), LineType.TAXI, "Jeffrey GONCALVES", "Jafar Taxi", 15.98f, new DateTime(2019, 3, 4), "taxig7.pdf"),
-                new ExpenseLine(GetMission("Mission E"), LineType.OTHER, "Jeffrey GONCALVES", "Jafar Other", 80010.0f, new DateTime(2019, 1, 2), "russia.pdf")
+                new ExpenseLine(GetMission("Mission A"), LineType.HOTEL, "Minh NGUYEN", "T Tower", 1000.0f, new DateTime(2019, 3, 4), "trumptower.pdf"), // by Yao, "trumptower.pdf"
+                new ExpenseLine(GetMission("Mission B"), LineType.RESTAURANT, "Jeffrey GONCALVES", "Tower restaurant", 8000.0f, new DateTime(2019, 1, 2), "restau1.pdf"), // by Yao, "restau1.pdf"
+                new ExpenseLine(GetMission("Mission C"), LineType.TAXI, "Jeffrey GONCALVES", "Jafar Taxi", 15.98f, new DateTime(2019, 3, 4), "taxig7.pdf"), //by Yao, "taxig7.pdf"
+                new ExpenseLine(GetMission("Mission E"), LineType.OTHER, "Jeffrey GONCALVES", "Jafar Other", 80010.0f, new DateTime(2019, 1, 2), "russia.pdf") //by Yao, "russia.pdf"
             };
 
 			// Lignes de l'ER 1 (arthur)
 			foreach (ExpenseLine el in ExpenseLines) {ExpenseReports[0].AddLine(el);}
 
 			// Ligne de l'ER 2 (flo) 
-			ExpenseReports[1].AddLine(new ExpenseLine(GetMission(6), LineType.RESTAURANT, "Pepperoni Pizza", 10.0f, new DateTime(2019, 1, 7), "pizza.pdf"));
-			ExpenseReports[1].AddLine(new ExpenseLine(GetMission(2), LineType.HOTEL, "Pepperoni Florian", 10.0f, new DateTime(2019, 1, 8), "hotelflo.pdf"));
+			ExpenseReports[1].AddLine(new ExpenseLine(GetMission(6), LineType.RESTAURANT, "Pepperoni Pizza", 10.0f, new DateTime(2019, 1, 7), "pizza.pdf")); // by Yao, "pizza.pdf"
+			ExpenseReports[1].AddLine(new ExpenseLine(GetMission(2), LineType.HOTEL, "Pepperoni Florian", 10.0f, new DateTime(2019, 1, 8), "hotelflo.pdf")); // by Yao, "hotelflo.pdf"
 
 			// Lignes de l'ER 4 (jeffrey). Jeffrey n'a aucune mission à effectuer actuellement
-			ExpenseReports[3].AddLine(new ExpenseLine(GetMission(1), LineType.RESTAURANT, "Jeffrey GONCALVES", "Simon Burger", 10.0f, new DateTime(2019, 1, 5), "trumpburger.pdf"));
-			ExpenseReports[3].AddLine(new ExpenseLine(GetMission(3), LineType.HOTEL, "Minh NGUYEN", "Jafar Hotel", 10.0f, new DateTime(2019, 1, 5), "hotel.pdf"));
+			//ExpenseReports[3].AddLine(new ExpenseLine(GetMission(1), LineType.RESTAURANT, "Jeffrey GONCALVES", "Simon Burger", 10.0f, new DateTime(2019, 1, 5), "trumpburger.pdf"));
+			//ExpenseReports[3].AddLine(new ExpenseLine(GetMission(3), LineType.HOTEL, "Minh NGUYEN", "Jafar Hotel", 10.0f, new DateTime(2019, 1, 5), "hotel.pdf"));
 
 			//foreach (ExpenseReport er in ExpenseReports) {
 			//    Db.ExpenseReports.Add(er);
@@ -246,20 +261,20 @@ namespace Casablanca.Models.Database
 
 			List<Leave> leaves = new List<Leave>()
 			{
-				new Leave(LeaveStatus.PENDING_APPROVAL_1, LeaveType.OTHER, GetCollaborator("Morgan", "FEURTE"), new DateTime(2019, 1, 05), new DateTime(2019, 1, 15)),
-				new Leave(LeaveStatus.REFUSED, LeaveType.PAID, GetCollaborator("Oubar", "MAYAKI"), new DateTime(2019, 1, 3), new DateTime(2019, 1, 6)),
-				new Leave(LeaveStatus.APPROVED, LeaveType.PAID, GetCollaborator("Oubar", "MAYAKI"), new DateTime(2019, 1, 4), new DateTime(2019, 1, 12)),
+				new Leave(LeaveStatus.PENDING_APPROVAL_1, LeaveType.OTHER, GetCollaborator("Morgan", "FEURTE"), new DateTime(2019, 2, 05), new DateTime(2019, 2, 15), "Matin", "Matin"),
+				new Leave(LeaveStatus.REFUSED, LeaveType.PAID, GetCollaborator("Oubar", "MAYAKI"), new DateTime(2019, 2, 3), new DateTime(2019, 2, 6), "Matin", "Matin"),
+				//new Leave(LeaveStatus.APPROVED, LeaveType.PAID, GetCollaborator("Oubar", "MAYAKI"), new DateTime(2019, 1, 4), new DateTime(2019, 1, 12)),
 
-				new Leave(LeaveStatus.PENDING_APPROVAL_2, LeaveType.PAID, GetCollaborator("Floriab", "LE PALLEC"), new DateTime(2019, 1, 9), new DateTime(2019, 1, 11)),
-				new Leave(LeaveStatus.APPROVED, LeaveType.PAID, GetCollaborator("Nathon", "BONNARD"), new DateTime(2019, 1, 19), new DateTime(2019, 1, 22)),
-				new Leave(LeaveStatus.PENDING_APPROVAL_1, LeaveType.RTT, GetCollaborator("Nathon", "BONNARD"), new DateTime(2019, 1, 1), new DateTime(2019, 1, 12)),
+				new Leave(LeaveStatus.PENDING_APPROVAL_1, LeaveType.PAID, GetCollaborator("Floriab", "LE PALLEC"), new DateTime(2019, 2, 9), new DateTime(2019, 2, 11), "Matin", "Matin"),
+				new Leave(LeaveStatus.APPROVED, LeaveType.PAID, GetCollaborator("Nathon", "BONNARD"), new DateTime(2019, 2, 19), new DateTime(2019, 2, 22), "Matin", "Après-midi"),
+				new Leave(LeaveStatus.PENDING_APPROVAL_1, LeaveType.RTT, GetCollaborator("Nathon", "BONNARD"), new DateTime(2019, 2, 1), new DateTime(2019, 2, 12), "Après-midi", "Après-midi"),
 
-				new Leave(LeaveStatus.PENDING_APPROVAL_2, LeaveType.RTT, GetCollaborator("Momo", "BELDI"), new DateTime(2019, 2, 1), new DateTime(2019, 2, 8)),
-				new Leave(LeaveStatus.APPROVED, LeaveType.PAID, GetCollaborator("Thibal", "WITCZAK"), new DateTime(2019, 1, 05), new DateTime(2019, 2, 15)),
-				new Leave(LeaveStatus.PENDING_APPROVAL_1, LeaveType.PAID, GetCollaborator("Minh", "NGUYEN"), new DateTime(2019, 2, 4), new DateTime(2019, 2, 5)),
+				//new Leave(LeaveStatus.PENDING_APPROVAL_2, LeaveType.RTT, GetCollaborator("Momo", "BELDI"), new DateTime(2019, 2, 1), new DateTime(2019, 2, 8)),
+				//new Leave(LeaveStatus.APPROVED, LeaveType.PAID, GetCollaborator("Thibal", "WITCZAK"), new DateTime(2019, 1, 05), new DateTime(2019, 2, 15)),
+				new Leave(LeaveStatus.PENDING_APPROVAL_1, LeaveType.PAID, GetCollaborator("Coronton", "MONSCOUR"), new DateTime(2019, 2, 14), new DateTime(2019, 2, 25), "Après-midi", "Après-midi"),
 
-				new Leave(LeaveStatus.REFUSED, LeaveType.RTT, GetCollaborator("Thibal", "WITCZAK"), new DateTime(2018, 12, 05), new DateTime(2019, 1, 15)),
-				new Leave(LeaveStatus.APPROVED, LeaveType.PAID, GetCollaborator("Minh", "NGUYEN"), new DateTime(2019, 3, 4), new DateTime(2019, 9, 18)) //je vais au Japon frère
+				new Leave(LeaveStatus.REFUSED, LeaveType.RTT, GetCollaborator("Thibal", "WITCZAK"), new DateTime(2018, 12, 05), new DateTime(2019, 1, 15), "Matin", "Matin"),
+				new Leave(LeaveStatus.APPROVED, LeaveType.PAID, GetCollaborator("Minh", "NGUYEN"), new DateTime(2019, 3, 4), new DateTime(2019, 9, 18), "Après-midi", "Matin") 
 
 			};
 			
@@ -267,6 +282,23 @@ namespace Casablanca.Models.Database
 			{
 				Db.Leaves.Add(l);
 			}
+
+			GetCollaborator("Thibal", "WITCZAK").NbPaid = 5;
+			GetCollaborator("Thibal", "WITCZAK").NbRTT = 10;
+
+			GetCollaborator("Oubar", "MAYAKI").NbPaid = 15;
+			GetCollaborator("Oubar", "MAYAKI").NbRTT = 18;
+
+			GetCollaborator("Nathon", "BONNARD").NbPaid = 5;
+			GetCollaborator("Nathon", "BONNARD").NbRTT = 5;
+
+			GetCollaborator("Floriab", "LE PALLEC").NbPaid = 11;
+			GetCollaborator("Floriab", "LE PALLEC").NbRTT = 9;
+
+			GetCollaborator("Minh", "NGUYEN").NbPaid = 100;
+			GetCollaborator("Minh", "NGUYEN").NbRTT = 900;
+
+
 			Db.SaveChanges();
 
 			#endregion
@@ -304,6 +336,14 @@ namespace Casablanca.Models.Database
             Db.Collaborators.Add(new Collaborator(firstname, lastname, login, password));
             Db.SaveChanges();
         }
+
+		public void RemoveCollaborator(int id)
+		{
+			Db.Collaborators.Remove(GetCollaborator(id));
+			Db.SaveChanges();
+
+		}
+
 
 		// Missions
 
@@ -343,8 +383,8 @@ namespace Casablanca.Models.Database
             return Db.ExpenseReports.SingleOrDefault(e => e.Id == id);
         }
 
-        public int CreateExpenseReport(Collaborator coll, Month month, int year, bool isAdvance) {
-			ExpenseReport tempER = new ExpenseReport(coll, month, year, isAdvance);
+        public int CreateExpenseReport(Collaborator coll, Month month, int year) {
+			ExpenseReport tempER = new ExpenseReport(coll, month, year);
 			Db.ExpenseReports.Add(tempER);
             Db.SaveChanges();
 			return tempER.Id;
@@ -369,55 +409,6 @@ namespace Casablanca.Models.Database
             Db.SaveChanges();
         }
 
-        //Advances
-        public int CreateAdvance(Collaborator coll, Month month, int year, bool isAdvance)
-        {
-            ExpenseReport tempER = new ExpenseReport(coll, month, year, isAdvance);
-            Db.ExpenseReports.Add(tempER);
-            Db.SaveChanges();
-            return tempER.Id;
-        }
-
-        public List<ExpenseReport> GetAdvances()
-        {
-            List<ExpenseReport> advances = new List<ExpenseReport>();
-            foreach (ExpenseReport er in Db.ExpenseReports.ToList())
-            {
-                if (er.IsAdvance)
-                    advances.Add(er);
-            }
-
-            return advances;
-        }
-
-        public ExpenseReport GetAdvance(int id)
-        {
-            return Db.ExpenseReports.SingleOrDefault(e => (e.Id == id && e.IsAdvance));
-        }
-        
-        public void TransferFromAdvanceToEr(int id)
-        {
-            List<ExpenseReport> advances = GetAdvances();
-            ExpenseReport expenseReport = GetExpenseReport(id);
-
-            foreach(ExpenseReport er in advances)
-            {
-                foreach(ExpenseLine el in er.ExpenseLines.ToList())
-                {
-                    if(el.Validated /*&& el.Mission.Status == MissionStatus.COMPLETED*/)
-                    {
-                        expenseReport.AddLine(el);
-                        er.RemoveLine(el);
-                    }
-                }
-
-                if(er.ExpenseLines.Count == 0)
-                {
-                    Db.ExpenseReports.Remove(er);
-                    Db.SaveChanges();
-                }
-            }
-        }
         // Login
         public Collaborator Login(string name, string pass)
 		{
@@ -472,8 +463,39 @@ namespace Casablanca.Models.Database
 			Db.SaveChanges();
 		}
 
-		// Helper
-		public string EncodeMD5(string pass) {
+        // Notifications
+        public List<Notification> GetNotifications()
+        {
+            return Db.Notifications.ToList();
+        }
+
+        public Notification GetNotifications(int id)
+        {
+            return Db.Notifications.SingleOrDefault(c => c.Id == id);
+        }
+
+        public List<Notification> GetNotifications(Collaborator receiver)
+        {
+            List<Notification> r = new List<Notification>();
+            foreach (Notification n in Db.Notifications)
+            {
+                if(n.Receiver != null)
+                {
+                    if (n.Receiver.Id == receiver.Id)
+                        r.Add(n);
+                }                
+            }
+            return r;
+        }
+
+        public void AddNotification(Notification not)
+        {
+            Db.Notifications.Add(not);
+            Db.SaveChanges();
+        }
+
+        // Helper
+        public string EncodeMD5(string pass) {
             string passSalt = "ChevalDeMetal" + pass + "Casablanca";
             return BitConverter.ToString(new MD5CryptoServiceProvider().ComputeHash(ASCIIEncoding.Default.GetBytes(passSalt)));
         }

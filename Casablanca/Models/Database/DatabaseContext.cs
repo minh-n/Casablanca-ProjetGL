@@ -22,5 +22,6 @@ namespace Casablanca.Models {
         public DbSet<ExpenseReport> ExpenseReports { get; set; }
 		public DbSet<Service> Services { get; set; }
         public DbSet<ExpenseLine> ExpenseLines { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
     }
 }

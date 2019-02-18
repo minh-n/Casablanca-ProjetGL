@@ -15,7 +15,7 @@
 		</dt>
 
 		<dd>
-			@Html.DisplayFor(model => model.EventName)
+			@Html.DisplayFor(model => model.Description)
 		</dd>
 
 		<dt>
@@ -23,7 +23,7 @@
 		</dt>
 
 		<dd>
-			@HelperModel.ToString(@Model.Status)
+			@HelperModel.ToString(Model.Status, Model.Treatment)
 		</dd>
 
 		<dt>
@@ -40,6 +40,7 @@
 
 		<dd>
 			@Model.StartDate.ToString("dd/MM/yyyy")
+			@Model.StartMorningOrAfternoon
 		</dd>
 
 		<dt>
@@ -48,9 +49,16 @@
 
 		<dd>
 			@Model.EndDate.ToString("dd/MM/yyyy")
+			@Model.EndMorningOrAfternoon
 		</dd>
 
+		<dt>
+			Nombre de demi-journées
+		</dt>
 
+		<dd>
+			@Model.ComputeLengthLeave()
+		</dd>
 
 	</dl>
 </div>

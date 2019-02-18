@@ -11,6 +11,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 
 namespace Casablanca.Controllers {
     public class ExpenseReportController : Controller {
@@ -110,6 +111,65 @@ namespace Casablanca.Controllers {
 
             // Change the status of the ER
             er.Status = ExpenseReportStatus.PENDING_APPROVAL_1;
+
+            //send a notification
+            switch (er.Collaborator.Role)
+            {
+                case Roles.USER:
+                    if (coll.Service.Name.Contains("Compta"))
+                    {
+                        dal.AddNotification(new Notification(coll, dal.GetCollaborator(coll.Service.GetChiefFromService()), NotificationType.EXPENSE));
+                    }
+                    else
+                    {
+                        List<Collaborator> tmp = new List<Collaborator>();
+
+                        foreach(ExpenseLine expenseLine in er.ExpenseLines)
+                        {
+                            if(!tmp.Contains(dal.GetCollaborator(expenseLine.Mission.ChiefId)))
+                                tmp.Add(dal.GetCollaborator(expenseLine.Mission.ChiefId));
+                        }
+
+                        foreach(Collaborator c in tmp)
+                        {
+                            dal.AddNotification(new Notification(coll, c, NotificationType.EXPENSE));
+                        }                        
+                    }                        
+                    break;
+                case Roles.CHIEF:
+                    if (coll.Service.Name.Contains("Compta"))
+                    {
+                        foreach (Collaborator c in dal.GetCollaborators())
+                        {
+                            if (c.Role == Roles.CHIEF && c.Service.Name.Contains("Direction"))
+                            {
+                                dal.AddNotification(new Notification(coll, c, NotificationType.EXPENSE));
+                            }
+                        }
+                    }
+                    else if (coll.Service.Name.Contains("Direction"))
+                    {
+                        foreach (Collaborator c in dal.GetCollaborators())
+                        {
+                            if (c.Role == Roles.CHIEF && c.Service.Name.Contains("Compta"))
+                            {
+                                dal.AddNotification(new Notification(coll, c, NotificationType.EXPENSE));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (Collaborator c in dal.GetCollaborators())
+                        {
+                            if (c.Role != Roles.CHIEF && c.Service.Name.Contains("Compta"))
+                            {
+                                dal.AddNotification(new Notification(coll, c, NotificationType.EXPENSE));
+                            }
+                        }
+                    }
+                    break;
+            }
+
             dal.SaveChanges();
 
             return Redirect("/ExpenseReport/Index");
@@ -217,8 +277,8 @@ namespace Casablanca.Controllers {
             Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
             ExpenseReport model = dal.GetExpenseReport(ERId);
 
-            // if it is not our own ER = cannot see
-            if (!coll.ExpenseReports.Contains(model))
+            // if it is not our own ER = cannot see 
+            if((!HelperModel.CheckManagement(coll)) && (!coll.ExpenseReports.Contains(model)))
                 return Redirect("/Home/Index");
 
             return View(model);
@@ -238,8 +298,8 @@ namespace Casablanca.Controllers {
 
             Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
 
-            //not in management OR isRH = cannot see
-            if ((HelperModel.CheckManagement(coll) == false) || HelperModel.CheckRH(coll))
+            //not in management OR CDS = cannot see
+            if (!HelperModel.CheckManagement(coll) && !HelperModel.CheckCDS(coll))
                 return Redirect("/Home/Index");
 
             List<ExpenseReport> AllERList = dal.GetExpenseReports();
@@ -391,10 +451,26 @@ namespace Casablanca.Controllers {
 
                 // If all EL are validated, switch to next status
                 if (allValidated)
+                {
                     er.Status = ExpenseReportStatus.PENDING_APPROVAL_2;
+
+                    //send notifications
+                    dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.EXPENSE, NotificationResult.VALIDATION, "Votre note de frais est validée par le(s) chef(s) de service concerné(s)"));
+
+                    foreach (Collaborator c in dal.GetCollaborators())
+                    {
+                        if (c.Role != Roles.CHIEF && c.Service.Name.Contains("Compta"))
+                        {
+                            dal.AddNotification(new Notification(er.Collaborator, c, NotificationType.EXPENSE));
+                        }
+                    }
+                }                    
             }
             else {
-                er.Status = ExpenseReportStatus.REFUSED; // We refused one or several lines
+                er.Status = ExpenseReportStatus.REFUSED; // We refused one or several lines     
+
+                //send a notification
+                dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.EXPENSE, NotificationResult.REFUSAL));
             }
 
             dal.SaveChanges();
@@ -454,16 +530,24 @@ namespace Casablanca.Controllers {
             }
 
             if (allValidated)
+            {
                 er.Status = ExpenseReportStatus.APPROVED;
+                //send a notification
+                dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.EXPENSE, NotificationResult.VALIDATION));
+            }
             else
-                er.Status = ExpenseReportStatus.REFUSED; // We refused one or several lines
+            {
+                er.Status = ExpenseReportStatus.REFUSED;    // We refused one or several lines 
+                //send a notification
+                dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.EXPENSE, NotificationResult.REFUSAL));
+            }
 
             dal.SaveChanges();
 
             return Redirect("/ExpenseReport/ProcessList");
         }
 
-        // Displays the ER a comptaboy needs to process
+        // Displays the ER a compta coll needs to process
         public ActionResult OneStepProcess(int ERId = 1) {
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                 return Redirect("/Home/Index");
@@ -551,9 +635,17 @@ namespace Casablanca.Controllers {
             }
 
             if (allValidated)
+            {
                 er.Status = ExpenseReportStatus.APPROVED;
+                //send a notification
+                dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.EXPENSE, NotificationResult.VALIDATION));
+            }                
             else
-                er.Status = ExpenseReportStatus.REFUSED; // We refused one or several lines
+            {
+                er.Status = ExpenseReportStatus.REFUSED;    // We refused one or several lines 
+                //send a notification
+                dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.EXPENSE, NotificationResult.REFUSAL));
+            }                 
 
             dal.SaveChanges();
 
@@ -568,11 +660,141 @@ namespace Casablanca.Controllers {
 
         private static IEnumerable<SelectListItem> GetMissionsList(Collaborator coll) {
             var missions = new List<SelectListItem>();
-            foreach (var s in coll.Missions.ToList()) {
-                var miss = new SelectListItem { Value = s.Id.ToString(), Text = s.Name };
-                missions.Add(miss);
+            foreach (var collMission in coll.Missions.ToList()) {
+				if(collMission.Status != MissionStatus.CANCELED)
+				{
+					var miss = new SelectListItem { Value = collMission.Id.ToString(), Text = collMission.Name };
+					missions.Add(miss);
+				}
             }
             return missions;
+        }
+
+
+
+		//HISTORY
+
+
+
+		// Displays the ER list management already processed
+		public ActionResult HistoryList()
+		{
+			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+				return Redirect("/Home/Index");
+
+			Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+
+            //not in management OR isRH = cannot see
+            if (!HelperModel.CheckManagement(coll) && !HelperModel.CheckRH(coll))
+				return Redirect("/Home/Index");
+
+			List<ExpenseReport> AllERList = dal.GetExpenseReports();
+			List<ExpenseReport> ERListToBeReturnedAsModel = new List<ExpenseReport>();
+
+			// for each Expense Report, check if they meet the following criterias
+			// if yes, add them to the list returned to the View
+			foreach (ExpenseReport e in AllERList)
+			{
+				if (e.Collaborator != coll) // a coll cannot validate his own ER
+				{
+					// If the ER needs to be treated the classic way
+					if (e.Treatment == Processing.CLASSIC)
+					{
+						if (HelperModel.CheckCompta(coll)) // CDS Compta et Compta
+						{
+							if ((e.Status == ExpenseReportStatus.APPROVED) | (e.Status == ExpenseReportStatus.REFUSED))
+							{
+								ERListToBeReturnedAsModel.Add(e);
+							}
+						}
+						else if (HelperModel.CheckCDS(coll)) // CDS
+						{
+							if ((e.Status == ExpenseReportStatus.APPROVED) | (e.Status == ExpenseReportStatus.REFUSED))
+							{
+								// in order to know if the Chief needs to see the ER
+								foreach (ExpenseLine el in e.ExpenseLines)
+								{
+									if (dal.GetCollaborator(el.Mission.ChiefId).Id == coll.Id)
+									{
+										ERListToBeReturnedAsModel.Add(e);
+										break;
+									}
+								}
+							}
+						}
+					}
+					else
+					{ // The ER needs to be treated specifically
+						if ((e.Status == ExpenseReportStatus.APPROVED) | (e.Status == ExpenseReportStatus.REFUSED))
+						{
+							switch (e.Treatment)
+							{
+								case Processing.COMPTA:
+									if (HelperModel.CheckCompta(coll))
+									{
+										ERListToBeReturnedAsModel.Add(e);
+									}
+									break;
+								case Processing.FINANCIAL_DIRECTOR:
+									if (HelperModel.CheckCDSCompta(coll))
+									{
+										ERListToBeReturnedAsModel.Add(e);
+									}
+									break;
+								case Processing.CEO:
+									if (HelperModel.CheckPDG(coll))
+									{
+										ERListToBeReturnedAsModel.Add(e);
+									}
+									break;
+							}
+						}
+					}
+				}
+			}
+
+			return View(ERListToBeReturnedAsModel);
+		}
+
+
+
+
+
+
+	}
+
+    public class JustificatoryUploadController : Controller
+    {
+        // GET: JustificatoryUpload
+        public ActionResult Index()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult UploadJustificatory(HttpPostedFileBase file)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+
+                    if (file != null)
+                    {
+                        string path = Path.Combine(Server.MapPath("~/APP_Data/UploadedFiles"), Path.GetFileName(file.FileName));
+                        file.SaveAs(path);
+
+                    }
+                    ViewBag.FileStatus = "Justificatory uploaded successfully.";
+                }
+                catch (Exception)
+                {
+
+                    ViewBag.FileStatus = "Error while Justificatory uploading.";
+                }
+
+            }
+            return View("Index");
         }
     }
 }

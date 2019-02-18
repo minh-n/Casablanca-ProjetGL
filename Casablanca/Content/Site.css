@@ -27,3 +27,16 @@ textarea {
     background-color:#808080;
     color:#ffffff;
 }
+
+.fc-sun {
+	background-color: #828282;
+}
+
+.fc-sat {
+	background-color: #828282;
+}
+
+.fc-today {
+	background-color: #e7ffd6;
+}
+

@@ -1,8 +1,13 @@
 ﻿@using Casablanca.Models
 @using Casablanca.Models.Leaves
 
+@using Casablanca.Models.Database
+
 @{
-	ViewBag.Title = "Congés";
+	ViewBag.Title = "Demandes de congés";
+	Dal dal = new Dal();
+	Collaborator currentColl = dal.GetCollaborator(User.Identity.Name);
+
 }
 
 @model  List<Leave>
@@ -14,20 +19,70 @@
 <div class="row">
 
 	<div class="col-lg-6">
+
 		<div id="calendar"></div> <!-- FULL CALENDAR -->
 
+
+		@*/* Groups :
+		*  1 : own leaves
+		*  2 : own service's leaves (only accepted)
+		*  3 : own service's leaves (every states)
+		*
+		*  4 : every other leaves. 
+
+
+
+			A solution would be : remove the All selector. This way, a leave can be added several times under different group labels.
+		*/*@
+		<div style="padding:10px">
+			<select id="cal_selector">
+				<option value="all">Toutes les demandes </option>
+				<option value="1">Demandes personnelles</option>
+
+				@if (!HelperModel.CheckManagement(currentColl))
+				{
+					<option value="2"> Demandes validées de mon service</option>
+				}
+				
+				@if (HelperModel.CheckCDS(currentColl) && !HelperModel.CheckRH(currentColl))
+				{
+					<option value="3">Toutes les demandes de mon service</option>
+				}
+			</select>
+		</div>
+
+
+
+
+
+
 		<p style="padding:20px">TODO : légende des couleurs.</p>
+
+
 	</div>
 
 
 	<div class="col-lg-6">
 		<div class="jumbotron">
-			<b>Jours de congés restants : </b> 5TODO
+
+
+			<b>Demi-journées de RTT restants : </b> @currentColl.NbRTT
 			<br>
-			<b>Jours de congés en attente : </b> 9TODO
+			<b>Demi-journées de congés payés restants : </b> @currentColl.NbPaid
 			<br>
-			<b>Jours de congés déjà pris : </b> 176TODO
 			<br>
+
+			<b>Demi-journées de RTT en attente : </b> @HelperModel.GetNumberLeave(currentColl, LeaveStatus.PENDING_APPROVAL_1, LeaveStatus.PENDING_APPROVAL_2, LeaveType.RTT)
+			<br>
+			<b>Demi-journées de congés payés en attente : </b> @HelperModel.GetNumberLeave(currentColl, LeaveStatus.PENDING_APPROVAL_1, LeaveStatus.PENDING_APPROVAL_2, LeaveType.PAID)
+			<br>
+			<br>
+
+			<b>Demi-journées de RTT déjà pris : </b> @HelperModel.GetNumberLeave(currentColl, LeaveStatus.APPROVED, LeaveType.RTT)
+			<br>
+			<b>Demi-journées de congés payés déjà pris : </b> @HelperModel.GetNumberLeave(currentColl, LeaveStatus.APPROVED, LeaveType.PAID)
+			<br>
+
 		</div>
 		@using (Html.BeginForm("CreateLeave", "Leave", FormMethod.Post))
 		{
@@ -61,47 +116,50 @@
 							<th scope="col" data-field="begin" data-sortable="true">Date de début</th>
 							<th scope="col" data-field="end" data-sortable="true">Date de fin</th>
 							<th scope="col" data-field="demijour" data-sortable="true">Nb demi-journées</th>
-
 							<th scope="col" data-field="status" data-sortable="true">Statut</th>
-
 							<th scope="col" data-field="action" data-sortable="false">Action</th>
 						</tr>
 					</thead>
 					<tbody>
 						@foreach (Leave item in Model)
-						{
-						<tr>
-							<td>
-								@item.EventName
-							</td>
-							<td>
-								@HelperModel.ToString(@item.Type)
-							</td>
-							<td>
-								@item.StartDate.ToString("dd/MM/yyyy")
-							</td>
-							<td>
-								@item.EndDate.ToString("dd/MM/yyyy")
-							</td>
-							<td>
-								Nb TODO
-							</td>
-							<td>
-								@HelperModel.ToString(item.Status)
+				{
+							<tr>
+								<td>
+									@item.Description
+								</td>
+								<td>
+									@HelperModel.ToString(item.Type)
+								</td>
+								<td>
+									@item.StartDate.ToString("dd/MM/yyyy")
+									@item.StartMorningOrAfternoon
+								</td>
+								<td>
+									@item.EndDate.ToString("dd/MM/yyyy")
+									@item.EndMorningOrAfternoon
+								</td>
+								<td>
+									@item.ComputeLengthLeave()
+								</td>
+								<td>
+									@HelperModel.ToString(item.Status, item.Treatment)
+								</td>
 
-							</td>
+								<!--traiter-->
+								<td>
+									@Html.ActionLink("Voir", "ViewLeave", "Leave", new { id = item.Id }, null)
 
 
-							<!--traiter-->
-							<td>
-								@Html.ActionLink("Voir", "ViewLeave", "Leave", new { id = item.Id }, null) 
-								<!--TODO ! Modifier ou supprimer la note ?-->
-								<!-- ??? eske on peut modifier une demande de congé ?-->
-								@*@if ((item.Status == LeaveStatus.PENDING_APPROVAL_1) | (item.Status == LeaveStatus.PENDING_APPROVAL_2))
-															*@
+									@if (HelperModel.AllowCancelLeave(item))
+									{
+						@Html.ActionLink("Annuler", "RemoveLeave", "Leave", new { id = item.Id }, null)
+									}
 
-							</td>
-						</tr>
+									<!--TODO ! Modifier ou supprimer la note ?-->
+									@*@if ((item.Status == LeaveStatus.PENDING_APPROVAL_1) | (item.Status == LeaveStatus.PENDING_APPROVAL_2))*@
+
+								</td>
+							</tr>
 						}
 					</tbody>
 				}
@@ -115,10 +173,11 @@
 
 
 @section Scripts{
-	@*<script>
-		$('#refresh').click(function () {
-			$("#calendar").fullCalendar("refetchEvents");
-		});
-	</script>*@
-	
+	<script>
+
+		$('#cal_selector').on('change', function () {
+			$('#calendar').fullCalendar('rerenderEvents');
+		})
+	</script>
+
 }

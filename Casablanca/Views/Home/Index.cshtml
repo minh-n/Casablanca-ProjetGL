@@ -1,10 +1,19 @@
 ﻿@using Casablanca.Models
+
+@using Casablanca.Models.Database
+
+@using Casablanca.Models.Leaves
+
 @using Casablanca.Models.ExpenseReports
 @using System.Globalization;
 
 
 @{
-	ViewBag.Title = "Casablanca";
+	ViewBag.Title = "Accueil";
+	Dal dal = new Dal();
+
+	List<Leave> leaves = dal.GetLeaves();
+	List<Notification> notifications = dal.GetNotifications();
 }
 
 @model Collaborator
@@ -14,11 +23,48 @@
 	@{
 		if (@HttpContext.Current.User.Identity.IsAuthenticated != false)
 		{
-			<h2>Bienvenue sur l'intranet, @Model.FirstName @Model.LastName ! nous sommes le @DateTime.Now</h2>
+			<h3>Bienvenue sur l'intranet, <b>@Model.FirstName @Model.LastName</b> !</h3>
+			<text>Nous sommes le <b>@DateTime.Now.ToString("dddd") @DateTime.Now.Day  @DateTime.Now.ToString("MMMM") @DateTime.Now.Year</b>.</text>
+
+			if (HelperModel.CheckCDSCompta(Model))
+			{
+				<text>Vous êtes connecté en tant que <b>Directeur Financier</b>.</text>
+			}
+			else if (HelperModel.CheckCDSRH(Model))
+			{
+				<text>Vous êtes connecté en tant que <b>Directeur des Ressources Humaines</b>.</text>
+			}
+			else if (HelperModel.CheckPDG(Model))
+			{
+				<text>Vous êtes connecté en tant que <b>PDG</b>.</text>
+			}
+			else if (HelperModel.CheckCDS(Model))
+			{
+				<text>Vous êtes connecté en tant que <b>Chef de service</b>.</text>
+			}
+			else if (HelperModel.CheckAdmin(Model))
+			{
+				<text>Vous êtes connecté en tant qu'<b>Administrateur</b>.</text>
+			}
+			else if (HelperModel.CheckAdmin(Model))
+			{
+				<text>Vous êtes connecté en tant qu'<b>Administrateur</b>.</text>
+			}
+			else
+			{
+				<text>Vous êtes connecté en tant que <b>Collaborateur</b> du service @Model.Service.Name.</text>
+			}
+
+			<br />
+
+			<text>Vous avez @HelperModel.GetNumberLeaveToProcess(@Model) congé(s),</text>
+			<text>@HelperModel.GetNumberERToProcess(@Model) note de frais(s) et</text>
+			<text>TODO notifications à traiter.</text>
+
 		}
 		else
 		{
-			<h2>Bienvenue sur Pops1819. Veuillez vous connecter !</h2>
+			<h3>Bienvenue sur Pops1819. Veuillez vous connecter !</h3>
 		}
 	}
 
@@ -29,8 +75,11 @@
 	<div class="col-md-4">
 		@if (Model != null)
 		{
+
 			<h3>Notes de frais</h3>
+
 			<p>
+
 				<div class="table-responsive">
 					<table class="table">
 						<thead>
@@ -43,20 +92,17 @@
 						<tbody>
 							@foreach (var item in Model.ExpenseReports)
 							{
+
 								<tr>
+
 									<td>
 										@HelperModel.FirstCharToUpper(DateTime.ParseExact(item.Month.ToString(), "MMMM", new CultureInfo("en-US")).ToString("MMMM"))
+
 										@item.Year
 									</td>
+
 									<td>
-										@switch (item.Status)
-										{
-											case ExpenseReportStatus.UNSENT:<text>Non envoyée</text>break;
-										case ExpenseReportStatus.REFUSED: <text>Refusée</text>break;
-									case ExpenseReportStatus.APPROVED: <text>Approuvée</text>break;
-								case ExpenseReportStatus.PENDING_APPROVAL_1: <text>1e validation</text>break;
-							case ExpenseReportStatus.PENDING_APPROVAL_2: <text>2nd validation</text>break;
-					}
+										@HelperModel.ToString(item.Status)
 									</td>
 
 									@*Un bouton pour accéder à la note de frais en cours*@
@@ -82,14 +128,113 @@
 		}
 	</div>
 	<div class="col-md-4">
-		<h3>Ce site est vraiment très beau</h3>
-		<p>En effet ! Il a été réalisé à partir du framework ASP.NET en utilisant le modèle MVC, vive la technologie !</p>
+		@if (Model != null)
+		{
+			<h3>Demandes de congé</h3>
+			<p>
+				<div class="table-responsive">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Type</th>
+								<th>Début</th>
+								<th>Fin</th>
+								<th>Statut</th>
+							</tr>
+						</thead>
+						<tbody>
+
+							@{
+								List<Leave> leavesColl = new List<Leave>();
+								
+								Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+
+								foreach (Leave l in leaves)
+								{
+									if (l.Collaborator.Id == coll.Id)
+									{
+										leavesColl.Add(l);
+									}
+								}
+							}
+
+							@foreach (var item in leavesColl)
+							{
+								<tr>
+									<td>
+										@HelperModel.ToString(item.Type)
+									</td>
+									<td>
+										@item.StartDate.ToString("dd/MM/yyyy")
+									</td>
+									<td>
+										@item.EndDate.ToString("dd/MM/yyyy")
+									</td>
+									<td>
+										@HelperModel.ToString(item.Status, item.Treatment)
+									</td>
+
+									@*
+										<td>
+
+											@Html.ActionLink("Voir", "ViewLeave", "Leave", new { id = item.Id }, null)
+
+										</td>*@
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+
+			</p>
+		}
 	</div>
 	<div class="col-md-4">
-		<h3>Notifications</h3>
-		<p>
-			Nous sommes actuellement en train de travailler dessus ! En effet, nous comprenons bien que le besoin principal du
-			client est d'avoir un mode sombre pour soulager ses yeux, l'utilité du site n'étant qu'un critère secondaire !
-		</p>
+		@if (Model != null)
+		{
+			<h3>Notifications</h3>
+			<div id="notificationsTable">
+				<p>
+					<div class="table-responsive">
+						<table class="table">
+							<thead>
+								<tr><th>Type</th><th>Statut</th><th>Message</th></tr>
+							</thead>
+							<tbody>
+
+								@{
+									List<Notification> notifsColl = dal.GetNotifications(dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name));
+								}
+
+								@foreach (Notification item in notifsColl)
+								{
+									<tr>
+										<td>
+											@HelperModel.ToString(item.NotifType)
+										</td>
+										<td>
+											@HelperModel.ToString(item.NotifResult)
+										</td>
+										<td>
+											@item.NotifContent
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</p>
+			</div>
+		}
 	</div>
 </div>
+
+@section scripts {
+	<!--Script references. -->
+	<!--Reference the SignalR library. -->
+	<script src="~/Scripts/jquery.signalR-2.4.0.min.js"></script>
+	<!--Reference the autogenerated SignalR hub script. -->
+	<script src="~/signalr/hubs"></script>
+	<!--Reference the NotificationsTicker script. -->
+	<script src="~/Scripts/Notification/NotificationsTicker.js"></script>
+}

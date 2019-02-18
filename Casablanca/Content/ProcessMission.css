@@ -1,0 +1,25 @@
+﻿select {
+    width: 400px;
+    padding: 8px 16px;
+}
+
+option {
+    font-size: 14px;
+    padding: 8px 8px 8px 28px;
+    position: relative;
+    color: #999;
+}
+
+.row {
+    display: flex;
+}
+
+.btns {
+    display: flex;
+    flex-direction: column;
+    margin: 0 10px;
+}
+
+button {
+    margin-top: 10px;
+}

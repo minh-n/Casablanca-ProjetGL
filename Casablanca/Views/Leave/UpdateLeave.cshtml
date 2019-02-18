@@ -1,7 +1,11 @@
-﻿@using Casablanca.Models.Leaves;
+﻿@using Casablanca.Models.Leaves
+@using Casablanca.Models
+@using Casablanca.Models.Database
 
 @{
 	ViewBag.Title = "Modifier une demande de congé";
+	Dal dal = new Dal();
+	Collaborator currentColl = dal.GetCollaborator(User.Identity.Name);
 }
 
 @model Leave
@@ -9,82 +13,202 @@
 <h2 class="text-left">Modifier une demande de congé </h2>
 
 
-<div align="center">
-	@using (Html.BeginForm("UpdateLeave", "Leave", FormMethod.Post))
-	{
+<div class="row">
+
+	<div class="col-lg-6">
+
+		<div align="center">
+			@using (Html.BeginForm("UpdateLeave", "Leave", FormMethod.Post))
+			{
+				<hr />
+				<div>
+					<div style="padding:10px">
+						<b>Description du congé</b>
+						<br>
+						@Html.TextAreaFor(model => model.Description, new { style = "width:500px; height:50px" })
+					</div>
+
+					<!-- Type -->
+					<div style="padding:10px">
+						<b>Type du congé</b>
+						<br />
+						@Html.DropDownListFor(model => Model.Type,
+							 (LeaveType.GetValues(typeof(LeaveType))).Cast<LeaveType>().ToList().Select(type => new SelectListItem {
+								 Text = HelperModel.ToString(type),
+								 Value = type.ToString(),
+								 Selected = (type == Model.Type)
+							 }))
+					</div>
+
+
+					<!-- StartDate -->
+
+					<div style="padding:10px">
+						<b>Date de début</b>
+
+						@{
+							if (Model.StartDate == new DateTime(0001, 01, 01))
+							{
+								@Html.TextBoxFor(model => Model.StartDate,
+								  new { @type = "date", @class = "form-control datepicker", @Value = DateTime.Now, @min = DateTime.Now.ToString("yyyy-MM-dd") })
+							}
+							else
+							{
+								@Html.TextBoxFor(model => Model.StartDate,
+								  new { @type = "date", @class = "form-control datepicker", @Value = Model.StartDate.ToString("dd-MM-yyyy"), @min = DateTime.Now.ToString("yyyy-MM-dd") })
+							}
+						}
+
+						<br />
+						<div>
+							@Html.LabelFor(m => m.StartMorningOrAfternoon)<br />
+
+							Commencer le matin
+							@Html.RadioButtonFor(m => m.StartMorningOrAfternoon, "Matin")<br />
+
+							Commencer l'après-midi
+							@Html.RadioButtonFor(m => m.StartMorningOrAfternoon, "Après-midi")
+
+						</div>
+					</div>
+
+
+
+					<!-- EndDate -->
+
+					<div style="padding:10px">
+						<b>Date de fin</b>
+
+						@{
+							if (Model.StartDate == new DateTime(0001, 01, 01))
+							{
+								@Html.TextBoxFor(model => Model.EndDate,
+								  new { @type = "date", @class = "form-control datepicker", @Value = DateTime.Now, @min = DateTime.Now.ToString("yyyy-MM-dd") })
+							}
+							else
+							{
+								@Html.TextBoxFor(model => Model.EndDate,
+								  new { @type = "date", @class = "form-control datepicker", @Value = Model.EndDate.ToString("dd-MM-yyyy"), @min = DateTime.Now.ToString("yyyy-MM-dd") })
+							}
+						}
+
+						<br />
+						<div>
+							@Html.LabelFor(m => m.EndMorningOrAfternoon) <br />
+							Terminer le matin
+							@Html.RadioButtonFor(m => m.EndMorningOrAfternoon, "Matin") <br />
+							Terminer l'après-midi
+							@Html.RadioButtonFor(m => m.EndMorningOrAfternoon, "Après-midi")
+						</div>
+
+					</div>
+
+
+				</div>
+
+
+				<div style="padding:10px">
+					<input type="submit" value="Sauvegarder la demande" />
+				</div>
+
+
+
+				@Html.ValidationSummary("");
+			}
+
+		</div>
+	</div>
+
+	<div class="col-lg-6">
+
 		<hr />
-		<div>
-			<div style="padding:10px">
-				Description du congé
-
-				@Html.TextBoxFor(model => model.EventName, new { style = "width:500px;" })
-			</div>
+		<div class="jumbotron">
 
 
-			<!-- Type -->
-			<div style="padding:10px">
-				Type du congé
+			<b>Demi-journées de RTT restants : </b> @currentColl.NbRTT
+			<br>
+			<b>Demi-journées de congés payés restants : </b> @currentColl.NbPaid
+			<br>
+			<br>
 
-				@Html.DropDownListFor(model => Model.Type,
-								(LeaveType.GetValues(typeof(LeaveType))).Cast<LeaveType>().ToList().Select(type => new SelectListItem {
-									Text = type.ToString(),
-									Value = type.ToString(),
-									Selected = (type == Model.Type)
-								}))
-			</div>
+			<b>Demi-journées de RTT en attente : </b> @HelperModel.GetNumberLeave(currentColl, LeaveStatus.PENDING_APPROVAL_1, LeaveStatus.PENDING_APPROVAL_2, LeaveType.RTT)
+			<br>
+			<b>Demi-journées de congés payés en attente : </b> @HelperModel.GetNumberLeave(currentColl, LeaveStatus.PENDING_APPROVAL_1, LeaveStatus.PENDING_APPROVAL_2, LeaveType.PAID)
+			<br>
+			<br>
 
-
-
-			<!-- StartDate -->
-
-			<div style="padding:10px">
-				Date de début
-
-
-
-				@Html.TextBoxFor(model => Model.StartDate,
-						  new { @type = "date", @class = "form-control datepicker", @Value = Model.StartDate.ToString("dd-MM-yyyy") })
-
-			</div>
-
-
-
-			<!-- EndDate -->
-
-			<div style="padding:10px">
-				Date de fin
-
-
-
-				@Html.TextBoxFor(model => Model.EndDate,
-						  new { @type = "date", @class = "form-control datepicker", @Value = Model.EndDate.ToString("dd-MM-yyyy") })
-
-			</div>
-
-
-
-
-
-
-			<!-- Displaying status -->
-			<div style="padding:10px">
-				(DEBUG) Statut du congé
-
-				@Html.DisplayFor(model => model.Status)
-			</div>
+			<b>Demi-journées de RTT déjà pris : </b> @HelperModel.GetNumberLeave(currentColl, LeaveStatus.APPROVED, LeaveType.RTT)
+			<br>
+			<b>Demi-journées de congés payés déjà pris : </b> @HelperModel.GetNumberLeave(currentColl, LeaveStatus.APPROVED, LeaveType.PAID)
+			<br>
 
 		</div>
 
-
-
-
-		<div style="padding:10px">
-			<input type="submit" value="Sauvegarder" />
+		<div id="informations">
+			<div>
+				Nombre de demi-journées total : <label id="montant">0</label> demi-journée(s)
+			</div>
 		</div>
-
-
-
-		@Html.ValidationSummary("");
-	}
-
+	</div>
 </div>
+
+
+
+@if (null != TempData["alertMessage"])
+{
+	<script type="text/javascript">
+
+		alert("Vous n'avez pas assez de jour de congé. \nPar conséquent, le congé n'a pas pu être créé.");
+	</script>
+}
+
+
+@section Scripts {
+	<script>
+
+        // Visual syntaxic sugar TODO
+		var computeTotalAmount = function () {
+
+			//compute weekend days
+			var weekendDays = 0;
+
+			for (var date = new Date(@Model.StartDate.ToString("dd-MM-yyyy")); date.Date <= new Date(@Model.EndDate.ToString("dd-MM-yyyy"); date = date.getDay++)
+			{
+				if ((date.DayOfWeek == DayOfWeek.Saturday) || (date.DayOfWeek == DayOfWeek.Sunday)) {
+					weekendDays++;
+				}
+			}
+
+			weekendDays *= 2;
+
+			var totalHalfDays = (new Date(@Model.EndDate.ToString("dd-MM-yyyy") - new Date(@Model.StartDate.ToString("dd-MM-yyyy")).Days * 2;
+
+			if (StartMorningOrAfternoon.Contains("Après-midi")) {
+				--totalHalfDays;
+			}
+			if (EndMorningOrAfternoon.Contains("Après-midi")) {
+				++totalHalfDays;
+			}
+
+
+
+            //var amount = table.find("#ExpenseReport_ExpenseLines_" + j + "__Cost").val();
+            //if (amount != "" && amount != undefined) {
+            //   totalAmount += parseFloat(amount.replace(',', '.'));
+            //}
+
+			$("#montant").text((new Date(@Model.StartDate.ToString("jj-MM-aaaa")).toFixed(2));
+
+
+        };
+
+        // Start-up scripts
+		computeTotalAmount();
+
+	</script>
+}
+
+
+
+
+
