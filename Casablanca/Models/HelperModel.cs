@@ -364,7 +364,7 @@ namespace Casablanca.Models
 
 		public static int GetNumberNotifications(Dal dal) //TODO
 		{
-            //TODO 
+            //TODO Ok?
             int notifUnread = 0;            
             foreach(Notification n in dal.GetNotifications(dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name)))
             {
