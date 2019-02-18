@@ -59,7 +59,7 @@ namespace Casablanca.Models.ExpenseReports {
             Type = LineType.HOTEL;
             Description = "";
             Cost = 0;
-            Date = new DateTime();
+            Date = DateTime.Now;
             //Justificatory = null; //by Yao
             Justificatory = "";
 			IsAdvance = false;
