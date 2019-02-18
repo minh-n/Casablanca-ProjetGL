@@ -494,6 +494,62 @@ namespace Casablanca.Models.Database
             Db.SaveChanges();
         }
 
+
+
+
+
+        //Advances
+        public int CreateAdvance(Collaborator coll, Month month, int year, bool isAdvance)
+        {
+            ExpenseReport tempER = new ExpenseReport(coll, month, year, isAdvance);
+            Db.ExpenseReports.Add(tempER);
+            Db.SaveChanges();
+            return tempER.Id;
+        }
+
+        public List<ExpenseReport> GetAdvances()
+        {
+            List<ExpenseReport> advances = new List<ExpenseReport>();
+            foreach (ExpenseReport er in Db.ExpenseReports.ToList())
+            {
+                if (er.IsAdvance)
+                    advances.Add(er);
+            }
+
+            return advances;
+        }
+
+        public ExpenseReport GetAdvance(int id)
+        {
+            return Db.ExpenseReports.SingleOrDefault(e => (e.Id == id && e.IsAdvance));
+        }
+
+        public void TransferFromAdvanceToEr(int id)
+        {
+            List<ExpenseReport> advances = GetAdvances();
+            ExpenseReport expenseReport = GetExpenseReport(id);
+
+            foreach (ExpenseReport er in advances)
+            {
+                foreach (ExpenseLine el in er.ExpenseLines.ToList())
+                {
+                    if (el.Validated /*&& el.Mission.Status == MissionStatus.COMPLETED*/)
+                    {
+                        expenseReport.AddLine(el);
+                        er.RemoveLine(el);
+                    }
+                }
+
+                if (er.ExpenseLines.Count == 0)
+                {
+                    Db.ExpenseReports.Remove(er);
+                    Db.SaveChanges();
+                }
+            }
+        }
+
+
+
         // Helper
         public string EncodeMD5(string pass) {
             string passSalt = "ChevalDeMetal" + pass + "Casablanca";
