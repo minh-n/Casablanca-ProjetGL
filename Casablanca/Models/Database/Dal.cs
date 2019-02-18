@@ -383,8 +383,8 @@ namespace Casablanca.Models.Database
             return Db.ExpenseReports.SingleOrDefault(e => e.Id == id);
         }
 
-        public int CreateExpenseReport(Collaborator coll, Month month, int year) {
-			ExpenseReport tempER = new ExpenseReport(coll, month, year);
+        public int CreateExpenseReport(Collaborator coll, Month month, int year, bool isAdvance) {
+			ExpenseReport tempER = new ExpenseReport(coll, month, year, isAdvance);
 			Db.ExpenseReports.Add(tempER);
             Db.SaveChanges();
 			return tempER.Id;

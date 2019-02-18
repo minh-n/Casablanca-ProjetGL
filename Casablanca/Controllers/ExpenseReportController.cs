@@ -1,9 +1,8 @@
 ﻿using Casablanca.Models.Database;
 using Casablanca.Models.ExpenseReports;
-using Casablanca.Models.ViewModel;
 using Casablanca.Models;
 
-
+using Casablanca.Models.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -312,7 +311,7 @@ namespace Casablanca.Controllers {
                 if (e.Collaborator != coll) // a coll cannot validate his own ER
                 {
                     // If the ER needs to be treated the classic way
-                    if(e.Treatment == Processing.CLASSIC) { 
+                    if(e.Treatment ==   Models.ExpenseReports.Processing.CLASSIC) { 
                         if (HelperModel.CheckCDSCompta(coll)) // CDS Compta
                         {
                             if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_2) {
@@ -349,17 +348,17 @@ namespace Casablanca.Controllers {
                     else { // The ER needs to be treated specifically
                         if(e.Status == ExpenseReportStatus.PENDING_APPROVAL_1) {
                             switch(e.Treatment) {
-                                case Processing.COMPTA:
+                                case Models.ExpenseReports.Processing.COMPTA:
                                     if (HelperModel.CheckCompta(coll)) {
                                         ERListToBeReturnedAsModel.Add(e);
                                     }
                                     break;
-                                case Processing.FINANCIAL_DIRECTOR:
+                                case Models.ExpenseReports.Processing.FINANCIAL_DIRECTOR:
                                     if (HelperModel.CheckCDSCompta(coll)) {
                                         ERListToBeReturnedAsModel.Add(e);
                                     }
                                     break;
-                                case Processing.CEO:
+                                case Models.ExpenseReports.Processing.CEO:
                                     if(HelperModel.CheckPDG(coll)) {
                                         ERListToBeReturnedAsModel.Add(e);
                                     }
@@ -429,7 +428,7 @@ namespace Casablanca.Controllers {
             if (er.Status != ExpenseReportStatus.PENDING_APPROVAL_1)
                 return Redirect("/ExpenseReport/Index");
 
-            // Check if we validated everything in the current processing list
+            // Check if we validated everything in the current   Models.ExpenseReports.Processing list
             bool allValidatedInProcessed = true;
             foreach (ExpenseLine el in er.ExpenseLines) {
                 foreach (ExpenseLine processedLine in model.ExpenseLines) {
@@ -561,17 +560,17 @@ namespace Casablanca.Controllers {
 
             // Check if coll has the right attributions
             switch (model.Treatment) {
-                case Processing.COMPTA:
+                case   Models.ExpenseReports.Processing.COMPTA:
                     if (!HelperModel.CheckCompta(coll)) {
                         return Redirect("/ExpenseReport/ProcessList");
                     }
                     break;
-                case Processing.FINANCIAL_DIRECTOR:
+                case   Models.ExpenseReports.Processing.FINANCIAL_DIRECTOR:
                     if (!HelperModel.CheckCDSCompta(coll)) {
                         return Redirect("/ExpenseReport/ProcessList");
                     }
                     break;
-                case Processing.CEO:
+                case   Models.ExpenseReports.Processing.CEO:
                     if (!HelperModel.CheckPDG(coll)) {
                         return Redirect("/ExpenseReport/ProcessList");
                     }
@@ -595,17 +594,17 @@ namespace Casablanca.Controllers {
 
             // Check if coll has the right attributions
             switch (model.Treatment) {
-                case Processing.COMPTA:
+                case   Models.ExpenseReports.Processing.COMPTA:
                     if (!HelperModel.CheckCompta(coll)) {
                         return Redirect("/ExpenseReport/ProcessList");
                     }
                     break;
-                case Processing.FINANCIAL_DIRECTOR:
+                case   Models.ExpenseReports.Processing.FINANCIAL_DIRECTOR:
                     if (!HelperModel.CheckCDSCompta(coll)) {
                         return Redirect("/ExpenseReport/ProcessList");
                     }
                     break;
-                case Processing.CEO:
+                case   Models.ExpenseReports.Processing.CEO:
                     if (!HelperModel.CheckPDG(coll)) {
                         return Redirect("/ExpenseReport/ProcessList");
                     }
@@ -698,7 +697,7 @@ namespace Casablanca.Controllers {
 				if (e.Collaborator != coll) // a coll cannot validate his own ER
 				{
 					// If the ER needs to be treated the classic way
-					if (e.Treatment == Processing.CLASSIC)
+					if (e.Treatment ==   Models.ExpenseReports.Processing.CLASSIC)
 					{
 						if (HelperModel.CheckCompta(coll)) // CDS Compta et Compta
 						{
@@ -729,19 +728,19 @@ namespace Casablanca.Controllers {
 						{
 							switch (e.Treatment)
 							{
-								case Processing.COMPTA:
+								case   Models.ExpenseReports.Processing.COMPTA:
 									if (HelperModel.CheckCompta(coll))
 									{
 										ERListToBeReturnedAsModel.Add(e);
 									}
 									break;
-								case Processing.FINANCIAL_DIRECTOR:
+								case   Models.ExpenseReports.Processing.FINANCIAL_DIRECTOR:
 									if (HelperModel.CheckCDSCompta(coll))
 									{
 										ERListToBeReturnedAsModel.Add(e);
 									}
 									break;
-								case Processing.CEO:
+								case   Models.ExpenseReports.Processing.CEO:
 									if (HelperModel.CheckPDG(coll))
 									{
 										ERListToBeReturnedAsModel.Add(e);
