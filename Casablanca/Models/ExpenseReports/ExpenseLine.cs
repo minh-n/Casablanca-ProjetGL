@@ -43,6 +43,7 @@ namespace Casablanca.Models.ExpenseReports {
         public DateTime Date { get; set; }
         [Display(Name = "justificatif")]
         public string Justificatory { get; set; }
+        //public HttpPostedFileBase Justificatory { get; set;} //by Yao
 
         // Validations 
 		public bool Validated { get; set; }         // Is validated by the CDS
@@ -59,11 +60,12 @@ namespace Casablanca.Models.ExpenseReports {
             Description = "";
             Cost = 0;
             Date = new DateTime();
+            //Justificatory = null; //by Yao
             Justificatory = "";
 			IsAdvance = false;
         }
 
-		public ExpenseLine(Mission mission, LineType type, string chiefValidator, string description, float cost, DateTime date, string justificatory)
+		public ExpenseLine(Mission mission, LineType type, string chiefValidator, string description, float cost, DateTime date, string justificatory) //by Yao
 		{
 			Mission = mission;
 			ChiefValidator = chiefValidator;
@@ -75,7 +77,8 @@ namespace Casablanca.Models.ExpenseReports {
 			IsAdvance = false;
 		}
 
-		public ExpenseLine(Mission mission, LineType type, string description, float cost, DateTime date, string justificatory) {
+		public ExpenseLine(Mission mission, LineType type, string description, float cost, DateTime date, string justificatory) //by Yao
+        {
             this.Mission = mission;
             this.Type = type;
             this.Description = description;

@@ -11,6 +11,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 
 namespace Casablanca.Controllers {
     public class ExpenseReportController : Controller {
@@ -730,4 +731,39 @@ namespace Casablanca.Controllers {
 
 
 	}
+
+    public class JustificatoryUploadController : Controller
+    {
+        // GET: JustificatoryUpload
+        public ActionResult Index()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult UploadJustificatory(HttpPostedFileBase file)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+
+                    if (file != null)
+                    {
+                        string path = Path.Combine(Server.MapPath("~/APP_Data/UploadedFiles"), Path.GetFileName(file.FileName));
+                        file.SaveAs(path);
+
+                    }
+                    ViewBag.FileStatus = "Justificatory uploaded successfully.";
+                }
+                catch (Exception)
+                {
+
+                    ViewBag.FileStatus = "Error while Justificatory uploading.";
+                }
+
+            }
+            return View("Index");
+        }
+    }
 }
