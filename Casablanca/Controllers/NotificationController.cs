@@ -137,11 +137,11 @@ namespace Casablanca.Controllers
                     //TODO
                     return Redirect("/ExpenseReport/Index");
                 case NotificationType.EXPENSE:
-                    return Redirect("/ExpenseReport/Index");
+                    return Redirect("/ExpenseReport/ProcessList");
                 case NotificationType.INFORMATION:
                     return Redirect("/Home/Contact");
                 case NotificationType.LEAVE:
-                    return Redirect("/Leave/Index");
+                    return Redirect("/Leave/ProcessList");
                 default:
                     return Redirect("/Home/Index");
             }
