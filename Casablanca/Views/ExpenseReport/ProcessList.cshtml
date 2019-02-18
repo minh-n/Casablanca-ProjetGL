@@ -40,7 +40,7 @@
             </thead>
             <tbody>
                 @foreach (ExpenseReport item in Model) {
-                    if (!HelperModel.IsERTreated(item, coll)) {
+                    //if (!HelperModel.IsERTreated(item, coll)) {
                         <tr>
                             <td>@item.Collaborator.FirstName @item.Collaborator.LastName</td>
                             <td>
@@ -79,7 +79,7 @@
                                 }
                             </td>
                         </tr>
-                    }
+                    //}
                 }
             </tbody>
         }
