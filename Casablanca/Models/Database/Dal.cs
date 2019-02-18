@@ -231,19 +231,20 @@ namespace Casablanca.Models.Database
 
 			Db.SaveChanges();
 
+            // Yao TO-DO
             ExpenseLines = new List<ExpenseLine>() {
-                new ExpenseLine(GetMission("Mission A"), LineType.HOTEL, "Minh NGUYEN", "T Tower", 1000.0f, new DateTime(2019, 3, 4), "trumptower.pdf"),
-                new ExpenseLine(GetMission("Mission B"), LineType.RESTAURANT, "Jeffrey GONCALVES", "Tower restaurant", 8000.0f, new DateTime(2019, 1, 2), "restau1.pdf"),
-                new ExpenseLine(GetMission("Mission C"), LineType.TAXI, "Jeffrey GONCALVES", "Jafar Taxi", 15.98f, new DateTime(2019, 3, 4), "taxig7.pdf"),
-                new ExpenseLine(GetMission("Mission E"), LineType.OTHER, "Jeffrey GONCALVES", "Jafar Other", 80010.0f, new DateTime(2019, 1, 2), "russia.pdf")
+                new ExpenseLine(GetMission("Mission A"), LineType.HOTEL, "Minh NGUYEN", "T Tower", 1000.0f, new DateTime(2019, 3, 4), "trumptower.pdf"), // by Yao, "trumptower.pdf"
+                new ExpenseLine(GetMission("Mission B"), LineType.RESTAURANT, "Jeffrey GONCALVES", "Tower restaurant", 8000.0f, new DateTime(2019, 1, 2), "restau1.pdf"), // by Yao, "restau1.pdf"
+                new ExpenseLine(GetMission("Mission C"), LineType.TAXI, "Jeffrey GONCALVES", "Jafar Taxi", 15.98f, new DateTime(2019, 3, 4), "taxig7.pdf"), //by Yao, "taxig7.pdf"
+                new ExpenseLine(GetMission("Mission E"), LineType.OTHER, "Jeffrey GONCALVES", "Jafar Other", 80010.0f, new DateTime(2019, 1, 2), "russia.pdf") //by Yao, "russia.pdf"
             };
 
 			// Lignes de l'ER 1 (arthur)
 			foreach (ExpenseLine el in ExpenseLines) {ExpenseReports[0].AddLine(el);}
 
 			// Ligne de l'ER 2 (flo) 
-			ExpenseReports[1].AddLine(new ExpenseLine(GetMission(6), LineType.RESTAURANT, "Pepperoni Pizza", 10.0f, new DateTime(2019, 1, 7), "pizza.pdf"));
-			ExpenseReports[1].AddLine(new ExpenseLine(GetMission(2), LineType.HOTEL, "Pepperoni Florian", 10.0f, new DateTime(2019, 1, 8), "hotelflo.pdf"));
+			ExpenseReports[1].AddLine(new ExpenseLine(GetMission(6), LineType.RESTAURANT, "Pepperoni Pizza", 10.0f, new DateTime(2019, 1, 7), "pizza.pdf")); // by Yao, "pizza.pdf"
+			ExpenseReports[1].AddLine(new ExpenseLine(GetMission(2), LineType.HOTEL, "Pepperoni Florian", 10.0f, new DateTime(2019, 1, 8), "hotelflo.pdf")); // by Yao, "hotelflo.pdf"
 
 			// Lignes de l'ER 4 (jeffrey). Jeffrey n'a aucune mission à effectuer actuellement
 			//ExpenseReports[3].AddLine(new ExpenseLine(GetMission(1), LineType.RESTAURANT, "Jeffrey GONCALVES", "Simon Burger", 10.0f, new DateTime(2019, 1, 5), "trumpburger.pdf"));
