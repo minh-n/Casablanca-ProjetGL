@@ -76,63 +76,67 @@
                                 else
                                 {
                                     <li class="nav-item dropdown">
-                                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            @HelperModel.GetNumberNotifications(dal)  Notifications
-                                        </a>
-                                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+										<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+											Notifications (@HelperModel.GetNumberNotifications(dal))
+										</a>
+										<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+											<div>
+												<div id="notificationsTable">
+													<p>
+														<div class="table-responsive">
+															<table class="table">
+																<thead>
+																	<tr><th>Type</th><th>Message</th></tr>
+																</thead>
+																<tbody>
 
-                                            <div id="notificationsTable">
-                                                <p>
-                                                    <div class="table-responsive">
-                                                        <table class="table">
-                                                            <thead>
-                                                                <tr><th>Type</th><th>Statut</th><th>Message</th></tr>
-                                                            </thead>
-                                                            <tbody>
+																	@{
+																		List<Notification> notifsColl = dal.GetNotifications(dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name));
+																		List<Notification> displayNotif = new List<Notification>();
 
-                                                                @{
-                                                                    List<Notification> notifsColl = dal.GetNotifications(dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name));
-                                                                    List<Notification> displayNotif = new List<Notification>();
+																		int i = notifsColl.Count() - 1;
+																		int notifCount = 0;
+																		while (i >= 0 && notifCount < 4)
+																		{
+																			if (notifsColl.ElementAt(i).NotifStatus == NotificationStatus.UNREAD)
+																			{
+																				displayNotif.Add(notifsColl.ElementAt(i));
+																				notifCount++;
+																			}
 
-                                                                    int i = notifsColl.Count() - 1;
-                                                                    int notifCount = 0;
-                                                                    while (i >= 0 && notifCount < 4)
-                                                                    {
-                                                                        if (notifsColl.ElementAt(i).NotifStatus == NotificationStatus.UNREAD)
-                                                                        {
-                                                                            displayNotif.Add(notifsColl.ElementAt(i));
-                                                                            notifCount++;
-                                                                        }
+																			i--;
+																		}
+																	}
 
-                                                                        i--;
-                                                                    }
-                                                                }
+																	@foreach (Notification item in displayNotif)
+																	{
+																		<tr>
+																			<td>
+																				@Html.ActionLink(@HelperModel.ToString(item.NotifType), "Link", "Notification", new { id = item.Id }, null)
+																				<br />
+																				(@HelperModel.ToString(item.NotifResult))
+																			</td>
+																		
+																			<td>
+																				<div style="width:auto">@item.NotifContent</div>
+																			</td>
+																		</tr>
+																	}
+																</tbody>
+															</table>
+														</div>
+													</p>
+												</div>
 
-                                                                @foreach (Notification item in displayNotif)
-                                                                {
-                                                                    <tr>
-                                                                        <td>
-                                                                            @Html.ActionLink(@HelperModel.ToString(item.NotifType), "Link", "Notification", new { id = item.Id }, null)
-                                                                        </td>
-                                                                        <td>
-                                                                            @HelperModel.ToString(item.NotifResult)
-                                                                        </td>
-                                                                        <td>
-                                                                            @item.NotifContent
-                                                                        </td>
-                                                                    </tr>
-                                                                }
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </p>
-                                            </div>
+												<div class="dropdown-divider"></div>
 
-                                            <div class="dropdown-divider"></div>
-                                            <text style="text-align:center"> @Html.ActionLink("Voir toutes les notifications", "Index", "Notification") </text>
-
+												<div style=" margin: auto; width: 50%; text-align:center">
+													<text style="text-align:center; padding:10px;"> @Html.ActionLink("Voir tout", "Index", "Notification") </text>
+												</div>
+											
+											</div>
                                         </div>
-                                    </li>
+</li>
                                 }
                             }
                         </ul>
