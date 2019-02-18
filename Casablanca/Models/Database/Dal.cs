@@ -494,7 +494,21 @@ namespace Casablanca.Models.Database
             Db.SaveChanges();
         }
 
+        public void DeleteNotification(Notification not)
+        {
+            Db.Notifications.Remove(not);
+            Db.SaveChanges();
+        }
 
+        public void DeleteNotification(List<Notification> notifs)
+        {
+            foreach (Notification not in notifs)
+            {
+                Db.Notifications.Remove(not);
+            }
+
+            Db.SaveChanges();
+        }
 
 
 
