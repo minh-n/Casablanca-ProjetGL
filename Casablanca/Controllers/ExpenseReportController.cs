@@ -58,7 +58,8 @@ namespace Casablanca.Controllers {
             Enum.TryParse(month, out Month m);
 
             // Create the ER
-            int returnedId = dal.CreateExpenseReport(coll, m, year);
+            int returnedId = dal.CreateExpenseReport(coll, m, year,false);
+            dal.TransferFromAdvanceToEr(returnedId);
 			string redirectString = "/ExpenseReport/UpdateExpenseReport/?id=" + returnedId;
 
 			return Redirect(redirectString);
@@ -73,16 +74,16 @@ namespace Casablanca.Controllers {
             Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
 
             // Compute year
-            /*string month = Request.Form["monthName"].ToString();
+            string month = Request.Form["monthName"].ToString();
             int year = DateTime.Now.Year;
             if (month != DateTime.Now.ToString("MMMM") && month == new CultureInfo("en-US").DateTimeFormat.GetMonthName(12).ToUpper())
                 year = DateTime.Now.Year - 1;
 
             // Compute month
-            Enum.TryParse(month, out Month m);*/
+            Enum.TryParse(month, out Month m);
 
             // Create the ER
-            int returnedId = dal.CreateAdvance(coll);
+            int returnedId = dal.CreateAdvance(coll, m, year, true);
             string redirectString = "/ExpenseReport/UpdateExpenseReport/?id=" + returnedId;
 
             return Redirect(redirectString);
@@ -171,6 +172,12 @@ namespace Casablanca.Controllers {
                         FinalValidation = false
                     };
 
+                    if (current.IsAdvance)
+                    {
+                        newEL.IsAdvance = true;
+                    }
+
+
                     newEL.ComputeValidator(current.Treatment);
 
                     // Check if an EL exists with the same values (which means we did not modify this line)
@@ -180,6 +187,7 @@ namespace Casablanca.Controllers {
                             newEL.Validated = old.Validated;
                             newEL.Treated = old.Treated;
                             newEL.FinalValidation = old.FinalValidation;
+                            newEL.IsAdvance = old.IsAdvance;
                             break;
                         }
                     }

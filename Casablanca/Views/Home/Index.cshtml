@@ -14,7 +14,7 @@
 	@{
 		if (@HttpContext.Current.User.Identity.IsAuthenticated != false)
 		{
-			<h2>Bienvenue sur l'intranet, @Model.FirstName @Model.LastName !</h2>
+			<h2>Bienvenue sur l'intranet, @Model.FirstName @Model.LastName ! nous sommes le @DateTime.Now</h2>
 		}
 		else
 		{

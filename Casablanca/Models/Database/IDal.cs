@@ -24,9 +24,14 @@ namespace Casablanca.Models.Database {
 		List<ExpenseReport> GetExpenseReports();
         ExpenseReport GetExpenseReport(int id);
 		Collaborator Login(string login, string password);
-        int CreateExpenseReport(Collaborator coll, Month month, int year);
-        int CreateAdvance(Collaborator coll);
+        int CreateExpenseReport(Collaborator coll, Month month, int year, bool isAdvance);
         void ClearExpenseLines(ExpenseReport er);
+
+        // Advances
+        int CreateAdvance(Collaborator coll, Month month, int year, bool isAdvance);
+        List<ExpenseReport> GetAdvances();
+        ExpenseReport GetAdvance(int id);
+        void TransferFromAdvanceToEr(int id);
 
         // Services
         List<Service> GetServices();

@@ -118,18 +118,19 @@ namespace Casablanca.Models.Database
 			Collaborators[16].Role = Roles.CHIEF; //KVN is now CDS Digital
 			Collaborators[10].Role = Roles.CHIEF; //Momo is DRH
 
-			#endregion
+            #endregion
 
-			#region Create missions
-			Missions = new List<Mission> {
-				new Mission("Mission A", DateTime.Today, new DateTime(2019, 5, 1), MissionStatus.IN_PROGRESS),
-				new Mission("Mission B", new DateTime(2019, 2, 9), new DateTime(2019, 3, 1), MissionStatus.PLANNED),
-				new Mission("Mission C", new DateTime(2018, 12, 25), new DateTime(2018, 12, 26), MissionStatus.CANCELED),
-				new Mission("Mission D", new DateTime(2018, 2, 25), new DateTime(2018, 2, 26), MissionStatus.COMPLETED),
-				new Mission("Mission E", new DateTime(2019, 2, 6), new DateTime(2019, 3, 1), MissionStatus.PLANNED),
-				new Mission("Mission F", new DateTime(2019, 1, 9), new DateTime(2019, 11, 1), MissionStatus.PLANNED),
-				new Mission("Mission G", new DateTime(2019, 1, 2), new DateTime(2019, 1, 4), MissionStatus.IN_PROGRESS),
-				new Mission("Mission H", new DateTime(2019, 2, 11), MissionStatus.IN_PROGRESS)
+            #region Create missions
+            Missions = new List<Mission> {
+                new Mission("Mission A", DateTime.Today, new DateTime(2019, 5, 1), MissionStatus.IN_PROGRESS),
+                new Mission("Mission B", new DateTime(2019, 2, 9), new DateTime(2019, 3, 1), MissionStatus.PLANNED),
+                new Mission("Mission C", new DateTime(2018, 12, 25), new DateTime(2018, 12, 26), MissionStatus.CANCELED),
+                new Mission("Mission D", new DateTime(2018, 2, 25), new DateTime(2018, 2, 26), MissionStatus.COMPLETED),
+                new Mission("Mission E", new DateTime(2019, 2, 6), new DateTime(2019, 3, 1), MissionStatus.PLANNED),
+                new Mission("Mission F", new DateTime(2019, 1, 9), new DateTime(2019, 11, 1), MissionStatus.PLANNED),
+                new Mission("Mission G", new DateTime(2019, 1, 2), new DateTime(2019, 1, 4), MissionStatus.IN_PROGRESS),
+                new Mission("Mission H", new DateTime(2019, 2, 11), MissionStatus.IN_PROGRESS),
+                new Mission("Mission I", new DateTime(2019, 2, 16), new DateTime(2019, 2, 17), MissionStatus.PLANNED)
 
 			};
 			#endregion
@@ -156,8 +157,9 @@ namespace Casablanca.Models.Database
 			GetCollaborator("Arthur", "BINELLI").Missions.Add(GetMission("Mission A"));
             GetCollaborator("Arthur", "BINELLI").Missions.Add(GetMission("Mission C"));
             GetCollaborator("Arthur", "BINELLI").Missions.Add(GetMission("Mission E"));
+            GetCollaborator("Arthur", "BINELLI").Missions.Add(GetMission("Mission I"));
 
-			GetCollaborator("Jeffrey", "GONCALVES").Missions.Add(GetMission("Mission A"));
+            GetCollaborator("Jeffrey", "GONCALVES").Missions.Add(GetMission("Mission A"));
 			GetCollaborator("Jeffrey", "GONCALVES").Missions.Add(GetMission("Mission F"));
 			
 			GetCollaborator("Nathon", "BONNARD").Missions.Add(GetMission("Mission B"));
@@ -195,8 +197,9 @@ namespace Casablanca.Models.Database
 			Missions[5].ChiefId = GetCollaborator("Oubar", "MAYAKI").Id;
 
 			Missions[6].ChiefId = GetCollaborator("Mathias", "BAZON").Id;
+            Missions[8].ChiefId = GetCollaborator("Mathias", "BAZON").Id;
 
-			Missions[7].ChiefId = GetCollaborator("Momo", "BELDI").Id;
+            Missions[7].ChiefId = GetCollaborator("Momo", "BELDI").Id;
 
 			Db.SaveChanges();
 
@@ -340,20 +343,11 @@ namespace Casablanca.Models.Database
             return Db.ExpenseReports.SingleOrDefault(e => e.Id == id);
         }
 
-        public int CreateExpenseReport(Collaborator coll, Month month, int year) {
-			ExpenseReport tempER = new ExpenseReport(coll, month, year);
+        public int CreateExpenseReport(Collaborator coll, Month month, int year, bool isAdvance) {
+			ExpenseReport tempER = new ExpenseReport(coll, month, year, isAdvance);
 			Db.ExpenseReports.Add(tempER);
             Db.SaveChanges();
 			return tempER.Id;
-        }
-
-        //Case for advances
-        public int CreateAdvance(Collaborator coll)
-        {
-            ExpenseReport tempER = new ExpenseReport(coll);
-            Db.ExpenseReports.Add(tempER);
-            Db.SaveChanges();
-            return tempER.Id;
         }
 
         public void ClearExpenseLines(ExpenseReport er) {
@@ -375,6 +369,55 @@ namespace Casablanca.Models.Database
             Db.SaveChanges();
         }
 
+        //Advances
+        public int CreateAdvance(Collaborator coll, Month month, int year, bool isAdvance)
+        {
+            ExpenseReport tempER = new ExpenseReport(coll, month, year, isAdvance);
+            Db.ExpenseReports.Add(tempER);
+            Db.SaveChanges();
+            return tempER.Id;
+        }
+
+        public List<ExpenseReport> GetAdvances()
+        {
+            List<ExpenseReport> advances = new List<ExpenseReport>();
+            foreach (ExpenseReport er in Db.ExpenseReports.ToList())
+            {
+                if (er.IsAdvance)
+                    advances.Add(er);
+            }
+
+            return advances;
+        }
+
+        public ExpenseReport GetAdvance(int id)
+        {
+            return Db.ExpenseReports.SingleOrDefault(e => (e.Id == id && e.IsAdvance));
+        }
+        
+        public void TransferFromAdvanceToEr(int id)
+        {
+            List<ExpenseReport> advances = GetAdvances();
+            ExpenseReport expenseReport = GetExpenseReport(id);
+
+            foreach(ExpenseReport er in advances)
+            {
+                foreach(ExpenseLine el in er.ExpenseLines.ToList())
+                {
+                    if(el.Validated /*&& el.Mission.Status == MissionStatus.COMPLETED*/)
+                    {
+                        expenseReport.AddLine(el);
+                        er.RemoveLine(el);
+                    }
+                }
+
+                if(er.ExpenseLines.Count == 0)
+                {
+                    Db.ExpenseReports.Remove(er);
+                    Db.SaveChanges();
+                }
+            }
+        }
         // Login
         public Collaborator Login(string name, string pass)
 		{

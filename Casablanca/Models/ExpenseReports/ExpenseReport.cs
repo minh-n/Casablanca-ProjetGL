@@ -49,14 +49,14 @@ namespace Casablanca.Models.ExpenseReports {
         public ExpenseReport() {
         }
 
-        public ExpenseReport(Collaborator coll, Month month, int year) {
+        public ExpenseReport(Collaborator coll, Month month, int year, bool isAdvance) {
             this.Month = month;
             this.Year = year;
             this.TotalCost = 0;
             this.NbLines = 0;
             this.Status = ExpenseReportStatus.UNSENT;
             this.ExpenseLines = new List<ExpenseLine>();
-            this.IsAdvance = false;
+            this.IsAdvance = isAdvance;
             this.Collaborator = coll;
             ComputeTreatment();
 
@@ -79,10 +79,10 @@ namespace Casablanca.Models.ExpenseReports {
 		}
 
         //Case for advances
-        public ExpenseReport(Collaborator coll)
+        /*public ExpenseReport(Collaborator coll, Month month, int year)
         {
-            this.Month = Month.NONE;
-            this.Year = 0;
+            this.Month = month;
+            this.Year = year;
             this.TotalCost = 0;
             this.NbLines = 0;
             this.Status = ExpenseReportStatus.UNSENT;
@@ -93,7 +93,7 @@ namespace Casablanca.Models.ExpenseReports {
 
             coll.ExpenseReports.Add(this);
 
-        }
+        }*/
 		public void AddLine(ExpenseLine el) {
             this.ExpenseLines.Add(el);
             this.NbLines++;

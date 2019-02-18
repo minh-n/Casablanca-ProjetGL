@@ -121,6 +121,11 @@ else if (months.Count != 0)
     {
         <div style="margin-left:15px">
             <button class="btn btn-primary" type="submit" style="margin-right:10px">Créer une avance de note de frais</button>
+            @Html.DropDownList("monthName", months.Select(month => new SelectListItem {
+                                                                   Text = HelperModel.FirstCharToUpper(DateTime.ParseExact(month, "MMMM", new CultureInfo("en-US")).ToString("MMMM")),
+                                                                   Value = month
+                                                               }	))
+            @Html.ValidationSummary("")
         </div>
     }
 

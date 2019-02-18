@@ -56,7 +56,7 @@ namespace Casablanca.Controllers {
             Enum.TryParse(month, out Month m);
 
             // Create the ER
-            int returnedId = dal.CreateExpenseReport(coll, m, year);
+            int returnedId = dal.CreateExpenseReport(coll, m, year, false);
 			string redirectString = "/ExpenseReport/UpdateExpenseReport/?id=" + returnedId;
 
 			return Redirect(redirectString);
