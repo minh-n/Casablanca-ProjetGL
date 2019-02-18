@@ -1,9 +1,8 @@
 ﻿using Casablanca.Models.Database;
 using Casablanca.Models.ExpenseReports;
-using Casablanca.Models.ViewModel;
 using Casablanca.Models;
 
-
+using Casablanca.Models.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +10,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 
 namespace Casablanca.Controllers {
     public class ExpenseReportController : Controller {
@@ -58,12 +58,36 @@ namespace Casablanca.Controllers {
             Enum.TryParse(month, out Month m);
 
             // Create the ER
-            int returnedId = dal.CreateExpenseReport(coll, m, year);
+            int returnedId = dal.CreateExpenseReport(coll, m, year,false);
+            dal.TransferFromAdvanceToEr(returnedId);
 			string redirectString = "/ExpenseReport/UpdateExpenseReport/?id=" + returnedId;
 
 			return Redirect(redirectString);
         }
 
+        [HttpPost] // Backend call of Index page
+        public ActionResult CreateAdvance()
+        {
+            if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+                return Redirect("/Home/Index");
+
+            Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+
+            // Compute year
+            string month = Request.Form["monthName"].ToString();
+            int year = DateTime.Now.Year;
+            if (month != DateTime.Now.ToString("MMMM") && month == new CultureInfo("en-US").DateTimeFormat.GetMonthName(12).ToUpper())
+                year = DateTime.Now.Year - 1;
+
+            // Compute month
+            Enum.TryParse(month, out Month m);
+
+            // Create the ER
+            int returnedId = dal.CreateAdvance(coll, m, year, true);
+            string redirectString = "/ExpenseReport/UpdateExpenseReport/?id=" + returnedId;
+
+            return Redirect(redirectString);
+        }
         // Changes the status of ER to PENDING_APPROVAL (from Index page)
         public ActionResult SendExpenseReport(int id = 1) {
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
@@ -207,6 +231,12 @@ namespace Casablanca.Controllers {
                         FinalValidation = false
                     };
 
+                    if (current.IsAdvance)
+                    {
+                        newEL.IsAdvance = true;
+                    }
+
+
                     newEL.ComputeValidator(current.Treatment);
 
                     // Check if an EL exists with the same values (which means we did not modify this line)
@@ -216,6 +246,7 @@ namespace Casablanca.Controllers {
                             newEL.Validated = old.Validated;
                             newEL.Treated = old.Treated;
                             newEL.FinalValidation = old.FinalValidation;
+                            newEL.IsAdvance = old.IsAdvance;
                             break;
                         }
                     }
@@ -280,7 +311,7 @@ namespace Casablanca.Controllers {
                 if (e.Collaborator != coll) // a coll cannot validate his own ER
                 {
                     // If the ER needs to be treated the classic way
-                    if(e.Treatment == Processing.CLASSIC) { 
+                    if(e.Treatment ==   Processing.CLASSIC) { 
                         if (HelperModel.CheckCDSCompta(coll)) // CDS Compta
                         {
                             if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_2) {
@@ -397,7 +428,7 @@ namespace Casablanca.Controllers {
             if (er.Status != ExpenseReportStatus.PENDING_APPROVAL_1)
                 return Redirect("/ExpenseReport/Index");
 
-            // Check if we validated everything in the current processing list
+            // Check if we validated everything in the current   Models.ExpenseReports.Processing list
             bool allValidatedInProcessed = true;
             foreach (ExpenseLine el in er.ExpenseLines) {
                 foreach (ExpenseLine processedLine in model.ExpenseLines) {
@@ -529,17 +560,17 @@ namespace Casablanca.Controllers {
 
             // Check if coll has the right attributions
             switch (model.Treatment) {
-                case Processing.COMPTA:
+                case   Models.ExpenseReports.Processing.COMPTA:
                     if (!HelperModel.CheckCompta(coll)) {
                         return Redirect("/ExpenseReport/ProcessList");
                     }
                     break;
-                case Processing.FINANCIAL_DIRECTOR:
+                case   Models.ExpenseReports.Processing.FINANCIAL_DIRECTOR:
                     if (!HelperModel.CheckCDSCompta(coll)) {
                         return Redirect("/ExpenseReport/ProcessList");
                     }
                     break;
-                case Processing.CEO:
+                case   Models.ExpenseReports.Processing.CEO:
                     if (!HelperModel.CheckPDG(coll)) {
                         return Redirect("/ExpenseReport/ProcessList");
                     }
@@ -563,17 +594,17 @@ namespace Casablanca.Controllers {
 
             // Check if coll has the right attributions
             switch (model.Treatment) {
-                case Processing.COMPTA:
+                case   Models.ExpenseReports.Processing.COMPTA:
                     if (!HelperModel.CheckCompta(coll)) {
                         return Redirect("/ExpenseReport/ProcessList");
                     }
                     break;
-                case Processing.FINANCIAL_DIRECTOR:
+                case   Models.ExpenseReports.Processing.FINANCIAL_DIRECTOR:
                     if (!HelperModel.CheckCDSCompta(coll)) {
                         return Redirect("/ExpenseReport/ProcessList");
                     }
                     break;
-                case Processing.CEO:
+                case   Models.ExpenseReports.Processing.CEO:
                     if (!HelperModel.CheckPDG(coll)) {
                         return Redirect("/ExpenseReport/ProcessList");
                     }
@@ -666,7 +697,7 @@ namespace Casablanca.Controllers {
 				if (e.Collaborator != coll) // a coll cannot validate his own ER
 				{
 					// If the ER needs to be treated the classic way
-					if (e.Treatment == Processing.CLASSIC)
+					if (e.Treatment ==   Models.ExpenseReports.Processing.CLASSIC)
 					{
 						if (HelperModel.CheckCompta(coll)) // CDS Compta et Compta
 						{
@@ -697,19 +728,19 @@ namespace Casablanca.Controllers {
 						{
 							switch (e.Treatment)
 							{
-								case Processing.COMPTA:
+								case   Models.ExpenseReports.Processing.COMPTA:
 									if (HelperModel.CheckCompta(coll))
 									{
 										ERListToBeReturnedAsModel.Add(e);
 									}
 									break;
-								case Processing.FINANCIAL_DIRECTOR:
+								case   Models.ExpenseReports.Processing.FINANCIAL_DIRECTOR:
 									if (HelperModel.CheckCDSCompta(coll))
 									{
 										ERListToBeReturnedAsModel.Add(e);
 									}
 									break;
-								case Processing.CEO:
+								case   Models.ExpenseReports.Processing.CEO:
 									if (HelperModel.CheckPDG(coll))
 									{
 										ERListToBeReturnedAsModel.Add(e);
@@ -730,4 +761,39 @@ namespace Casablanca.Controllers {
 
 
 	}
+
+    public class JustificatoryUploadController : Controller
+    {
+        // GET: JustificatoryUpload
+        public ActionResult Index()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult UploadJustificatory(HttpPostedFileBase file)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+
+                    if (file != null)
+                    {
+                        string path = Path.Combine(Server.MapPath("~/APP_Data/UploadedFiles"), Path.GetFileName(file.FileName));
+                        file.SaveAs(path);
+
+                    }
+                    ViewBag.FileStatus = "Justificatory uploaded successfully.";
+                }
+                catch (Exception)
+                {
+
+                    ViewBag.FileStatus = "Error while Justificatory uploading.";
+                }
+
+            }
+            return View("Index");
+        }
+    }
 }

@@ -18,7 +18,7 @@ namespace Casablanca.Models
 	 */
 
 
-	public enum Processing
+	public enum HelperProcessing
 	{
 		CLASSIC,
 		COMPTA,
@@ -33,7 +33,7 @@ namespace Casablanca.Models
 	{
 
 
-		public static Processing ComputeTreatmentER(Collaborator coll)
+		public static HelperProcessing ComputeTreatmentER(Collaborator coll)
 		{
 			Service s = coll.Service;
 			Roles role = coll.Role;
@@ -44,39 +44,39 @@ namespace Casablanca.Models
 					if (s.Name.Contains("Compta"))
 					{
 						// Coll compta => double val DF
-						return Processing.FINANCIAL_DIRECTOR;
+						return HelperProcessing.FINANCIAL_DIRECTOR;
 					}
 					else
 					{
 						// Cas classique
-						return Processing.CLASSIC;
+						return HelperProcessing.CLASSIC;
 					}
 				case Roles.CHIEF:
 					if (s.Name.Contains("Compta"))
 					{
 						// CDS compta => double val PDG
-						return Processing.CEO;
+						return HelperProcessing.CEO;
 					}
 					else if (s.Name.Contains("RH"))
 					{
 						// CDS RH => double val compta
-						return Processing.COMPTA;
+						return HelperProcessing.COMPTA;
 					}
 					else if (s.Name.Contains("Direction"))
 					{
 						// PDG => double val DF
-						return Processing.FINANCIAL_DIRECTOR;
+						return HelperProcessing.FINANCIAL_DIRECTOR;
 					}
 					else
 					{
-						return Processing.COMPTA;
+						return HelperProcessing.COMPTA;
 					}
 				default:
-					return Processing.CLASSIC;
+					return HelperProcessing.CLASSIC;
 			}
 		}
 
-		public static Processing ComputeTreatmentLeave(Collaborator coll)
+		public static HelperProcessing ComputeTreatmentLeave(Collaborator coll)
 		{
 			Service s = coll.Service;
 			Roles role = coll.Role;
@@ -88,35 +88,35 @@ namespace Casablanca.Models
 					if(CheckRH(coll))
 					{
 						// Coll RH => double val DHR
-						return Processing.DHR;
+						return HelperProcessing.DHR;
 					}
 					else
 					{
 						// Cas classique
-						return Processing.CLASSIC;
+						return HelperProcessing.CLASSIC;
 					}
 				case Roles.CHIEF:
 					if (s.Name.Contains("Compta"))
 					{
 						// CDS compta => double val RH
-						return Processing.HR;
+						return HelperProcessing.HR;
 					}
 					else if (s.Name.Contains("RH"))
 					{
 						// CDS RH => double val PDG
-						return Processing.CEO;
+						return HelperProcessing.CEO;
 					}
 					else if (s.Name.Contains("Direction"))
 					{
 						// PDG => double val DRH
-						return Processing.DHR;
+						return HelperProcessing.DHR;
 					}
 					else
 					{
-						return Processing.HR;
+						return HelperProcessing.HR;
 					}
 				default:
-					return Processing.CLASSIC;
+					return HelperProcessing.CLASSIC;
 			}
 		}
 
@@ -200,7 +200,7 @@ namespace Casablanca.Models
 				if (e.Collaborator != coll) // a coll cannot validate his own ER
 				{
 					// If the ER needs to be treated the classic way
-					if (e.Treatment == Processing.CLASSIC)
+					if (e.Treatment == ExpenseReports.Processing.CLASSIC)
 					{
 						if (HelperModel.CheckCDSCompta(coll)) // CDS Compta
 						{
@@ -248,19 +248,19 @@ namespace Casablanca.Models
 						{
 							switch (e.Treatment)
 							{
-								case Processing.COMPTA:
+								case ExpenseReports.Processing.COMPTA:
 									if (HelperModel.CheckCompta(coll))
 									{
 										++number;
 									}
 									break;
-								case Processing.FINANCIAL_DIRECTOR:
+                                case ExpenseReports.Processing.FINANCIAL_DIRECTOR:
 									if (HelperModel.CheckCDSCompta(coll))
 									{
 										++number;
 									}
 									break;
-								case Processing.CEO:
+                                case ExpenseReports.Processing.CEO:
 									if (HelperModel.CheckPDG(coll))
 									{
 										++number;
@@ -292,7 +292,7 @@ namespace Casablanca.Models
 				if (e.Collaborator != coll) // a coll cannot validate his own ER
 				{
 					// If the ER needs to be treated the classic way
-					if (e.Treatment == Processing.CLASSIC)
+					if (e.Treatment == HelperProcessing.CLASSIC)
 					{
 						if (HelperModel.CheckCDSRH(coll)) // CDS RH
 						{
@@ -335,19 +335,19 @@ namespace Casablanca.Models
 						{
 							switch (e.Treatment)
 							{
-								case Processing.DHR:
+								case HelperProcessing.DHR:
 									if (HelperModel.CheckCDSRH(coll)) //si le coll traiteur est un CDSRH
 									{
 										++number;
 									}
 									break;
-								case Processing.HR:
+								case HelperProcessing.HR:
 									if (HelperModel.CheckRH(coll))
 									{
 										++number;
 									}
 									break;
-								case Processing.CEO:
+								case HelperProcessing.CEO:
 									if (HelperModel.CheckPDG(coll))
 									{
 										++number;
@@ -425,9 +425,9 @@ namespace Casablanca.Models
 			return "Debug: TypeCongé";
 		}
 
-		public static string ToString(LeaveStatus status, Processing process)
+		public static string ToString(LeaveStatus status, HelperProcessing process)
 		{
-			if(process == Processing.CLASSIC)
+			if(process == HelperProcessing.CLASSIC)
 			{
 				switch (status)
 				{
@@ -446,23 +446,23 @@ namespace Casablanca.Models
 						
 				else if(status == LeaveStatus.PENDING_APPROVAL_1 | status ==LeaveStatus.PENDING_APPROVAL_2)
 				{
-					if (process == Processing.CEO)
+					if (process == HelperProcessing.CEO)
 					{
 						return "Traitement PDG";
 					}
-					else if (process == Processing.COMPTA)
+					else if (process == HelperProcessing.COMPTA)
 					{
 						return "Traitement Compta";
 					}
-					else if (process == Processing.DHR)
+					else if (process == HelperProcessing.DHR)
 					{
 						return "Traitement DRH";
 					}
-					else if (process == Processing.FINANCIAL_DIRECTOR)
+					else if (process == HelperProcessing.FINANCIAL_DIRECTOR)
 					{
 						return "Traitement D.Financier";
 					}
-					else if (process == Processing.HR)
+					else if (process == HelperProcessing.HR)
 					{
 						return "Traitement RH";
 					}
@@ -493,23 +493,58 @@ namespace Casablanca.Models
 			return "Debug: StatutCongé";
 		}
 
-		public static string ToString(ExpenseReportStatus status)
+		public static string ToString(ExpenseReportStatus status, Processing process)
 		{
 
-			//TODO if status == process.CEO etc comme les leaves
-
-			switch (status)
+			if (process == Processing.CLASSIC)
 			{
-				case ExpenseReportStatus.UNSENT: return "Non envoyée";
-				case ExpenseReportStatus.REFUSED: return "Refusée";
-				case ExpenseReportStatus.APPROVED: return "Approuvée";
-				case ExpenseReportStatus.PENDING_APPROVAL_1: return "Validation chef de service en cours ";
-				case ExpenseReportStatus.PENDING_APPROVAL_2: return "Validation compta en cours ";
+				switch (status)
+				{
+					case ExpenseReportStatus.UNSENT: return "Non envoyée";
+					case ExpenseReportStatus.REFUSED: return "Refusée";
+					case ExpenseReportStatus.APPROVED: return "Approuvée";
+					case ExpenseReportStatus.PENDING_APPROVAL_1: return "Validation chef de service en cours ";
+					case ExpenseReportStatus.PENDING_APPROVAL_2: return "Validation compta en cours ";
+
+				}
 			}
+			else
+			{
+				if (status == ExpenseReportStatus.APPROVED)
+					return "Approuvée";
+
+				else if (status == ExpenseReportStatus.PENDING_APPROVAL_1 | status == ExpenseReportStatus.PENDING_APPROVAL_2)
+				{
+					if (process == Processing.CEO)
+					{
+						return "Traitement PDG";
+					}
+					else if (process == Processing.COMPTA)
+					{
+						return "Traitement Compta";
+					}
+					else if (process == Processing.FINANCIAL_DIRECTOR)
+					{
+						return "Traitement D.Financier";
+					}
+					else
+					{
+						return "Debug: Traitement spécial";
+					}
+				}
+				else
+				{
+					return "Non envoyée";
+				}
+			}
+
 			return "Debug: StatutER";
+			
+			
 		}
 
-        public static string ToString(NotificationType type)
+
+		public static string ToString(NotificationType type)
         {
             switch (type)
             {

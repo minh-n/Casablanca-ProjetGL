@@ -197,8 +197,8 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AdminController.cs" />
-    <Compile Include="Controllers\AdvanceController.cs" />
     <Compile Include="Controllers\ExpenseReportController.cs" />
+    <Compile Include="Controllers\JustificatoryUploadController.cs" />
     <Compile Include="Controllers\NotificationController.cs" />
     <Compile Include="Controllers\ServiceController.cs" />
     <Compile Include="Controllers\Hubs\NotificationHub.cs" />
@@ -210,9 +210,8 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Database\DatabaseInitialization.cs" />
-    <Compile Include="Models\Advances\AdvanceLine.cs" />
-    <Compile Include="Models\Advances\AdvanceReport.cs" />
     <Compile Include="Models\HelperModel.cs" />
+    <Compile Include="Models\JustificatoryUploadModel.cs" />
     <Compile Include="Models\MultiButtonAttribute.cs" />
     <Compile Include="Models\Notification.cs" />
     <Compile Include="Models\Mission.cs" />
@@ -441,10 +440,13 @@
     <Content Include="Views\Service\Index.cshtml" />
     <Content Include="Views\Admin\CreateService.cshtml" />
     <Content Include="Views\ExpenseReport\HistoryList.cshtml" />
+    <Content Include="Views\JustificatoryUpload\Index.cshtml" />
     <Content Include="Views\Notification\Index.cshtml" />
     <Content Include="Views\Notification\EditorTemplates\SelectNotificationEditorVM.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="App_Data\UploadedFiles\" />
+    <Folder Include="Views\Notification\" />
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>

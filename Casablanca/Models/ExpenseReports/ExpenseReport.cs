@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
 using System.Web;
-using Casablanca.Models;
 
 namespace Casablanca.Models.ExpenseReports {
 
@@ -19,9 +18,15 @@ namespace Casablanca.Models.ExpenseReports {
     }
 
     public enum Month {
-        JANUARY, FEBRUARY, MARCH, APRIL, MAY, JUNE, JULY, AUGUST, SEPTEMBER, OCTOBER, NOVEMBER, DECEMBER 
+        JANUARY, FEBRUARY, MARCH, APRIL, MAY, JUNE, JULY, AUGUST, SEPTEMBER, OCTOBER, NOVEMBER, DECEMBER, NONE 
     }
-	
+
+    public enum Processing {
+        CLASSIC,
+        COMPTA,
+        FINANCIAL_DIRECTOR,
+        CEO
+    }
 
     public class ExpenseReport {
 
@@ -36,20 +41,24 @@ namespace Casablanca.Models.ExpenseReports {
         public virtual Collaborator Collaborator { get; set; }
         public virtual List<ExpenseLine> ExpenseLines { get; set; }
 
+        //Advance
+        public bool IsAdvance { get; set; }
+
         public Processing Treatment { get; set; }
 
         public ExpenseReport() {
         }
 
-        public ExpenseReport(Collaborator coll, Month month, int year) {
+        public ExpenseReport(Collaborator coll, Month month, int year, bool isAdvance) {
             this.Month = month;
             this.Year = year;
             this.TotalCost = 0;
             this.NbLines = 0;
             this.Status = ExpenseReportStatus.UNSENT;
             this.ExpenseLines = new List<ExpenseLine>();
+            this.IsAdvance = isAdvance;
             this.Collaborator = coll;
-            this.Treatment = HelperModel.ComputeTreatmentER(this.Collaborator);
+            ComputeTreatment();
 
             coll.ExpenseReports.Add(this);
         }
@@ -62,12 +71,29 @@ namespace Casablanca.Models.ExpenseReports {
 			this.NbLines = 0;
 			this.Status = stat;
 			this.ExpenseLines = new List<ExpenseLine>();
+            this.IsAdvance = false;
 			this.Collaborator = coll;
-			this.Treatment = HelperModel.ComputeTreatmentER(this.Collaborator);
+            ComputeTreatment();
 
-			coll.ExpenseReports.Add(this);
+            coll.ExpenseReports.Add(this);
 		}
 
+        //Case for advances
+        /*public ExpenseReport(Collaborator coll, Month month, int year)
+        {
+            this.Month = month;
+            this.Year = year;
+            this.TotalCost = 0;
+            this.NbLines = 0;
+            this.Status = ExpenseReportStatus.UNSENT;
+            this.ExpenseLines = new List<ExpenseLine>();
+            this.IsAdvance = true;
+            this.Collaborator = coll;
+            ComputeTreatment();
+
+            coll.ExpenseReports.Add(this);
+
+        }*/
 		public void AddLine(ExpenseLine el) {
             this.ExpenseLines.Add(el);
             this.NbLines++;
@@ -84,6 +110,41 @@ namespace Casablanca.Models.ExpenseReports {
                 this.TotalCost = 0.0f;
         }
 
-       
+        public void ComputeTreatment() {
+            Service s = Collaborator.Service;
+            Roles role = Collaborator.Role;
+
+            switch(role) {
+                case Roles.USER:
+                    if(s.Name.Contains("Compta")) {
+                        // Coll compta => double val DF
+                        Treatment = Processing.FINANCIAL_DIRECTOR;
+                    }
+                    else {
+                        // Cas classique
+                        //Debug.WriteLine("OMG");
+                        Treatment = Processing.CLASSIC;
+                    }
+                    break;
+                case Roles.CHIEF:
+                    if(s.Name.Contains("Compta")) {
+                        // CDS compta => double val PDG
+                        //Debug.WriteLine("OOOOOOOOOOH");
+                        Treatment = Processing.CEO;
+                    }
+                    else if (s.Name.Contains("RH")) {
+                        // CDS RH => double val compta
+                        Treatment = Processing.COMPTA;
+                    }
+                    else if (s.Name.Contains("Direction")) {
+                        // PDG => double val DF
+                        Treatment = Processing.FINANCIAL_DIRECTOR;
+                    }
+                    else {
+                        Treatment = Processing.COMPTA;
+                    }
+                    break;
+            }
+        }
     }
 }

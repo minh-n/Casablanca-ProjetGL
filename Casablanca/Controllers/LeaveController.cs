@@ -246,7 +246,7 @@ namespace Casablanca.Controllers
 				if (e.Collaborator != coll) // a coll cannot validate his own ER
 				{
 					// If the ER needs to be treated the classic way
-					if (e.Treatment == Processing.CLASSIC)
+					if (e.Treatment == HelperProcessing.CLASSIC)
 					{
 						if (HelperModel.CheckCDSRH(coll)) // CDS RH
 						{
@@ -287,19 +287,19 @@ namespace Casablanca.Controllers
 						{
 							switch (e.Treatment)
 							{
-								case Processing.DHR:
+								case HelperProcessing.DHR:
 									if (HelperModel.CheckCDSRH(coll)) //si le coll traiteur est un CDSRH
 									{
 										LeaveListToBeReturnedAsModel.Add(e);
 									}
 									break;
-								case Processing.HR:
+								case HelperProcessing.HR:
 									if (HelperModel.CheckRH(coll))
 									{
 										LeaveListToBeReturnedAsModel.Add(e);
 									}
 									break;
-								case Processing.CEO:
+								case HelperProcessing.CEO:
 									if (HelperModel.CheckPDG(coll))
 									{
 										LeaveListToBeReturnedAsModel.Add(e);

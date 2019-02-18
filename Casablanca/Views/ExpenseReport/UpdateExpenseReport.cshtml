@@ -14,7 +14,15 @@
 }
 
 <div class="container">
-    <h2 class="text-left">Effectuer une demande de notes de frais </h2>
+    @if (!Model.ExpenseReport.IsAdvance)
+    {
+        <h2 class="text-left">Effectuer une demande de notes de frais </h2>
+    }
+    else
+    {
+        <h2 class="text-left">Effectuer une avance de notes de frais </h2>
+    }
+
 
     <div style="padding:15px">
         <button class="btn btn-primary table-add">Ajouter une ligne de frais</button>
@@ -80,7 +88,7 @@
 									@Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Date,
 									new {
 										@type = "date", @class = "form-control datepicker",
-										@value = Model.ExpenseReport.ExpenseLines[i].Date.ToString("dd-MM-yyyy"),
+										@Value = Model.ExpenseReport.ExpenseLines[i].Date.ToString("yyyy-MM-dd")
 										//@min = Model.ExpenseReport.ExpenseLines[i].Mission.StartDate.ToString("yyyy-MM-dd"),
 										//@max = Model.ExpenseReport.ExpenseLines[i].Mission.EndDate.ToString("yyyy-MM-dd")
 									})
@@ -180,13 +188,14 @@
 					@Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Date,
 					new {
 						@type = "date", @class = "form-control datepicker",
-						@value = DateTime.Now.ToString("dd-MM-yyyy")
+						@Value = Model.ExpenseReport.ExpenseLines[nbEL].Date.ToString("yyyy-MM-dd")
 					})
 
 				}
 			</td>
             <td>
-                @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Justificatory, new { type = "file", @Value = "", accept = ".pdf" })
+                @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Justificatory, new { type = "file", @Value = "", accept = ".pdf" }) 
+                <!-- by Yao -->
             </td>
             @if (Model.ExpenseReport.Status == ExpenseReportStatus.REFUSED) {
                 <td>

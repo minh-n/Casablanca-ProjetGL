@@ -32,7 +32,7 @@ namespace Casablanca.Models.Leaves {
 		public string Color { get; set; }
 
 		public LeaveType Type { get; set; }
-		public Processing Treatment { get; set; }
+		public HelperProcessing Treatment { get; set; }
 
 		public virtual Collaborator Collaborator { get; set; }
 

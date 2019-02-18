@@ -99,7 +99,7 @@
 								<!--traiter-->
 								<td>
 
-									@if (item.Treatment == Processing.HR | item.Treatment == Processing.DHR | item.Treatment == Processing.CEO)
+									@if (item.Treatment == HelperProcessing.HR | item.Treatment == HelperProcessing.DHR | item.Treatment == HelperProcessing.CEO)
 									{
 										<div>
 
@@ -107,7 +107,7 @@
 										</div>
 									}
 
-									else if (item.Treatment == Processing.CLASSIC)
+									else if (item.Treatment == HelperProcessing.CLASSIC)
 									{
 										if (item.Status == LeaveStatus.PENDING_APPROVAL_1 | item.Status == LeaveStatus.PENDING_APPROVAL_2)
 										{

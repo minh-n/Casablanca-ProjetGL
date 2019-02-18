@@ -25,22 +25,25 @@
         @Html.HiddenFor(model => Model.Id)
 
         <div style="padding:10px">
-            <div> @Html.LabelFor(model => Model.Name) </div>
+            <div> Nom de la mission </div>
             <div> @Html.TextBoxFor(model => Model.Name) </div>
         </div>
         <br>
 
         <div style="padding:10px">
 
-            <div> @Html.LabelFor(model => Model.Status) </div>
+            <div> Statut de la mission </div>
 
-            <div> TODO : drop down list status </div>
+			<div>
+				@Html.DropDownListFor(m => m.Status,
+				  new SelectList(Enum.GetValues(typeof(MissionStatus))))
+			</div>
 
         </div>
         <br>
 
         <div style="padding:10px">
-            <div>@Html.LabelFor(model => Model.StartDate)</div>
+            <div>Date de début</div>
             <div>
                 @Html.TextBoxFor(model => Model.StartDate,
                                     new { @type = "date", @class = "form-control datepicker", @Value = Model.StartDate.ToString("yyyy-MM-dd") })
@@ -48,8 +51,8 @@
         </div>
 
         <div style="padding:10px">
-            TODO: Make this field optional!
-            <div> @Html.LabelFor(model => Model.EndDate) </div>
+            
+            <div> Date de fin </div>
             <div>
                 @Html.TextBoxFor(model => Model.EndDate,
                                     new { @type = "date", @class = "form-control datepicker", @Value = Model.EndDate.ToString("yyyy-MM-dd") })

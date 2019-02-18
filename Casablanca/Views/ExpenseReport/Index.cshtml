@@ -3,7 +3,7 @@
 @using Casablanca.Models.Database;
 @using Casablanca.Models;
 @{
-	ViewBag.Title = "Mes frais";
+    ViewBag.Title = "Mes frais";
 }
 <!-- Bootstrap Table Style -->
 @Styles.Render("/Content/bootstrap-table.min.css")
@@ -12,162 +12,194 @@
 
 <h2 class="text-left">Notes de frais en cours (non envoyées ou refusées)</h2>
 <div class="table-responsive">
-	<table class="table"
-		   id="table"
-		   data-toggle="table"
-		   data-search="true">
-		<thead>
-			<tr>
-				<th>Mois</th>
-				<th>Montant Total</th>
-				<th>Nombre de frais</th>
-				<th>Statut</th>
-				<th>Action</th>
-			</tr>
-		</thead>
-		<tbody>
-			@foreach (var item in Model)
-			{
+    <table class="table"
+           id="table"
+           data-toggle="table"
+           data-search="true">
+        <thead>
+            <tr>
+                <th>Mois</th>
+                <th>Montant Total</th>
+                <th>Nombre de frais</th>
+                <th>Statut</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
 
-				if (item.Status != ExpenseReportStatus.APPROVED)
-				{
-					<tr>
-						<td>
+                if (item.Status != ExpenseReportStatus.APPROVED)
+                {
+                    <tr>
+                        <td>
 
-							@HelperModel.FirstCharToUpper(DateTime.ParseExact(item.Month.ToString(), "MMMM", new CultureInfo("en-US")).ToString("MMMM"))
-							@item.Year
+                            @HelperModel.FirstCharToUpper(DateTime.ParseExact(item.Month.ToString(), "MMMM", new CultureInfo("en-US")).ToString("MMMM"))
+                            @item.Year
 
-						</td>
-						<td>@item.TotalCost</td>
-						<td>@item.NbLines</td>
-						<td>
-							@HelperModel.ToString(item.Status)
-						</td>
+                        </td>
+                        <td>@item.TotalCost</td>
+                        <td>@item.NbLines</td>
+                        <td>
+                            @HelperModel.ToString(item.Status, item.Treatment)
+                        </td>
 
-						@*Un bouton pour accéder à la note de frais en cours*@
-						<td>
+                        @*Un bouton pour accéder à la note de frais en cours*@
+                        <td>
 
-							@if (item.Status == ExpenseReportStatus.UNSENT || item.Status == ExpenseReportStatus.REFUSED)
-							{
-								<div>@Html.ActionLink("Modifier", "UpdateExpenseReport", "ExpenseReport", new { id = item.Id }, null) | @Html.ActionLink("Envoyer", "SendExpenseReport", "ExpenseReport", new { id = item.Id }, null)</div>
-							}
-							else
-							{
-								@Html.ActionLink("Voir", "ViewExpenseReport", "ExpenseReport", new { ERId = item.Id }, null)
-							}
-						</td>
-					</tr>
-				}
+                            @if (item.Status == ExpenseReportStatus.UNSENT || item.Status == ExpenseReportStatus.REFUSED)
+                            {
+                                <div>@Html.ActionLink("Modifier", "UpdateExpenseReport", "ExpenseReport", new { id = item.Id }, null) | @Html.ActionLink("Envoyer", "SendExpenseReport", "ExpenseReport", new { id = item.Id }, null)</div>
+                            }
+                            else
+                            {
+                                @Html.ActionLink("Voir", "ViewExpenseReport", "ExpenseReport", new { ERId = item.Id }, null)
+                            }
+                        </td>
+                    </tr>
+                }
 
-			}
-		</tbody>
-	</table>
+            }
+        </tbody>
+    </table>
 </div>
 
 @{
-	// Computing the months available to create new ERs
-	string current_month = DateTime.Now.ToString("MMMM", new CultureInfo("en-US")).ToUpper();
-	string previous_month = DateTime.Now.AddMonths(-1).ToString("MMMM", new CultureInfo("en-US")).ToUpper();
-	int current_year = DateTime.Now.Year;
+    // Computing the months available to create new ERs
+    string current_month = DateTime.Now.ToString("MMMM", new CultureInfo("en-US")).ToUpper();
+    string previous_month = DateTime.Now.AddMonths(-1).ToString("MMMM", new CultureInfo("en-US")).ToUpper();
+    int current_year = DateTime.Now.Year;
 
-	List<string> months = new List<string> {
+    List<string> months = new List<string> {
 previous_month,
 current_month
 };
 
-	foreach (ExpenseReport er in Model)
-	{
-		if (er.Year == current_year)
-		{
-			if (er.Month.ToString() == current_month)
-			{
-				months.Remove(current_month);
-			}
-			if (er.Month.ToString() == previous_month)
-			{
-				months.Remove(previous_month);
-			}
-		}
-		else
-		{
-			if (er.Month.ToString() == previous_month)
-			{
-				months.Remove(previous_month);
-			}
-		}
-	}
+    foreach (ExpenseReport er in Model)
+    {
+        if (er.Year == current_year)
+        {
+            if (er.Month.ToString() == current_month)
+            {
+                months.Remove(current_month);
+            }
+            if (er.Month.ToString() == previous_month)
+            {
+                months.Remove(previous_month);
+            }
+        }
+        else
+        {
+            if (er.Month.ToString() == previous_month)
+            {
+                months.Remove(previous_month);
+            }
+        }
+    }
 
-	// Get the current coll
-	Dal dal = new Dal();
-	Collaborator coll = dal.GetCollaborator(User.Identity.Name);
+    // Get the current coll
+    Dal dal = new Dal();
+    Collaborator coll = dal.GetCollaborator(User.Identity.Name);
 }
 
 <!-- Create a dropdownlist to select which ER to create -->
 @if (coll.Missions.Count == 0)
 {
-	<div style="padding:15px; font-size:16px">Vous ne possédez pas de missions, vous ne pouvez donc pas avoir de note de frais.</div>
+    <div style="padding:15px; font-size:16px">Vous ne possédez pas de missions, vous ne pouvez donc pas avoir de note de frais.</div>
 }
 else if (months.Count != 0)
 {
-	using (Html.BeginForm("CreateExpenseReport", "ExpenseReport", FormMethod.Post))
-	{
-		<div style="padding:15px">
-			<button class="btn btn-primary" type="submit" style="margin-right:10px">Créer une note de frais pour le mois de</button>
-			@Html.DropDownList("monthName", months.Select(month => new SelectListItem {
-																   Text = HelperModel.FirstCharToUpper(DateTime.ParseExact(month, "MMMM", new CultureInfo("en-US")).ToString("MMMM")),
-																   Value = month
-															   }	))
-			@Html.ValidationSummary("")
-		</div>
-	}
+
+    //bouton ER créer
+    using (Html.BeginForm("CreateExpenseReport", "ExpenseReport", FormMethod.Post))
+    {
+        <div style="padding:15px">
+            <button class="btn btn-primary" type="submit" style="margin-right:10px">Créer une note de frais pour le mois de</button>
+            @Html.DropDownList("monthName", months.Select(month => new SelectListItem {
+                                                                   Text = HelperModel.FirstCharToUpper(DateTime.ParseExact(month, "MMMM", new CultureInfo("en-US")).ToString("MMMM")),
+                                                                   Value = month
+    }	))
+            @Html.ValidationSummary("")
+        </div>
+    }
+
+
+
+    //Bouton avance
+
+
+    if (coll.Missions.Exists(m => m.Status == MissionStatus.PLANNED))
+    {
+        using (Html.BeginForm("CreateAdvance", "ExpenseReport", FormMethod.Post))
+        {
+            <div style="margin-left:15px">
+                <button class="btn btn-primary" type="submit" style="margin-right:10px">Créer une avance de note de frais</button>
+                @*@Html.DropDownList("monthName", months.Select(month => new SelectListItem
+           {
+               Text = HelperModel.FirstCharToUpper(DateTime.ParseExact(month, "MMMM", new CultureInfo("en-US")).ToString("MMMM")),
+               Value = month
+           }))*@
+                @Html.ValidationSummary("")
+            </div>
+        }
+
+    }
+    else
+    {
+        <div style="padding:15px; font-size:16px">Vous ne possédez pas de missions prévues, vous ne pouvez donc pas faire de demandes d'avances.</div>
+    }
 }
+
+
+
+
 
 <h2 class="text-left">Notes de frais approuvées</h2>
 <div class="table-responsive">
-	<table class="table"
-		   id="table"
-		   data-toggle="table"
-		   data-search="true">
-		<thead>
-			<tr>
-				<th>Mois</th>
-				<th>Montant Total</th>
-				<th>Nombre de frais</th>
-				<th>Statut</th>
-				<th>Voir</th>
-			</tr>
-		</thead>
-		<tbody>
-			@foreach (var item in Model)
-			{
+    <table class="table"
+           id="table"
+           data-toggle="table"
+           data-search="true">
+        <thead>
+            <tr>
+                <th>Mois</th>
+                <th>Montant Total</th>
+                <th>Nombre de frais</th>
+                <th>Statut</th>
+                <th>Voir</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
 
-				if (item.Status == ExpenseReportStatus.APPROVED)
-				{
-					<tr>
-						<td>
+                if (item.Status == ExpenseReportStatus.APPROVED)
+                {
+                    <tr>
+                        <td>
 
-							@HelperModel.FirstCharToUpper(DateTime.ParseExact(item.Month.ToString(), "MMMM", new CultureInfo("en-US")).ToString("MMMM"))
-							@item.Year
+                            @HelperModel.FirstCharToUpper(DateTime.ParseExact(item.Month.ToString(), "MMMM", new CultureInfo("en-US")).ToString("MMMM"))
+                            @item.Year
 
-						</td>
-						<td>@item.TotalCost</td>
-						<td>@item.NbLines</td>
-						<td>
-							@HelperModel.ToString(item.Status)
-						</td>
+                        </td>
+                        <td>@item.TotalCost</td>
+                        <td>@item.NbLines</td>
+                        <td>
+                            @HelperModel.ToString(item.Status, item.Treatment)
+                        </td>
 
-						@*Un bouton pour accéder à la note de frais en cours*@
-						<td>
+                        @*Un bouton pour accéder à la note de frais en cours*@
+                        <td>
 
-							@Html.ActionLink("Voir", "ViewExpenseReport", "ExpenseReport", new { ERId = item.Id }, null)
+                            @Html.ActionLink("Voir", "ViewExpenseReport", "ExpenseReport", new { ERId = item.Id }, null)
 
-						</td>
-					</tr>
-				}
+                        </td>
+                    </tr>
+                }
 
-			}
-		</tbody>
-	</table>
+            }
+        </tbody>
+    </table>
 </div>
 
 
@@ -176,7 +208,7 @@ else if (months.Count != 0)
 
 
 @section Scripts {
-	<!-- Bootstrap table -->
-	<script src="~/Scripts/bootstrap-table.js"></script>
+    <!-- Bootstrap table -->
+    <script src="~/Scripts/bootstrap-table.js"></script>
 
 }
