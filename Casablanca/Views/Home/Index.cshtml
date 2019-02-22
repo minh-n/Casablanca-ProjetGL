@@ -95,11 +95,14 @@
 
 								<tr>
 
-									<td>
-										@HelperModel.FirstCharToUpper(DateTime.ParseExact(item.Month.ToString(), "MMMM", new CultureInfo("en-US")).ToString("MMMM"))
+                                    <td>
+                                        @if (!item.IsAdvance)
+                                        {
+                                            @HelperModel.FirstCharToUpper(DateTime.ParseExact(item.Month.ToString(), "MMMM", new CultureInfo("en-US")).ToString("MMMM"))
+                                            @item.Year
+                                        }
 
-										@item.Year
-									</td>
+                                    </td>
 
 									<td>
 										@HelperModel.ToString(item.Status, item.Treatment)

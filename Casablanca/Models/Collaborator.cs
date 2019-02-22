@@ -39,6 +39,8 @@ namespace Casablanca.Models {
 
         public virtual List<ExpenseReport> ExpenseReports { get; set; }
 
+        public float Balance { get; set; }
+
 		public Roles Role { get; set; }
 
 		// TODO : Autres attributs ? Jour de congés restants par exemple
@@ -60,6 +62,7 @@ namespace Casablanca.Models {
             this.Missions = new List<Mission>();
             this.Missions.Add(mission);
             this.ExpenseReports = new List<ExpenseReport>();
+            this.Balance = 0;
 			this.Role = Roles.USER;
 			this.NbPaid = 0;
 			this.NbRTT = 0;
@@ -75,6 +78,7 @@ namespace Casablanca.Models {
 			this.Missions = new List<Mission>();
 			this.Missions.Add(mission);
 			this.ExpenseReports = new List<ExpenseReport>();
+            this.Balance = 0;
 			this.Role = Roles.USER;
 			this.NbPaid = paid;
 			this.NbRTT = rtt;
@@ -88,6 +92,7 @@ namespace Casablanca.Models {
             this.Service = null;
             this.Missions = new List<Mission>();
             this.ExpenseReports = new List<ExpenseReport>();
+            this.Balance = 0;
 			this.Role = Roles.USER;
 			this.NbPaid = 0;
 			this.NbRTT = 0;
@@ -101,6 +106,7 @@ namespace Casablanca.Models {
             this.Service = null;
             this.Missions = new List<Mission>();
             this.ExpenseReports = new List<ExpenseReport>();
+            this.Balance = 0;
 			this.Role = Roles.USER;
 			this.NbPaid = 0;
 			this.NbRTT = 0;
@@ -114,6 +120,7 @@ namespace Casablanca.Models {
             this.Service = null;
             this.Missions = null;
             this.ExpenseReports = null;
+            this.Balance = 0;
 			this.Role = Roles.USER;
 			this.NbPaid = 0;
 			this.NbRTT = 0;

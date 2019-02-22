@@ -513,9 +513,9 @@ namespace Casablanca.Models.Database
 
 
         //Advances
-        public int CreateAdvance(Collaborator coll, Month month, int year, bool isAdvance)
+        public int CreateAdvance(Collaborator coll, bool isAdvance)
         {
-            ExpenseReport tempER = new ExpenseReport(coll, month, year, isAdvance);
+            ExpenseReport tempER = new ExpenseReport(coll, Month.NONE,1990, isAdvance);
             Db.ExpenseReports.Add(tempER);
             Db.SaveChanges();
             return tempER.Id;
@@ -538,18 +538,20 @@ namespace Casablanca.Models.Database
             return Db.ExpenseReports.SingleOrDefault(e => (e.Id == id && e.IsAdvance));
         }
 
-        public void TransferFromAdvanceToEr(int id)
+        public float TransferFromAdvanceToEr(int id)
         {
             List<ExpenseReport> advances = GetAdvances();
             ExpenseReport expenseReport = GetExpenseReport(id);
+            float estimatedCost = 0;
 
             foreach (ExpenseReport er in advances)
             {
                 foreach (ExpenseLine el in er.ExpenseLines.ToList())
                 {
-                    if (el.Validated && el.Mission.Status == MissionStatus.COMPLETED)
+                    if (el.Validated /*&& el.Mission.Status == MissionStatus.COMPLETED*/)
                     {
                         expenseReport.AddLine(el);
+                        estimatedCost += el.Cost;
                         er.RemoveLine(el);
                     }
                 }
@@ -560,6 +562,8 @@ namespace Casablanca.Models.Database
                     Db.SaveChanges();
                 }
             }
+
+            return estimatedCost;
         }
 
 

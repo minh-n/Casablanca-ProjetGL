@@ -33,9 +33,12 @@
                 {
                     <tr>
                         <td>
+                            @if(!item.IsAdvance)
+                            {
+                                @HelperModel.FirstCharToUpper(DateTime.ParseExact(item.Month.ToString(), "MMMM", new CultureInfo("en-US")).ToString("MMMM"))
+                                 @item.Year
+                            }
 
-                            @HelperModel.FirstCharToUpper(DateTime.ParseExact(item.Month.ToString(), "MMMM", new CultureInfo("en-US")).ToString("MMMM"))
-                            @item.Year
 
                         </td>
                         <td>@item.TotalCost</td>
@@ -177,10 +180,11 @@ else if (months.Count != 0)
                 {
                     <tr>
                         <td>
-
-                            @HelperModel.FirstCharToUpper(DateTime.ParseExact(item.Month.ToString(), "MMMM", new CultureInfo("en-US")).ToString("MMMM"))
-                            @item.Year
-
+                            @if (!item.IsAdvance)
+                            {
+                                @HelperModel.FirstCharToUpper(DateTime.ParseExact(item.Month.ToString(), "MMMM", new CultureInfo("en-US")).ToString("MMMM"))
+                                @item.Year
+                            }
                         </td>
                         <td>@item.TotalCost</td>
                         <td>@item.NbLines</td>

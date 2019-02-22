@@ -28,18 +28,30 @@
         <button class="btn btn-primary table-add">Ajouter une ligne de frais</button>
     </div>
 
-    @using (Html.BeginForm("UpdateExpenseReport", "ExpenseReport", FormMethod.Post)) {
+    @using (Html.BeginForm("UpdateExpenseReport", "ExpenseReport", FormMethod.Post))
+    {
         <div id="table" class="table-editable" data-toggle="table" data-search="true">
             <table class="table">
                 <thead>
                     <tr>
                         <th>Type de frais</th>
                         <th>Description&nbsp;</th>
-                        <th>Montant en €</th>
+                        @if (Model.ExpenseReport.IsAdvance)
+                        {
+                            <th>Montant estimé (€)</th>
+                        }
+                        else
+                        {
+                            <th>Montant en €</th>
+                        }
                         <th>Mission associée</th>
-                        <th>Date du frais</th>
+                        @if (!Model.ExpenseReport.IsAdvance)
+                        {
+                            <th>Date du frais</th>
+                        }
                         <th>Justificatif</th>
-                        @if (Model.ExpenseReport.Status == ExpenseReportStatus.REFUSED) {
+                        @if (Model.ExpenseReport.Status == ExpenseReportStatus.REFUSED)
+                        {
                             <th>Statut du frais</th>
                         }
                         <th>Supprimer</th>
@@ -49,23 +61,52 @@
                 <tbody>
                     @Html.HiddenFor(model => Model.ExpenseReport.Id)
 
-                    @for (int i = 0; i < nbEL; i++) {
+                    @for (int i = 0; i < nbEL; i++)
+                    {
                         <tr>
+                            @Html.HiddenFor(model => Model.ExpenseReport.ExpenseLines[i].IsAdvance)
+
                             <!--Type de frais-->
-                            <td>
-                                @Html.DropDownListFor(model => Model.ExpenseReport.ExpenseLines[i].Type,
-                                (LineType.GetValues(typeof(LineType))).Cast<LineType>().ToList().Select(type => new SelectListItem {
-                                    Text = type.ToString(),
-                                    Value = type.ToString(),
-                                    Selected = (type == Model.ExpenseReport.ExpenseLines[i].Type)
-                                }))
-                            </td>
+                            @if (!Model.ExpenseReport.IsAdvance && Model.ExpenseReport.ExpenseLines[i].IsAdvance)
+                            {
+                                <td>
+                                    @Html.DropDownListFor(model => Model.ExpenseReport.ExpenseLines[i].Type,
+                                    (LineType.GetValues(typeof(LineType))).Cast<LineType>().ToList().Select(type => new SelectListItem {
+                                        Text = type.ToString(),
+                                        Value = type.ToString(),
+                                        Selected = (type == Model.ExpenseReport.ExpenseLines[i].Type)
+                                    }), new { @disabled = "disabled" })
+                                    
+                                    @Html.HiddenFor(model => Model.ExpenseReport.Id)
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    @Html.DropDownListFor(model => Model.ExpenseReport.ExpenseLines[i].Type,
+                                    (LineType.GetValues(typeof(LineType))).Cast<LineType>().ToList().Select(type => new SelectListItem {
+                                        Text = type.ToString(),
+                                        Value = type.ToString(),
+                                        Selected = (type == Model.ExpenseReport.ExpenseLines[i].Type)
+                                    }))
+                                </td>
+                            }
+                            
 
                             <!--Description du frais-->
-                            <td>
-                                @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Description)
-                            </td>
+                            @if (!Model.ExpenseReport.IsAdvance && Model.ExpenseReport.ExpenseLines[i].IsAdvance)
+                            {
+                                <td>
 
+                                    @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Description, new {@readonly = "readonly"})
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Description)
+                                </td>
+                            }
                             <!--Montant -->
                             <td>
                                 @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Cost,
@@ -73,30 +114,52 @@
                             </td>
 
                             <!-- Mission -->
-                            <td>
-                                @Html.DropDownListFor(
-                                   model => Model.ExpenseReport.ExpenseLines[i].Mission.Id,
-                                   Model.CollaboratorMissions.Select(mission => new SelectListItem {
-                                        Text = mission.Text, Value = mission.Value, Selected =
-                                        (mission.Value == Model.ExpenseReport.ExpenseLines[i].Mission.Id.ToString())}))
-                            </td>
+                            @if (!Model.ExpenseReport.IsAdvance && Model.ExpenseReport.ExpenseLines[i].IsAdvance)
+                            {
+                                <td>
+                                    @Html.DropDownListFor(
+                                    model => Model.ExpenseReport.ExpenseLines[i].Mission.Id,
+                                    Model.CollaboratorMissions.Select(mission => new SelectListItem {
+                                        Text = mission.Text,
+                                        Value = mission.Value,
+                                        Selected = (mission.Value == Model.ExpenseReport.ExpenseLines[i].Mission.Id.ToString())}), new { @disabled = "disabled" })
+                                    
+                                    @Html.HiddenFor(model => Model.ExpenseReport.ExpenseLines[i].Mission.Id)
+                                </td>
+                            }
+                            else
+                            { 
+                                 <td>
+                                    @Html.DropDownListFor(
+                                    model => Model.ExpenseReport.ExpenseLines[i].Mission.Id,
+                                    Model.CollaboratorMissions.Select(mission => new SelectListItem {
+                                        Text = mission.Text,
+                                        Value = mission.Value,
+                                        Selected = (mission.Value == Model.ExpenseReport.ExpenseLines[i].Mission.Id.ToString())}))
+                                </td>
+                            }
+                           
 
                             <!-- Date de la ligne de frais -->
-							<td>
+                            @if (!Model.ExpenseReport.IsAdvance)
+                            {
+                                <td>
 
-								@{
-									@Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Date,
-									new {
-										@type = "date", @class = "form-control datepicker",
-										@Value = Model.ExpenseReport.ExpenseLines[i].Date.ToString("yyyy-MM-dd")
-										//@min = Model.ExpenseReport.ExpenseLines[i].Mission.StartDate.ToString("yyyy-MM-dd"),
-										//@max = Model.ExpenseReport.ExpenseLines[i].Mission.EndDate.ToString("yyyy-MM-dd")
-									})
-									
-								}
+                                    @{
+                                        @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Date,
+                                        new {
+                                            @type = "date", @class = "form-control datepicker",
+                                            @Value = Model.ExpenseReport.ExpenseLines[i].Date.ToString("yyyy-MM-dd")
+                                            //@min = Model.ExpenseReport.ExpenseLines[i].Mission.StartDate.ToString("yyyy-MM-dd"),
+                                            //@max = Model.ExpenseReport.ExpenseLines[i].Mission.EndDate.ToString("yyyy-MM-dd")
+                                        })
+
+                                    }
 
 
-							</td>
+                                </td>
+                            }
+
 
                             <!-- Justificatif TODO -->
                             <td>
@@ -106,25 +169,33 @@
                             </td>
 
                             <!-- Statut de la ligne de frais (uniquement quand l'ER a déjà été refusée) -->
-                            @if (Model.ExpenseReport.Status == ExpenseReportStatus.REFUSED) {
+                            @if (Model.ExpenseReport.Status == ExpenseReportStatus.REFUSED)
+                            {
                                 <td>
-                                    @if (Model.ExpenseReport.ExpenseLines[i].Treated == Treatment.COMPTA) {
-                                        if (Model.ExpenseReport.ExpenseLines[i].FinalValidation) {
+                                    @if (Model.ExpenseReport.ExpenseLines[i].Treated == Treatment.COMPTA)
+                                    {
+                                        if (Model.ExpenseReport.ExpenseLines[i].FinalValidation)
+                                        {
                                             <text>Validée compta</text>
                                         }
-                                        else {
+                                        else
+                                        {
                                             <text>Refusée compta</text>
                                         }
                                     }
-                                    else if (Model.ExpenseReport.ExpenseLines[i].Treated == Treatment.CDS) {
-                                        if (Model.ExpenseReport.ExpenseLines[i].Validated) {
+                                    else if (Model.ExpenseReport.ExpenseLines[i].Treated == Treatment.CDS)
+                                    {
+                                        if (Model.ExpenseReport.ExpenseLines[i].Validated)
+                                        {
                                             <text>Validée CDS</text>
                                         }
-                                        else {
+                                        else
+                                        {
                                             <text>Refusée CDS</text>
                                         }
                                     }
-                                    else {
+                                    else
+                                    {
                                         <text>Non traitée</text>
                                     }
                                 </td>
@@ -141,18 +212,35 @@
             </table>
         </div>
         @Html.HiddenFor(model => Model.SubmitValue)
-
-        <div style="padding:20px">
-            <button id="save-btn" type="submit" class="btn btn-primary">Sauvegarder la note de frais</button>
-        </div>
+        if (!Model.ExpenseReport.IsAdvance)
+        {
+            <div style="padding:20px">
+                <button id="save-btn" type="submit" class="btn btn-primary">Sauvegarder la note de frais</button>
+            </div>
+        }
+        else
+        {
+            <div style="padding:20px">
+                <button id="save-btn" type="submit" class="btn btn-primary">Sauvegarder l'avance</button>
+            </div>
+        }
         @Html.ValidationSummary("");
     }
 
-    <div id="informations">
-        <div>
-            Montant total de la note : <label id="montant">0</label> €
-        </div>
-    </div>
+     <div id="informations">
+        @if (!Model.ExpenseReport.IsAdvance)
+         {
+            <div>
+                Montant total de la note : <label id="montant">0</label> €
+            </div>
+        }
+        else
+        {
+            <div>
+                Montant total de l'avance : <label id="montant">0</label> €
+            </div>
+        }
+     </div>
 
     <!-- This is our clonable table line -->
     <table id="additionnalrow" hidden>
@@ -172,32 +260,37 @@
             <td>
                 @*@Html.DropDownListFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Mission.Id, Model.CollaboratorMissions)*@
                 @Html.DropDownListFor(
-									m => Model.ExpenseReport.ExpenseLines[nbEL].Mission.Id,
-									Model.CollaboratorMissions.Select
-									(mission =>
-										new SelectListItem {
-											Text = mission.Text,
-											Value = mission.Value,
-											Selected = (mission.Value == Model.CollaboratorMissions.FirstOrDefault().Value)
-										}
-									)
-				)
+                                    m => Model.ExpenseReport.ExpenseLines[nbEL].Mission.Id,
+                                    Model.CollaboratorMissions.Select
+                                    (mission =>
+                                        new SelectListItem {
+                                            Text = mission.Text,
+                                            Value = mission.Value,
+                                            Selected = (mission.Value == Model.CollaboratorMissions.FirstOrDefault().Value)
+                                        }
+                                    )
+                )
             </td>
-			<td>
-				@{
-					@Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Date,
-					new {
-						@type = "date", @class = "form-control datepicker",
-						@Value = Model.ExpenseReport.ExpenseLines[nbEL].Date.ToString("yyyy-MM-dd")
-					})
+            @if (!Model.ExpenseReport.IsAdvance)
+            {
+                <td>
+                    @{
+                        @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Date,
+                        new {
+                            @type = "date", @class = "form-control datepicker",
+                            @Value = Model.ExpenseReport.ExpenseLines[nbEL].Date.ToString("yyyy-MM-dd")
+                        })
 
-				}
-			</td>
+                    }
+                </td>
+            }
+
             <td>
-                @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Justificatory, new { type = "file", @Value = "", accept = ".pdf" }) 
+                @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Justificatory, new { type = "file", @Value = "", accept = ".pdf" })
                 <!-- by Yao -->
             </td>
-            @if (Model.ExpenseReport.Status == ExpenseReportStatus.REFUSED) {
+            @if (Model.ExpenseReport.Status == ExpenseReportStatus.REFUSED)
+            {
                 <td>
                     <text> TODO ???</text>
                 </td>

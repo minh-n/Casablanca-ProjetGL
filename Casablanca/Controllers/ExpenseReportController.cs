@@ -15,13 +15,15 @@ using System.IO;
 namespace Casablanca.Controllers {
     public class ExpenseReportController : Controller {
         private IDal dal;
+        private float EstimatedCost;
 
         public ExpenseReportController() : this(new Dal()) {
-
+            EstimatedCost = 0;
         }
 
         private ExpenseReportController(IDal dal) {
             this.dal = dal;
+            EstimatedCost = 0;
         }
 
         /* ############################################################
@@ -59,7 +61,7 @@ namespace Casablanca.Controllers {
 
             // Create the ER
             int returnedId = dal.CreateExpenseReport(coll, m, year,false);
-            dal.TransferFromAdvanceToEr(returnedId);
+            EstimatedCost = dal.TransferFromAdvanceToEr(returnedId);
 			string redirectString = "/ExpenseReport/UpdateExpenseReport/?id=" + returnedId;
 
 			return Redirect(redirectString);
@@ -73,17 +75,8 @@ namespace Casablanca.Controllers {
 
             Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
 
-            // Compute year
-            string month = Request.Form["monthName"].ToString();
-            int year = DateTime.Now.Year;
-            if (month != DateTime.Now.ToString("MMMM") && month == new CultureInfo("en-US").DateTimeFormat.GetMonthName(12).ToUpper())
-                year = DateTime.Now.Year - 1;
-
-            // Compute month
-            Enum.TryParse(month, out Month m);
-
-            // Create the ER
-            int returnedId = dal.CreateAdvance(coll, m, year, true);
+            // Create the Advance
+            int returnedId = dal.CreateAdvance(coll,true);
             string redirectString = "/ExpenseReport/UpdateExpenseReport/?id=" + returnedId;
 
             return Redirect(redirectString);
@@ -228,7 +221,8 @@ namespace Casablanca.Controllers {
                     ExpenseLine newEL = new ExpenseLine(dal.GetMission(el.Mission.Id), el.Type, el.Description, el.Cost, el.Date, el.Justificatory) {
                         Validated = false,
                         Treated = Treatment.NOT_TREATED,
-                        FinalValidation = false
+                        FinalValidation = false,
+                        IsAdvance = el.IsAdvance
                     };
 
                     if (current.IsAdvance)
@@ -410,6 +404,7 @@ namespace Casablanca.Controllers {
 
         [HttpPost] // Backend call from ProcessCDS page
         public ActionResult ProcessCDS(ProcessExpenseLineVM model) {
+
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                 return Redirect("/Home/Index");
 
@@ -497,6 +492,9 @@ namespace Casablanca.Controllers {
 
         [HttpPost] // Backend call from ProcessCompta page
         public ActionResult ProcessCompta(ExpenseReport model) {
+
+            float finalCost = 0; //contains the final cost of advance lines
+
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                 return Redirect("/Home/Index");
 
@@ -531,6 +529,20 @@ namespace Casablanca.Controllers {
             if (allValidated)
             {
                 er.Status = ExpenseReportStatus.APPROVED;
+
+                //Compute the collaborator's balance
+                if (!er.IsAdvance)
+                {
+                    foreach (ExpenseLine el in er.ExpenseLines)
+                    {
+                        if (el.IsAdvance)
+                            finalCost += el.Cost;
+                    }
+
+                    //coll.Balance += (EstimatedCost - finalCost);
+                    er.Collaborator.Balance += (EstimatedCost - finalCost);
+                }
+                
                 //send a notification
                 dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.EXPENSE, NotificationResult.VALIDATION));
             }
@@ -586,6 +598,9 @@ namespace Casablanca.Controllers {
 
         [HttpPost] // // Backend call from OneStepProcess page
         public ActionResult OneStepProcess(ExpenseReport model) {
+
+            float finalCost = 0;
+
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                 return Redirect("/Home/Index");
 
@@ -636,6 +651,20 @@ namespace Casablanca.Controllers {
             if (allValidated)
             {
                 er.Status = ExpenseReportStatus.APPROVED;
+
+                //Compute the collaborator's balance
+                if (!er.IsAdvance)
+                {
+                    foreach (ExpenseLine el in er.ExpenseLines)
+                    {
+                        if (el.IsAdvance)
+                            finalCost += el.Cost;
+                    }
+
+                    //coll.Balance += (EstimatedCost - finalCost);
+                    er.Collaborator.Balance += (EstimatedCost - finalCost);
+                }
+
                 //send a notification
                 dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.EXPENSE, NotificationResult.VALIDATION));
             }                

@@ -30,10 +30,10 @@ namespace Casablanca.Models.Database {
         void ClearExpenseLines(ExpenseReport er);
 
         // Advances
-        int CreateAdvance(Collaborator coll, Month month, int year, bool isAdvance);
+        int CreateAdvance(Collaborator coll, bool isAdvance);
         List<ExpenseReport> GetAdvances();
         ExpenseReport GetAdvance(int id);
-        void TransferFromAdvanceToEr(int id);
+        float TransferFromAdvanceToEr(int id);
 
         // Services
         List<Service> GetServices();
