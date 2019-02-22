@@ -66,21 +66,21 @@
 		<div class="jumbotron">
 
 
-			<b>Demi-journées de RTT restants : </b> @currentColl.NbRTT
+			<b>Journées de RTT restants : </b> @(currentColl.NbRTT * 0.5)
 			<br>
-			<b>Demi-journées de congés payés restants : </b> @currentColl.NbPaid
-			<br>
-			<br>
-
-			<b>Demi-journées de RTT en attente : </b> @HelperModel.GetNumberLeave(currentColl, LeaveStatus.PENDING_APPROVAL_1, LeaveStatus.PENDING_APPROVAL_2, LeaveType.RTT)
-			<br>
-			<b>Demi-journées de congés payés en attente : </b> @HelperModel.GetNumberLeave(currentColl, LeaveStatus.PENDING_APPROVAL_1, LeaveStatus.PENDING_APPROVAL_2, LeaveType.PAID)
+			<b>Journées de congés payés restants : </b> @(currentColl.NbPaid * 0.5)
 			<br>
 			<br>
 
-			<b>Demi-journées de RTT déjà pris : </b> @HelperModel.GetNumberLeave(currentColl, LeaveStatus.APPROVED, LeaveType.RTT)
+			<b>Journées de RTT en attente : </b> @(HelperModel.GetNumberLeave(currentColl, LeaveStatus.PENDING_APPROVAL_1, LeaveStatus.PENDING_APPROVAL_2, LeaveType.RTT) * 0.5)
 			<br>
-			<b>Demi-journées de congés payés déjà pris : </b> @HelperModel.GetNumberLeave(currentColl, LeaveStatus.APPROVED, LeaveType.PAID)
+			<b>Journées de congés payés en attente : </b> @(HelperModel.GetNumberLeave(currentColl, LeaveStatus.PENDING_APPROVAL_1, LeaveStatus.PENDING_APPROVAL_2, LeaveType.PAID)*0.5)
+			<br>
+			<br>
+
+			<b>Journées de RTT déjà pris : </b> @(HelperModel.GetNumberLeave(currentColl, LeaveStatus.APPROVED, LeaveType.RTT)*0.5)
+			<br>
+			<b>Journées de congés payés déjà pris : </b> @(HelperModel.GetNumberLeave(currentColl, LeaveStatus.APPROVED, LeaveType.PAID)*0.5)
 			<br>
 
 		</div>
@@ -113,9 +113,9 @@
 						<tr>
 							<th scope="col" data-field="description" data-sortable="true">Description</th>
 							<th scope="col" data-field="type" data-sortable="true">Type</th>
-							<th scope="col" data-field="begin" data-sortable="true">Date de début</th>
-							<th scope="col" data-field="end" data-sortable="true">Date de fin</th>
-							<th scope="col" data-field="demijour" data-sortable="true">Nb demi-journées</th>
+							<th scope="col" data-field="begin" data-sortable="true">Date début</th>
+							<th scope="col" data-field="end" data-sortable="true">Date fin</th>
+							<th scope="col" data-field="demijour" data-sortable="true">Journées</th>
 							<th scope="col" data-field="status" data-sortable="true">Statut</th>
 							<th scope="col" data-field="action" data-sortable="false">Action</th>
 						</tr>
@@ -139,7 +139,7 @@
 									@item.EndMorningOrAfternoon
 								</td>
 								<td>
-									@item.ComputeLengthLeave()
+									@(item.ComputeLengthLeave() * 0.5)
 								</td>
 								<td>
 									@HelperModel.ToString(item.Status, item.Treatment)
@@ -155,7 +155,7 @@
 						@Html.ActionLink("Annuler", "RemoveLeave", "Leave", new { id = item.Id }, null)
 									}
 
-									<!--TODO ! Modifier ou supprimer la note ?-->
+									<!--TODO ! Modifier ou supprimer la note ? c'est bon je pense-->
 									@*@if ((item.Status == LeaveStatus.PENDING_APPROVAL_1) | (item.Status == LeaveStatus.PENDING_APPROVAL_2))*@
 
 								</td>

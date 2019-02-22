@@ -27,9 +27,9 @@ namespace Casablanca.Models.ViewModel
 
 		public CalendarVM(Leave leave, char gr)
 		{
-			Title =  leave.Collaborator.LastName + " ("+  leave.Collaborator.Service.Name +  ") - " + leave.Type.ToString(); //Name (Service) - LeaveType
+			Title =  leave.Collaborator.LastName; // + " ("+  leave.Collaborator.Service.Name +  ") - " + leave.Type.ToString() Name (Service) - LeaveType
 			Desc = "Du " + leave.StartDate.ToString("dd/MM/yyyy") + " au " + leave.EndDate.ToString("dd/MM/yyyy") +
-				"<br>Demi-journées : " + leave.ComputeLengthLeave() +
+				"<br>Journées : " + leave.ComputeLengthLeave() +
 				"<br>(" + leave.Description + ")";
 
 			Start_Date = leave.StartDate.ToString("yyyy-MM-dd");
