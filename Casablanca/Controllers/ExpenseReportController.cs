@@ -15,15 +15,12 @@ using System.IO;
 namespace Casablanca.Controllers {
     public class ExpenseReportController : Controller {
         private IDal dal;
-        private float EstimatedCost;
 
         public ExpenseReportController() : this(new Dal()) {
-            EstimatedCost = 0;
         }
 
         private ExpenseReportController(IDal dal) {
             this.dal = dal;
-            EstimatedCost = 0;
         }
 
         /* ############################################################
@@ -61,7 +58,7 @@ namespace Casablanca.Controllers {
 
             // Create the ER
             int returnedId = dal.CreateExpenseReport(coll, m, year,false);
-            EstimatedCost = dal.TransferFromAdvanceToEr(returnedId);
+            dal.TransferFromAdvanceToEr(returnedId);
 			string redirectString = "/ExpenseReport/UpdateExpenseReport/?id=" + returnedId;
 
 			return Redirect(redirectString);
@@ -542,7 +539,9 @@ namespace Casablanca.Controllers {
                     }
 
                     //coll.Balance += (EstimatedCost - finalCost);
-                    er.Collaborator.Balance += (EstimatedCost - finalCost);
+                    er.Collaborator.Balance += (finalCost - er.Collaborator.AdvanceCost);
+                    er.Collaborator.AdvanceCost = 0;
+
                 }
                 
                 //send a notification
@@ -664,7 +663,8 @@ namespace Casablanca.Controllers {
                     }
 
                     //coll.Balance += (EstimatedCost - finalCost);
-                    er.Collaborator.Balance += (EstimatedCost - finalCost);
+                    er.Collaborator.Balance += (finalCost - er.Collaborator.AdvanceCost);
+                    er.Collaborator.AdvanceCost = 0;
                 }
 
                 //send a notification

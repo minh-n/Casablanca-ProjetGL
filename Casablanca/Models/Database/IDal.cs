@@ -33,7 +33,7 @@ namespace Casablanca.Models.Database {
         int CreateAdvance(Collaborator coll, bool isAdvance);
         List<ExpenseReport> GetAdvances();
         ExpenseReport GetAdvance(int id);
-        float TransferFromAdvanceToEr(int id);
+        void TransferFromAdvanceToEr(int id);
 
         // Services
         List<Service> GetServices();

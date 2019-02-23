@@ -40,6 +40,7 @@ namespace Casablanca.Models {
         public virtual List<ExpenseReport> ExpenseReports { get; set; }
 
         public float Balance { get; set; }
+        public float AdvanceCost { get; set; }
 
 		public Roles Role { get; set; }
 

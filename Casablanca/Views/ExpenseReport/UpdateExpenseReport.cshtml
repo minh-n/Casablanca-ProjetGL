@@ -111,6 +111,8 @@
                             <td>
                                 @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Cost,
                                     new { @class = "required numeric", Value = String.Format("{0:}", Model.ExpenseReport.ExpenseLines[i].Cost) })
+
+                                @Html.HiddenFor(model => Model.ExpenseReport.ExpenseLines[i].Cost, new { @Value = "@Model.ExpenseReport.ExpenseLines[i].Cost" })
                             </td>
 
                             <!-- Mission -->
