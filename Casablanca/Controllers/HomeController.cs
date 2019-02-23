@@ -30,7 +30,7 @@ namespace Casablanca.Controllers
 		//}
 
 
-		public ActionResult UserProfile(int id)
+		public ActionResult UserProfile(int id = 0)
 		{
 			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
 				return Redirect("/Home/Index");
@@ -69,7 +69,9 @@ namespace Casablanca.Controllers
 			return View(model);
         }
 
-        public ActionResult CollaboratorView(int id)
+
+		//Obsolete ?
+        public ActionResult CollaboratorView(int id = 0)
         {
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                 return Redirect("/Home/Index");
