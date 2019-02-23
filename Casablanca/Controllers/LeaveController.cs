@@ -457,6 +457,7 @@ namespace Casablanca.Controllers
                             if (c.Role == Roles.CHIEF && c.Service.Name.Contains("Direction"))
                             {
                                 dal.AddNotification(new Notification(tempToDb.Collaborator, c, NotificationType.LEAVE));
+                                break;
                             }
                         }
                     }
@@ -467,6 +468,7 @@ namespace Casablanca.Controllers
                             if (c.Role == Roles.CHIEF && c.Service.Name.Contains("RH"))
                             {
                                 dal.AddNotification(new Notification(tempToDb.Collaborator, c, NotificationType.LEAVE));
+                                break;
                             }
                         }
                     }

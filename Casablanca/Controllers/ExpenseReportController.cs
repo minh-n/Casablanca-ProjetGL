@@ -435,7 +435,7 @@ namespace Casablanca.Controllers {
                         el.Treated = Treatment.CDS;
                     }
                 }
-            }
+            }                                
 
             if (allValidatedInProcessed) {
                 // Check if all EL in ER are validated
@@ -458,13 +458,15 @@ namespace Casablanca.Controllers {
                             dal.AddNotification(new Notification(er.Collaborator, c, NotificationType.EXPENSE));
                         }
                     }
-                }                    
+                }
+                else
+                    dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.EXPENSE, NotificationResult.VALIDATION));
             }
             else {
                 er.Status = ExpenseReportStatus.REFUSED; // We refused one or several lines     
 
                 //send a notification
-                dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.EXPENSE, NotificationResult.REFUSAL, "Votre note de frais a été refusé par au moins un chef de service"));
+                dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.EXPENSE, NotificationResult.REFUSAL));
             }
 
             dal.SaveChanges();

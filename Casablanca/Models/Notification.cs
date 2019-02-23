@@ -81,7 +81,7 @@ namespace Casablanca.Models
             Receiver = receiver;
             NotifStatus = NotificationStatus.UNREAD;
             NotifType = notifType;
-            NotifManage = NotificationManage.MANAGE;
+            NotifManage = NotificationManage.RESULT;
             NotifResult = notifResult;
             NotifContent = notifContent;
         }
@@ -96,15 +96,7 @@ namespace Casablanca.Models
             {
                 if (NotifResult != NotificationResult.RECALL)
                 {
-                    if(NotifType == NotificationType.EXPENSE)
-                    {
-                        if(NotifResult == NotificationResult.VALIDATION)
-                            NotifContent = "Votre note de frais est validée";
-                        else if(NotifResult == NotificationResult.REFUSAL)
-                            NotifContent = "Votre note de frais est refusée";
-                    }
-                    else
-                        NotifContent = Transmitter.FirstName.ToString() + " " + Transmitter.LastName.ToString() + " a " + ToString(NotifResult) + " votre " + ToString(NotifType);
+                    NotifContent = Transmitter.FirstName.ToString() + " " + Transmitter.LastName.ToString() + " a " + ToString(NotifResult) + " votre " + ToString(NotifType);
                 }
                 else
                 {

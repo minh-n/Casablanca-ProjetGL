@@ -131,20 +131,40 @@ namespace Casablanca.Controllers
 
             dal.SaveChanges();
 
-            switch (notif.NotifType)
+            if(notif.NotifManage == NotificationManage.MANAGE)
             {
-                case NotificationType.ADVANCE:
-                    //TODO
-                    return Redirect("/ExpenseReport/Index");
-                case NotificationType.EXPENSE:
-                    return Redirect("/ExpenseReport/ProcessList");
-                case NotificationType.INFORMATION:
-                    return Redirect("/Home/Contact");
-                case NotificationType.LEAVE:
-                    return Redirect("/Leave/ProcessList");
-                default:
-                    return Redirect("/Home/Index");
+                switch (notif.NotifType)
+                {
+                    case NotificationType.ADVANCE:
+                        //TODO
+                        return Redirect("/ExpenseReport/Index");
+                    case NotificationType.EXPENSE:
+                        return Redirect("/ExpenseReport/ProcessList");
+                    case NotificationType.INFORMATION:
+                        return Redirect("/Home/Contact");
+                    case NotificationType.LEAVE:
+                        return Redirect("/Leave/ProcessList");
+                    default:
+                        return Redirect("/Home/Index");
+                }
             }
+            else
+            {
+                switch (notif.NotifType)
+                {
+                    case NotificationType.ADVANCE:
+                        //TODO
+                        return Redirect("/ExpenseReport/Index");
+                    case NotificationType.EXPENSE:
+                        return Redirect("/ExpenseReport/Index");
+                    case NotificationType.INFORMATION:
+                        return Redirect("/Home/Contact");
+                    case NotificationType.LEAVE:
+                        return Redirect("/Leave/Index");
+                    default:
+                        return Redirect("/Home/Index");
+                }
+            }            
         }
 
         [HttpPost]
