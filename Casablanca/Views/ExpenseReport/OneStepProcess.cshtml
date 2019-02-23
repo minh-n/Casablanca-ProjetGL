@@ -1,53 +1,79 @@
 ﻿@using Casablanca.Models.ExpenseReports
 
 @{
-	ViewBag.Title = "Traitement spécial";
+    ViewBag.Title = "Traitement spécial";
 }
 
 @model ExpenseReport
 
 @{
-	int nbEL = Model.ExpenseLines.Count;
+    int nbEL = Model.ExpenseLines.Count;
 }
 
 <h2 class="text-left">
-	Note de frais du collaborateur @Model.Collaborator.FirstName  @Model.Collaborator.LastName
+    Note de frais du collaborateur @Model.Collaborator.FirstName  @Model.Collaborator.LastName
 </h2>
 
 @using (Html.BeginForm("OneStepProcess", "ExpenseReport", FormMethod.Post))
 {
-	<div class="table-responsive">
-		<table class="table">
-			<thead>
-				<tr>
-					<th>Type de frais</th>
-					<th>Description</th>
-					<th>Montant</th>
-					<th>Mission associée</th>
-					<th>Date</th>
-					<th>Justificatif</th>
-					<th>Valider</th>
-				</tr>
-			</thead>
-			<tbody>
-				@Html.HiddenFor(model => Model.Id)
+    <div class="table-responsive">
+        <div id="checkboxes">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Type de frais</th>
+                        <th>Description</th>
+                        <th>Montant</th>
+                        <th>Mission associée</th>
+                        <th>Date</th>
+                        <th>Justificatif</th>
+                        <th>Valider <input type="checkbox" id="checkall" /></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @Html.HiddenFor(model => Model.Id)
 
-				@for (int i = 0; i < nbEL; i++)
-				{
-					<tr>
-						@Html.HiddenFor(model => Model.ExpenseLines[i].Id)
-						<td>@Model.ExpenseLines[i].Type</td>
-						<td>@Model.ExpenseLines[i].Description</td>
-						<td>@Model.ExpenseLines[i].Cost €</td>
-						<td>@Model.ExpenseLines[i].Mission.Name</td>
-						<td>@Model.ExpenseLines[i].Date.ToString("dd/MM/yyyy")</td>
-						<td>@Model.ExpenseLines[i].Justificatory</td>
-						<td>@Html.CheckBoxFor(model => Model.ExpenseLines[i].FinalValidation)</td>
-					</tr>
-				}
-			</tbody>
-		</table>
-	</div>
+                    @for (int i = 0; i < nbEL; i++)
+                    {
+                        <tr>
+                            @Html.HiddenFor(model => Model.ExpenseLines[i].Id)
+                            <td>@Model.ExpenseLines[i].Type</td>
+                            <td>@Model.ExpenseLines[i].Description</td>
+                            <td>@Model.ExpenseLines[i].Cost €</td>
+                            <td>@Model.ExpenseLines[i].Mission.Name</td>
+                            <td>@Model.ExpenseLines[i].Date.ToString("dd/MM/yyyy")</td>
+                            <td>@Model.ExpenseLines[i].Justificatory</td>
+                            <td>@Html.CheckBoxFor(model => Model.ExpenseLines[i].FinalValidation)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-	<button id="save-btn" type="submit" class="btn btn-primary">Terminer la validation</button>
+    <button id="save-btn" type="submit" class="btn btn-primary">Terminer la validation</button>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script type="text/javascript">
+
+        function toggleChecked(status) {
+            $("#checkboxes input").each(function () {
+                // Set the checked status of each to match the
+                // checked status of the check all checkbox:
+                $(this).prop("checked", status);
+            });
+        }
+
+        $(document).ready(function () {
+            // Attach the call to toggleChecked to the
+            // click event of the global checkbox:
+            $("#checkall").click(function () {
+                var status = $("#checkall").prop('checked');
+                toggleChecked(status);
+            });
+        });
+    </script>
 }
