@@ -183,39 +183,71 @@ namespace Casablanca.Controllers
 				EndMorningOrAfternoon = model.EndMorningOrAfternoon,
 				Treatment = HelperModel.ComputeTreatmentLeave(coll)
 			};
+			
 
-            int leaveLength = tempToDb.ComputeLengthLeave();
-			// if leave length inferior to available leave (for RTT and for PAID), allow the creation
-			if ((leaveLength <= coll.NbPaid) && tempToDb.Type == LeaveType.PAID && leaveLength > 0)
+			if (!HasLeaveOverlap(tempToDb)) //check if there's no leaves falling on the same date
 			{
-				coll.NbPaid -= leaveLength;
-				dal.CreateLeave(tempToDb);
-				SendNotificationHelp(tempToDb);
-				dal.SaveChanges();
+				int leaveLength = tempToDb.ComputeLengthLeave();
+				// if leave length inferior to available leave (for RTT and for PAID), allow the creation
+				if ((leaveLength <= coll.NbPaid) && tempToDb.Type == LeaveType.PAID && leaveLength > 0)
+				{
+					coll.NbPaid -= leaveLength;
+					dal.CreateLeave(tempToDb);
+					SendNotificationHelp(tempToDb);
+					dal.SaveChanges();
+				}
+				else if ((leaveLength <= coll.NbRTT) && tempToDb.Type == LeaveType.RTT && leaveLength > 0)
+				{
+					coll.NbRTT -= leaveLength;
+					dal.CreateLeave(tempToDb);
+					SendNotificationHelp(tempToDb);
+					dal.SaveChanges();
+				}
+				else if (tempToDb.Type == LeaveType.OTHER && leaveLength > 0) //in that case, we don't check the number of remaining days (sick leave etc)
+				{
+					dal.CreateLeave(tempToDb);
+					SendNotificationHelp(tempToDb);
+					dal.SaveChanges();
+				}
+				else // the user doesn't have enough leave days available, either for RTT or PAID
+				{
+					// Error alert to the coll. The leave is not saved into the database. 
+					TempData["alertMessage"] = "Le congé n'a pas pu être créé.";
+					return View(model);
+				}
 			}
-			else if ((leaveLength <= coll.NbRTT) && tempToDb.Type == LeaveType.RTT && leaveLength > 0)
-			{
-				coll.NbRTT -= leaveLength;
-				dal.CreateLeave(tempToDb);
-				SendNotificationHelp(tempToDb);
-				dal.SaveChanges();
-			}
-			else if (tempToDb.Type == LeaveType.OTHER && leaveLength > 0) //in that case, we don't check the number of remaining days (sick leave etc)
-			{
-				dal.CreateLeave(tempToDb);
-				SendNotificationHelp(tempToDb);
-				dal.SaveChanges();
-			}
-			else // the user doesn't have enough leave days available, either for RTT or PAID
+			else
 			{
 				// Error alert to the coll. The leave is not saved into the database. 
-				TempData["alertMessage"] = "Le congé n'a pas pu être créé.";
+				TempData["alertMessage"] = "Le congé n'a pas pu être créé. Un congé existe déjà pour le même intervalle.";
 				return View(model);
 			}
-
+			
 			return Redirect("/Leave/Index");
 
 		}
+
+		public bool HasLeaveOverlap(Leave currentLeave)
+		{
+
+			bool overlap = false;
+
+			foreach (Leave l in dal.GetLeaves())
+			{
+				if(l.Collaborator.Id == currentLeave.Collaborator.Id)
+				{
+					overlap = currentLeave.StartDate <= l.EndDate && l.StartDate <= currentLeave.EndDate;
+
+					if (overlap == true)
+					{
+						return overlap;
+					}
+				}
+			}
+
+			return overlap;
+		}
+
 
 
 		#endregion
@@ -440,7 +472,6 @@ namespace Casablanca.Controllers
 
 
 		#endregion
-
 
         public void SendNotificationHelp(Leave tempToDb)
         {

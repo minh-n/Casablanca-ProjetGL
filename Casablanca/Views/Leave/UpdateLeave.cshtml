@@ -122,6 +122,47 @@
 	<div class="col-lg-6">
 
 		<hr />
+
+		<div>
+
+			<div id="calendar"></div> <!-- FULL CALENDAR -->
+			@*/* Groups :
+			*  1 : own leaves
+			*  2 : own service's leaves (only accepted)
+			*  3 : own service's leaves (every states)
+			*
+			*  4 : every other leaves.
+
+
+
+				A solution would be : remove the All selector. This way, a leave can be added several times under different group labels.
+			*/*@
+			<div style="padding:10px">
+				<select id="cal_selector">
+					<option value="all">Toutes les demandes </option>
+					<option value="1">Demandes personnelles</option>
+
+					@if (!HelperModel.CheckManagement(currentColl))
+					{
+						<option value="2"> Demandes validées de mon service</option>
+					}
+
+					@if (HelperModel.CheckCDS(currentColl) && !HelperModel.CheckRH(currentColl))
+					{
+						<option value="3">Toutes les demandes de mon service</option>
+					}
+				</select>
+			</div>
+
+
+
+
+
+
+			<p style="padding:20px">TODO : légende des couleurs.</p>
+
+
+		</div>
 		<div class="jumbotron">
 
 
