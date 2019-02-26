@@ -136,8 +136,7 @@ namespace Casablanca.Controllers
                 switch (notif.NotifType)
                 {
                     case NotificationType.ADVANCE:
-                        //TODO
-                        return Redirect("/ExpenseReport/Index");
+                        return Redirect("/ExpenseReport/AdvanceProcessList");
                     case NotificationType.EXPENSE:
                         return Redirect("/ExpenseReport/ProcessList");
                     case NotificationType.INFORMATION:
@@ -153,7 +152,6 @@ namespace Casablanca.Controllers
                 switch (notif.NotifType)
                 {
                     case NotificationType.ADVANCE:
-                        //TODO
                         return Redirect("/ExpenseReport/Index");
                     case NotificationType.EXPENSE:
                         return Redirect("/ExpenseReport/Index");

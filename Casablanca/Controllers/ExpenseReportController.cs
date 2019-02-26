@@ -107,7 +107,15 @@ namespace Casablanca.Controllers {
                 case Roles.USER:
                     if (coll.Service.Name.Contains("Compta"))
                     {
-                        dal.AddNotification(new Notification(coll, dal.GetCollaborator(coll.Service.GetChiefFromService()), NotificationType.EXPENSE));
+                        if (er.IsAdvance)
+                        {
+                            dal.AddNotification(new Notification(coll, dal.GetCollaborator(coll.Service.GetChiefFromService()), NotificationType.ADVANCE));
+                        }
+                        else
+                        {
+                            dal.AddNotification(new Notification(coll, dal.GetCollaborator(coll.Service.GetChiefFromService()), NotificationType.EXPENSE));
+                        }
+                        
                     }
                     else
                     {
@@ -121,7 +129,15 @@ namespace Casablanca.Controllers {
 
                         foreach(Collaborator c in tmp)
                         {
-                            dal.AddNotification(new Notification(coll, c, NotificationType.EXPENSE));
+                            if (er.IsAdvance)
+                            {
+                                dal.AddNotification(new Notification(coll, c, NotificationType.ADVANCE));
+                            }
+                            else
+                            {
+                                dal.AddNotification(new Notification(coll, c, NotificationType.EXPENSE));
+                            }
+                            
                         }                        
                     }                        
                     break;
@@ -132,7 +148,15 @@ namespace Casablanca.Controllers {
                         {
                             if (c.Role == Roles.CHIEF && c.Service.Name.Contains("Direction"))
                             {
-                                dal.AddNotification(new Notification(coll, c, NotificationType.EXPENSE));
+                                if (er.IsAdvance)
+                                {
+                                    dal.AddNotification(new Notification(coll, c, NotificationType.ADVANCE));
+                                }
+                                else
+                                {
+                                    dal.AddNotification(new Notification(coll, c, NotificationType.EXPENSE));
+                                }
+                                
                             }
                         }
                     }
@@ -142,7 +166,15 @@ namespace Casablanca.Controllers {
                         {
                             if (c.Role == Roles.CHIEF && c.Service.Name.Contains("Compta"))
                             {
-                                dal.AddNotification(new Notification(coll, c, NotificationType.EXPENSE));
+                                if (er.IsAdvance)
+                                {
+                                    dal.AddNotification(new Notification(coll, c, NotificationType.ADVANCE));
+                                }
+                                else
+                                {
+                                    dal.AddNotification(new Notification(coll, c, NotificationType.EXPENSE));
+                                }
+                                
                             }
                         }
                     }
@@ -152,7 +184,15 @@ namespace Casablanca.Controllers {
                         {
                             if (c.Role != Roles.CHIEF && c.Service.Name.Contains("Compta"))
                             {
-                                dal.AddNotification(new Notification(coll, c, NotificationType.EXPENSE));
+                                if (er.IsAdvance)
+                                {
+                                    dal.AddNotification(new Notification(coll, c, NotificationType.ADVANCE));
+                                }
+                                else
+                                {
+                                    dal.AddNotification(new Notification(coll, c, NotificationType.EXPENSE));
+                                }
+                                
                             }
                         }
                     }
@@ -544,24 +584,58 @@ namespace Casablanca.Controllers {
                     er.Status = ExpenseReportStatus.PENDING_APPROVAL_2;
 
                     //send notifications
-                    dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.EXPENSE, NotificationResult.VALIDATION, "Votre note de frais est validée par le(s) chef(s) de service concerné(s)"));
+                    if (er.IsAdvance)
+                    {
+                        dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.ADVANCE, NotificationResult.VALIDATION, "Votre demande d'avances est validée par le(s) chef(s) de service concerné(s)"));
+                    }
+                    else
+                    {
+                        dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.EXPENSE, NotificationResult.VALIDATION, "Votre note de frais est validée par le(s) chef(s) de service concerné(s)"));
+                    }
+                    
 
                     foreach (Collaborator c in dal.GetCollaborators())
                     {
                         if (c.Role != Roles.CHIEF && c.Service.Name.Contains("Compta"))
                         {
-                            dal.AddNotification(new Notification(er.Collaborator, c, NotificationType.EXPENSE));
+                            if (er.IsAdvance)
+                            {
+                                dal.AddNotification(new Notification(er.Collaborator, c, NotificationType.ADVANCE));
+                            }
+                            else
+                            {
+                                dal.AddNotification(new Notification(er.Collaborator, c, NotificationType.EXPENSE));
+                            }
+                            
                         }
                     }
                 }
                 else
-                    dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.EXPENSE, NotificationResult.VALIDATION));
+                {
+                    if (er.IsAdvance)
+                    {
+                        dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.ADVANCE, NotificationResult.VALIDATION));
+                    }
+                    else
+                    {
+                        dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.EXPENSE, NotificationResult.VALIDATION));
+                    }
+                }
+                    
             }
             else {
                 er.Status = ExpenseReportStatus.REFUSED; // We refused one or several lines     
 
                 //send a notification
-                dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.EXPENSE, NotificationResult.REFUSAL));
+                if (er.IsAdvance)
+                {
+                    dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.ADVANCE, NotificationResult.REFUSAL));
+                }
+                else
+                {
+                    dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.EXPENSE, NotificationResult.REFUSAL));
+                }
+               
             }
 
             dal.SaveChanges();
@@ -648,16 +722,32 @@ namespace Casablanca.Controllers {
                     er.Collaborator.AdvanceCost = 0;
 
                 }
-                
+
                 //send a notification
-                dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.EXPENSE, NotificationResult.VALIDATION));
+                if (er.IsAdvance)
+                {
+                    dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.ADVANCE, NotificationResult.VALIDATION));
+                }
+                else
+                {
+                    dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.EXPENSE, NotificationResult.VALIDATION));
+                }
             }
+                
             else
             {
                 er.Status = ExpenseReportStatus.REFUSED;    // We refused one or several lines 
                 //send a notification
-                dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.EXPENSE, NotificationResult.REFUSAL));
+                if (er.IsAdvance)
+                {
+                    dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.ADVANCE, NotificationResult.REFUSAL));
+                }
+                else
+                {
+                    dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.EXPENSE, NotificationResult.REFUSAL));
+                }
             }
+                
 
             dal.SaveChanges();
 
@@ -780,13 +870,29 @@ namespace Casablanca.Controllers {
                 }
 
                 //send a notification
-                dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.EXPENSE, NotificationResult.VALIDATION));
+                if (er.IsAdvance)
+                {
+                    dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.ADVANCE, NotificationResult.VALIDATION));
+                }
+                else
+                {
+                    dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.EXPENSE, NotificationResult.VALIDATION));
+                }
+                
             }                
             else
             {
                 er.Status = ExpenseReportStatus.REFUSED;    // We refused one or several lines 
                 //send a notification
-                dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.EXPENSE, NotificationResult.REFUSAL));
+                if (er.IsAdvance)
+                {
+                    dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.ADVANCE, NotificationResult.REFUSAL));
+                }
+                else
+                {
+                    dal.AddNotification(new Notification(coll, er.Collaborator, NotificationType.EXPENSE, NotificationResult.REFUSAL));
+                }
+                
             }                 
 
             dal.SaveChanges();
