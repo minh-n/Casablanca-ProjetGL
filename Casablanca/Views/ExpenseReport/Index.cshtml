@@ -10,7 +10,7 @@
 
 @model List<ExpenseReport>
 
-<h2 class="text-left">Notes de frais en cours (non envoyées ou refusées)</h2>
+<h2 class="text-left">Notes de frais & Avances en cours (non envoyées ou refusées)</h2>
 <div class="table-responsive">
     <table class="table"
            id="table"
@@ -38,8 +38,10 @@
                                 @HelperModel.FirstCharToUpper(DateTime.ParseExact(item.Month.ToString(), "MMMM", new CultureInfo("en-US")).ToString("MMMM"))
                                  @item.Year
                             }
-
-
+                            else
+                            {
+                                <text> Avance </text>
+                            }
                         </td>
                         <td>@item.TotalCost</td>
                         <td>@item.NbLines</td>
@@ -137,11 +139,6 @@ else if (months.Count != 0)
         {
             <div style="margin-left:15px">
                 <button class="btn btn-primary" type="submit" style="margin-right:10px">Créer une avance de note de frais</button>
-                @*@Html.DropDownList("monthName", months.Select(month => new SelectListItem
-           {
-               Text = HelperModel.FirstCharToUpper(DateTime.ParseExact(month, "MMMM", new CultureInfo("en-US")).ToString("MMMM")),
-               Value = month
-           }))*@
                 @Html.ValidationSummary("")
             </div>
         }
@@ -157,7 +154,7 @@ else if (months.Count != 0)
 
 
 
-<h2 class="text-left">Notes de frais approuvées</h2>
+<h2 class="text-left">Notes de frais & Avances approuvées</h2>
 <div class="table-responsive">
     <table class="table"
            id="table"
@@ -184,6 +181,10 @@ else if (months.Count != 0)
                             {
                                 @HelperModel.FirstCharToUpper(DateTime.ParseExact(item.Month.ToString(), "MMMM", new CultureInfo("en-US")).ToString("MMMM"))
                                 @item.Year
+                            }
+                            else
+                            {
+                                <text> Avance </text>
                             }
                         </td>
                         <td>@item.TotalCost</td>

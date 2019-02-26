@@ -430,12 +430,6 @@
     <Content Include="Views\Leave\ProcessList.cshtml" />
     <Content Include="Views\Leave\UpdateLeave.cshtml" />
     <Content Include="Views\Leave\ViewLeave.cshtml" />
-    <Content Include="Views\Advance\OneStepProcess.cshtml" />
-    <Content Include="Views\Advance\ProcessCDS.cshtml" />
-    <Content Include="Views\Advance\ProcessCompta.cshtml" />
-    <Content Include="Views\Advance\ProcessList.cshtml" />
-    <Content Include="Views\Advance\UpdateAdvance.cshtml" />
-    <Content Include="Views\Advance\ViewAdvance.cshtml" />
     <Content Include="Views\Mission\ViewMission.cshtml" />
     <Content Include="Views\Service\Index.cshtml" />
     <Content Include="Views\Admin\CreateService.cshtml" />
@@ -443,11 +437,11 @@
     <Content Include="Views\JustificatoryUpload\Index.cshtml" />
     <Content Include="Views\Notification\Index.cshtml" />
     <Content Include="Views\Notification\EditorTemplates\SelectNotificationEditorVM.cshtml" />
+    <Content Include="Views\ExpenseReport\AdvanceHistoryList.cshtml" />
+    <Content Include="Views\ExpenseReport\AdvanceProcessList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\UploadedFiles\" />
-    <Folder Include="Views\Notification\" />
-    <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

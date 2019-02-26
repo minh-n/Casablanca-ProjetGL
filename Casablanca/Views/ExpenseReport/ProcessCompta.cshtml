@@ -10,9 +10,18 @@
     int nbEL = Model.ExpenseLines.Count;
 }
 
-<h2 class="text-left">
-    Note de frais du collaborateur @Model.Collaborator.FirstName  @Model.Collaborator.LastName
-</h2>
+@if (Model.IsAdvance)
+{
+    <h2 class="text-left">
+        Demande d'avances du collaborateur @Model.Collaborator.FirstName  @Model.Collaborator.LastName
+    </h2>
+}
+else
+{
+    <h2 class="text-left">
+        Note de frais du collaborateur @Model.Collaborator.FirstName  @Model.Collaborator.LastName
+    </h2>
+}
 
 @using (Html.BeginForm("ProcessCompta", "ExpenseReport", FormMethod.Post))
 {
@@ -25,7 +34,10 @@
                         <th>Description</th>
                         <th>Montant</th>
                         <th>Mission associée</th>
-                        <th>Date</th>
+                        @if (!Model.IsAdvance)
+                        {
+                            <th>Date</th>
+                        }
                         <th>Justificatif</th>
                         <th>Valider <input type="checkbox" id="checkall" /></th>
                     </tr>
@@ -41,7 +53,10 @@
                             <td>@Model.ExpenseLines[i].Description</td>
                             <td>@Model.ExpenseLines[i].Cost €</td>
                             <td>@Model.ExpenseLines[i].Mission.Name</td>
-                            <td>@Model.ExpenseLines[i].Date.ToString("dd/MM/yyyy")</td>
+                            @if (!Model.IsAdvance)
+                            {
+                                <td>@Model.ExpenseLines[i].Date.ToString("dd/MM/yyyy")</td>
+                            }
                             <td>@Model.ExpenseLines[i].Justificatory</td>
                             <td>@Html.CheckBoxFor(model => Model.ExpenseLines[i].FinalValidation)</td>
                         </tr>

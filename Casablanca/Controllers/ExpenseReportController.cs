@@ -363,6 +363,104 @@ namespace Casablanca.Controllers {
             return View(ERListToBeReturnedAsModel);
         }
 
+        // Displays the advances list management needs to process
+        public ActionResult AdvanceProcessList()
+        {
+            if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+                return Redirect("/Home/Index");
+
+            Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+
+            //not in management OR CDS = cannot see
+            if (!HelperModel.CheckManagement(coll) && !HelperModel.CheckCDS(coll))
+                return Redirect("/Home/Index");
+
+            List<ExpenseReport> AllERList = dal.GetAdvances();
+            List<ExpenseReport> AdvancesListToBeReturnedAsModel = new List<ExpenseReport>();
+
+
+            // for each Expense Report, check if they meet the following criterias
+            // if yes, add them to the list returned to the View
+            foreach (ExpenseReport e in AllERList)
+            {
+                if (e.Collaborator != coll) // a coll cannot validate his own ER
+                {
+                    // If the ER needs to be treated the classic way
+                    if (e.Treatment == Processing.CLASSIC)
+                    {
+                        if (HelperModel.CheckCDSCompta(coll)) // CDS Compta
+                        {
+                            if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_2)
+                            {
+                                AdvancesListToBeReturnedAsModel.Add(e);
+                            }
+                            if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_1)
+                            {
+                                // in order to know if the Chief needs to see the ER, check if coll is the chief of a mission in ELs
+                                foreach (ExpenseLine el in e.ExpenseLines)
+                                {
+                                    if (dal.GetCollaborator(el.Mission.ChiefId).Id == coll.Id)
+                                    {
+                                        AdvancesListToBeReturnedAsModel.Add(e);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        else if (HelperModel.CheckCompta(coll)) // Compta
+                        {
+                            if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_2)
+                                AdvancesListToBeReturnedAsModel.Add(e);
+                        }
+                        else if (HelperModel.CheckCDS(coll)) // CDS
+                        {
+                            if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_1)
+                            {
+                                // in order to know if the Chief needs to see the ER
+                                foreach (ExpenseLine el in e.ExpenseLines)
+                                {
+                                    if (dal.GetCollaborator(el.Mission.ChiefId).Id == coll.Id)
+                                    {
+                                        AdvancesListToBeReturnedAsModel.Add(e);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else
+                    { // The ER needs to be treated specifically
+                        if (e.Status == ExpenseReportStatus.PENDING_APPROVAL_1)
+                        {
+                            switch (e.Treatment)
+                            {
+                                case Processing.COMPTA:
+                                    if (HelperModel.CheckCompta(coll))
+                                    {
+                                        AdvancesListToBeReturnedAsModel.Add(e);
+                                    }
+                                    break;
+                                case Processing.FINANCIAL_DIRECTOR:
+                                    if (HelperModel.CheckCDSCompta(coll))
+                                    {
+                                        AdvancesListToBeReturnedAsModel.Add(e);
+                                    }
+                                    break;
+                                case Processing.CEO:
+                                    if (HelperModel.CheckPDG(coll))
+                                    {
+                                        AdvancesListToBeReturnedAsModel.Add(e);
+                                    }
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return View(AdvancesListToBeReturnedAsModel);
+        }
+
         // Display the ER a Chief needs to process
         public ActionResult ProcessCDS(int ERId = 5) {
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
@@ -468,7 +566,14 @@ namespace Casablanca.Controllers {
 
             dal.SaveChanges();
 
-            return Redirect("/ExpenseReport/ProcessList");
+            if (er.IsAdvance)
+            {
+                return Redirect("/ExpenseReport/AdvanceProcessList");
+            }
+            else
+            {
+                return Redirect("/ExpenseReport/ProcessList");
+            }
         }
 
         // Displays the ER a comptaboy needs to process
@@ -556,7 +661,14 @@ namespace Casablanca.Controllers {
 
             dal.SaveChanges();
 
-            return Redirect("/ExpenseReport/ProcessList");
+            if (er.IsAdvance)
+            {
+                return Redirect("/ExpenseReport/AdvanceProcessList");
+            }
+            else
+            {
+                return Redirect("/ExpenseReport/ProcessList");
+            }
         }
 
         // Displays the ER a compta coll needs to process
@@ -679,7 +791,15 @@ namespace Casablanca.Controllers {
 
             dal.SaveChanges();
 
-            return Redirect("/ExpenseReport/ProcessList");
+            if (er.IsAdvance)
+            {
+                return Redirect("/ExpenseReport/AdvanceProcessList");
+            }
+            else
+            {
+                return Redirect("/ExpenseReport/ProcessList");
+            }
+            
         }
 
         /* ############################################################
@@ -786,12 +906,87 @@ namespace Casablanca.Controllers {
 			return View(ERListToBeReturnedAsModel);
 		}
 
+        // Displays the ER list management already processed
+        public ActionResult AdvanceHistoryList()
+        {
+            if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+                return Redirect("/Home/Index");
 
+            Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
 
+            //not in management OR isRH = cannot see
+            if (!HelperModel.CheckManagement(coll) && !HelperModel.CheckRH(coll))
+                return Redirect("/Home/Index");
 
+            List<ExpenseReport> AllERList = dal.GetAdvances();
+            List<ExpenseReport> AdvancesListToBeReturnedAsModel = new List<ExpenseReport>();
 
+            // for each Expense Report, check if they meet the following criterias
+            // if yes, add them to the list returned to the View
+            foreach (ExpenseReport e in AllERList)
+            {
+                if (e.Collaborator != coll) // a coll cannot validate his own ER
+                {
+                    // If the ER needs to be treated the classic way
+                    if (e.Treatment == Models.ExpenseReports.Processing.CLASSIC)
+                    {
+                        if (HelperModel.CheckCompta(coll)) // CDS Compta et Compta
+                        {
+                            if ((e.Status == ExpenseReportStatus.APPROVED) | (e.Status == ExpenseReportStatus.REFUSED))
+                            {
+                                AdvancesListToBeReturnedAsModel.Add(e);
+                            }
+                        }
+                        else if (HelperModel.CheckCDS(coll)) // CDS
+                        {
+                            if ((e.Status == ExpenseReportStatus.APPROVED) | (e.Status == ExpenseReportStatus.REFUSED))
+                            {
+                                // in order to know if the Chief needs to see the ER
+                                foreach (ExpenseLine el in e.ExpenseLines)
+                                {
+                                    if (dal.GetCollaborator(el.Mission.ChiefId).Id == coll.Id)
+                                    {
+                                        AdvancesListToBeReturnedAsModel.Add(e);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else
+                    { // The ER needs to be treated specifically
+                        if ((e.Status == ExpenseReportStatus.APPROVED) | (e.Status == ExpenseReportStatus.REFUSED))
+                        {
+                            switch (e.Treatment)
+                            {
+                                case Models.ExpenseReports.Processing.COMPTA:
+                                    if (HelperModel.CheckCompta(coll))
+                                    {
+                                        AdvancesListToBeReturnedAsModel.Add(e);
+                                    }
+                                    break;
+                                case Models.ExpenseReports.Processing.FINANCIAL_DIRECTOR:
+                                    if (HelperModel.CheckCDSCompta(coll))
+                                    {
+                                        AdvancesListToBeReturnedAsModel.Add(e);
+                                    }
+                                    break;
+                                case Models.ExpenseReports.Processing.CEO:
+                                    if (HelperModel.CheckPDG(coll))
+                                    {
+                                        AdvancesListToBeReturnedAsModel.Add(e);
+                                    }
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
 
-	}
+            return View(AdvancesListToBeReturnedAsModel);
+        }
+
+    }
 
     public class JustificatoryUploadController : Controller
     {

@@ -44,11 +44,9 @@
                         <tr>
                             <td>@item.Collaborator.FirstName @item.Collaborator.LastName</td>
                             <td>
-                                @if (!item.IsAdvance)
-                                {
                                     @HelperModel.FirstCharToUpper(DateTime.ParseExact(item.Month.ToString(), "MMMM", new CultureInfo("en-US")).ToString("MMMM"))
                                     @item.Year
-                                }
+                                
                             </td>
                             <td>@item.TotalCost €</td>
                             <td>@item.NbLines</td>

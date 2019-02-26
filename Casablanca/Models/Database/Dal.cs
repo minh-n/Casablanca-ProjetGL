@@ -376,7 +376,15 @@ namespace Casablanca.Models.Database
 
 		// ExpenseReports
 		public List<ExpenseReport> GetExpenseReports() {
-            return Db.ExpenseReports.ToList();
+
+            List<ExpenseReport> expenseReports = new List<ExpenseReport>();
+            foreach (ExpenseReport er in Db.ExpenseReports.ToList())
+            {
+                if (!er.IsAdvance)
+                    expenseReports.Add(er);
+            }
+
+            return expenseReports;
         }
 
 		public ExpenseReport GetExpenseReport(int id) {

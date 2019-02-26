@@ -76,7 +76,7 @@
 		@if (Model != null)
 		{
 
-			<h3>Notes de frais</h3>
+			<h3>Notes de frais & Avances</h3>
 
 			<p>
 
@@ -100,6 +100,10 @@
                                         {
                                             @HelperModel.FirstCharToUpper(DateTime.ParseExact(item.Month.ToString(), "MMMM", new CultureInfo("en-US")).ToString("MMMM"))
                                             @item.Year
+                                        }
+                                        else
+                                        {
+                                            <text> Avance </text>
                                         }
 
                                     </td>
