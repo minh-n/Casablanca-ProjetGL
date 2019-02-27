@@ -13,6 +13,9 @@
     var nbEL = Model.ExpenseReport.ExpenseLines.Count - 1;
 }
 
+<link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
+
+
 <div class="container">
     @if (!Model.ExpenseReport.IsAdvance)
     {
@@ -54,7 +57,7 @@
                         {
                             <th>Statut du frais</th>
                         }
-                        <th>Supprimer</th>
+                        <th> </th>
 
                     </tr>
                 </thead>
@@ -107,6 +110,7 @@
                                     @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Description)
                                 </td>
                             }
+
                             <!--Montant -->
                             <td>
                                 @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Cost,
@@ -149,12 +153,13 @@
 
                                     @{
                                         @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Date,
-                                        new {
-                                            @type = "date", @class = "form-control datepicker",
-                                            @Value = Model.ExpenseReport.ExpenseLines[i].Date.ToString("yyyy-MM-dd")
-                                            //@min = Model.ExpenseReport.ExpenseLines[i].Mission.StartDate.ToString("yyyy-MM-dd"),
-                                            //@max = Model.ExpenseReport.ExpenseLines[i].Mission.EndDate.ToString("yyyy-MM-dd")
-                                        })
+										new {
+											@type = "date", @class = "form-control datepicker",
+											@Value = Model.ExpenseReport.ExpenseLines[i].Date.ToString("yyyy-MM-dd"),
+											@style = "padding:0px; height:26px"
+											//@min = Model.ExpenseReport.ExpenseLines[i].Mission.StartDate.ToString("yyyy-MM-dd"),
+											//@max = Model.ExpenseReport.ExpenseLines[i].Mission.EndDate.ToString("yyyy-MM-dd")
+										})
 
                                     }
 
@@ -204,9 +209,11 @@
                             }
 
                             <!-- Supprimer -->
-                            <td>
-                                <span class="table-remove fa fa-remove"></span>
-                            </td>
+							<td>
+								<button class="table-remove btn btn-primary" style="padding:2px">Supprimer</button>
+							
+								@*<span class="table-remove fa fa-remove"></span>*@
+							</td>
                         </tr>
 
                     }
@@ -246,61 +253,71 @@
 
     <!-- This is our clonable table line -->
     <table id="additionnalrow" hidden>
-        <tr class="hide">
-            <td>
-                @Html.DropDownListFor(m => Model.ExpenseReport.ExpenseLines[nbEL].Type,
-                (LineType.GetValues(typeof(LineType))).Cast<LineType>().ToList().Select(type => new SelectListItem {
-                    Text = type.ToString(),
-                    Value = type.ToString()
-                }))
-            </td>
-            <td>@Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Description, new { @Value = "" })</td>
-            <td>
-                @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Cost,
-                                            new { @class = "required numeric", Value = String.Format("{0:}", "") })
-            </td>
-            <td>
-                @*@Html.DropDownListFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Mission.Id, Model.CollaboratorMissions)*@
-                @Html.DropDownListFor(
-                                    m => Model.ExpenseReport.ExpenseLines[nbEL].Mission.Id,
-                                    Model.CollaboratorMissions.Select
-                                    (mission =>
-                                        new SelectListItem {
-                                            Text = mission.Text,
-                                            Value = mission.Value,
-                                            Selected = (mission.Value == Model.CollaboratorMissions.FirstOrDefault().Value)
-                                        }
-                                    )
-                )
-            </td>
-            @if (!Model.ExpenseReport.IsAdvance)
-            {
-                <td>
-                    @{
-                        @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Date,
-                        new {
-                            @type = "date", @class = "form-control datepicker",
-                            @Value = Model.ExpenseReport.ExpenseLines[nbEL].Date.ToString("yyyy-MM-dd")
-                        })
+		<tr class="hide">
+			<td>
+				@Html.DropDownListFor(m => Model.ExpenseReport.ExpenseLines[nbEL].Type,
+				(LineType.GetValues(typeof(LineType))).Cast<LineType>().ToList().Select(type => new SelectListItem {
+					Text = type.ToString(),
+					Value = type.ToString()
+				}))
+			</td>
 
-                    }
-                </td>
-            }
 
-            <td>
-                @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Justificatory, new { type = "file", @Value = "", accept = ".pdf" })
-                <!-- by Yao -->
-            </td>
-            @if (Model.ExpenseReport.Status == ExpenseReportStatus.REFUSED)
-            {
-                <td>
-                    <text> TODO ???</text>
-                </td>
-            }
-            <td>
-                <span class="table-remove fa fa-remove"></span>
-            </td>
-        </tr>
+			<!--Description -->
+			<td>@Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Description, new { @Value = "" })</td>
+
+
+			<!--Montant -->
+			<td>
+				@Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Cost,
+											new { @class = "required numeric", Value = String.Format("{0:}", "")
+											})
+			</td>
+			<td>
+				@*@Html.DropDownListFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Mission.Id, Model.CollaboratorMissions)*@
+				@Html.DropDownListFor(
+									m => Model.ExpenseReport.ExpenseLines[nbEL].Mission.Id,
+									Model.CollaboratorMissions.Select
+									(mission =>
+										new SelectListItem {
+											Text = mission.Text,
+											Value = mission.Value,
+											Selected = (mission.Value == Model.CollaboratorMissions.FirstOrDefault().Value)
+										}
+									),
+									new { style = "width:120px; height:26px" }
+				)
+			</td>
+			@if (!Model.ExpenseReport.IsAdvance)
+			{
+				<td>
+					@{
+						@Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Date,
+						new {
+							@type = "date", @class = "form-control datepicker",
+							@Value = Model.ExpenseReport.ExpenseLines[nbEL].Date.ToString("yyyy-MM-dd"),
+							@style = "padding:0px; height:26px" 
+						}
+						)
+
+					}
+				</td>
+			}
+
+			<td>
+				@Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Justificatory, new { type = "file", @Value = "", accept = ".pdf" })
+				<!-- by Yao -->
+			</td>
+			@if (Model.ExpenseReport.Status == ExpenseReportStatus.REFUSED)
+			{
+				<td>
+					<text> TODO ???</text>
+				</td>
+			}
+			<td>
+				<button class="table-remove btn btn-primary" style="padding:2px">Supprimer</button>
+			</td>
+		</tr>
     </table>
 </div>
 

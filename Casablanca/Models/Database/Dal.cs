@@ -266,7 +266,10 @@ namespace Casablanca.Models.Database
 				//new Leave(LeaveStatus.APPROVED, LeaveType.PAID, GetCollaborator("Oubar", "MAYAKI"), new DateTime(2019, 1, 4), new DateTime(2019, 1, 12)),
 
 				new Leave(LeaveStatus.PENDING_APPROVAL_1, LeaveType.PAID, GetCollaborator("Floriab", "LE PALLEC"), new DateTime(2019, 2, 9), new DateTime(2019, 2, 11), "Matin", "Matin"),
-				new Leave(LeaveStatus.APPROVED, LeaveType.PAID, GetCollaborator("Nathon", "BONNARD"), new DateTime(2019, 2, 19), new DateTime(2019, 2, 22), "Matin", "Après-midi"),
+
+				new Leave(LeaveStatus.APPROVED, LeaveType.PAID, GetCollaborator("Nathon", "BONNARD"), new DateTime(2019, 2, 27), new DateTime(2019, 3, 11), "Matin", "Après-midi"),
+
+
 				new Leave(LeaveStatus.PENDING_APPROVAL_1, LeaveType.RTT, GetCollaborator("Nathon", "BONNARD"), new DateTime(2019, 2, 1), new DateTime(2019, 2, 12), "Après-midi", "Après-midi"),
 
 				//new Leave(LeaveStatus.PENDING_APPROVAL_2, LeaveType.RTT, GetCollaborator("Momo", "BELDI"), new DateTime(2019, 2, 1), new DateTime(2019, 2, 8)),
@@ -547,7 +550,7 @@ namespace Casablanca.Models.Database
             {
                 foreach (ExpenseLine el in er.ExpenseLines.ToList())
                 {
-                    if (el.Validated /*&& el.Mission.Status == MissionStatus.COMPLETED*/)
+                    if (el.Validated && el.Mission.Status == MissionStatus.COMPLETED) //To check
                     {
                         expenseReport.Collaborator.AdvanceCost += el.Cost;
                         expenseReport.AddLine(el);

@@ -30,17 +30,17 @@
         </div>
         <br>
 
-        <div style="padding:10px">
+        @*<div style="padding:10px">
 
             <div> Statut de la mission </div>
 
 			<div>
-				@Html.DropDownListFor(m => m.Status,
+				@Html.HiddenFor(m => m.Status,
 				  new SelectList(Enum.GetValues(typeof(MissionStatus))))
 			</div>
 
         </div>
-        <br>
+        <br>*@
 
         <div style="padding:10px">
             <div>Date de début</div>

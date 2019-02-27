@@ -64,7 +64,16 @@
 						<!--traiter-->
 						<td>
 
-							@Html.ActionLink("Modifier", "ProcessMission", "Mission", new { id = item.Id }, null)
+							@Html.ActionLink("Modifier", "ProcessMission", "Mission", new { id = item.Id }, null) |
+
+							@if (item.Status == MissionStatus.CANCELED)
+							{
+								@Html.ActionLink("Changer statut", "ResetStatusMission", "Mission", new { id = item.Id }, null)
+							}
+							else
+							{
+								@Html.ActionLink("Annuler", "CancelMission", "Mission", new { id = item.Id }, null)
+							}
 
 						</td>
 					</tr>

@@ -119,11 +119,71 @@ namespace Casablanca.Controllers
 			{
 				m.Status = MissionStatus.COMPLETED;
 			}
+			else if ((m.StartDate < DateTime.Now) && (m.EndDate >= DateTime.Now) && (m.Status != MissionStatus.CANCELED))
+			{
+				m.Status = MissionStatus.IN_PROGRESS;
+			}
+			else if ((m.StartDate > DateTime.Now) && (m.EndDate > DateTime.Now) && (m.Status != MissionStatus.CANCELED))
+			{
+				m.Status = MissionStatus.PLANNED;
+			}
+			else
+			{
+				m.Status = model.Status;
+			}
 
             m.CollList.Clear();
 			m.CollList = collList;
 
-            // TODO : affecter la mission aux collaborateurs (check s'ils l'ont pas, on l'ajoute)
+			dal.SaveChanges();
+
+			return Redirect("/Mission/Index");
+		}
+
+		public ActionResult ResetStatusMission(int id)
+		{
+			//------------Background identity check-------------//
+			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+				return Redirect("/Home/Index");
+
+			Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+			if ((HelperModel.CheckCDS(coll) == false)) //if not CDS
+				return Redirect("/Home/Index");
+			//--------------------------------------------------//
+
+			Mission m = dal.GetMission(id);
+
+			if ((m.EndDate < DateTime.Now))
+			{
+				m.Status = MissionStatus.COMPLETED;
+			}
+			else if ((m.StartDate < DateTime.Now) && (m.EndDate >= DateTime.Now))
+			{
+				m.Status = MissionStatus.IN_PROGRESS;
+			}
+			else if ((m.StartDate > DateTime.Now) && (m.EndDate > DateTime.Now))
+			{
+				m.Status = MissionStatus.PLANNED;
+			}
+
+			dal.SaveChanges();
+
+			return Redirect("/Mission/Index");
+		}
+
+		public ActionResult CancelMission(int id)
+		{
+			//------------Background identity check-------------//
+			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+				return Redirect("/Home/Index");
+
+			Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+			if ((HelperModel.CheckCDS(coll) == false)) //if not CDS
+				return Redirect("/Home/Index");
+			//--------------------------------------------------//
+			Mission m = dal.GetMission(id);
+
+			m.Status = MissionStatus.CANCELED;
 
 			dal.SaveChanges();
 
@@ -142,7 +202,6 @@ namespace Casablanca.Controllers
 			if ((HelperModel.CheckCDS(coll) == false)) //if not CDS
 				return Redirect("/Home/Index");
 			//--------------------------------------------------//
-
 
 			// Create the Mission
 			int returnedId = dal.CreateMission(coll.Id);

@@ -29,7 +29,7 @@ namespace Casablanca.Models.ViewModel
 		{
 			Title =  leave.Collaborator.LastName; // + " ("+  leave.Collaborator.Service.Name +  ") - " + leave.Type.ToString() Name (Service) - LeaveType
 			Desc = "Du " + leave.StartDate.ToString("dd/MM/yyyy") + " au " + leave.EndDate.ToString("dd/MM/yyyy") +
-				"<br>Journées : " + leave.ComputeLengthLeave() +
+				"<br>Journées : " + leave.ComputeLengthLeave()*0.5 +
 				"<br>(" + leave.Description + ")";
 
 			Start_Date = leave.StartDate.ToString("yyyy-MM-dd");
