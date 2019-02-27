@@ -11,9 +11,19 @@
     int nbEL = Model.ExpenseLines.Count;
 }
 
-<h2 class="text-left">
-    Note de frais du collaborateur @Model.ExpenseReport.Collaborator.FirstName  @Model.ExpenseReport.Collaborator.LastName
-</h2>
+@if (Model.ExpenseReport.IsAdvance)
+{
+    <h2 class="text-left">
+        Demande d'avances du collaborateur @Model.ExpenseReport.Collaborator.FirstName  @Model.ExpenseReport.Collaborator.LastName
+    </h2>
+}
+else
+{
+    <h2 class="text-left">
+        Note de frais du collaborateur @Model.ExpenseReport.Collaborator.FirstName  @Model.ExpenseReport.Collaborator.LastName
+    </h2>
+}
+
 
 @using (Html.BeginForm("ProcessCDS", "ExpenseReport", FormMethod.Post))
 {
@@ -26,7 +36,10 @@
                         <th>Description</th>
                         <th>Montant du frais</th>
                         <th>Mission associée</th>
-                        <th>Date du frais</th>
+                        @if (!Model.ExpenseReport.IsAdvance)
+                        {
+                            <th>Date du frais</th>
+                        }
                         <th>Justificatif</th>
                         <th>Valider <input type="checkbox" id="checkall" /></th>
                     </tr>
@@ -42,7 +55,10 @@
                             <td>@Model.ExpenseLines[i].Description</td>
                             <td>@Model.ExpenseLines[i].Cost €</td>
                             <td>@Model.ExpenseLines[i].Mission.Name</td>
-                            <td>@Model.ExpenseLines[i].Date.ToString("dd/MM/yyyy")</td>
+                            @if (!Model.ExpenseReport.IsAdvance)
+                            {
+                                <td>@Model.ExpenseLines[i].Date.ToString("dd/MM/yyyy")</td>
+                            }
                             <td>@Model.ExpenseLines[i].Justificatory</td>
                             <td>@Html.CheckBoxFor(model => Model.ExpenseLines[i].Validated)</td>
                         </tr>
