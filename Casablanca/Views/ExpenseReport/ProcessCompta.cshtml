@@ -26,44 +26,49 @@ else
 @using (Html.BeginForm("ProcessCompta", "ExpenseReport", FormMethod.Post))
 {
     <div class="table-responsive">
-        <div id="checkboxes">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Type de frais</th>
-                        <th>Description</th>
-                        <th>Montant</th>
-                        <th>Mission associée</th>
-                        @if (!Model.IsAdvance)
-                        {
-                            <th>Date</th>
-                        }
-                        <th>Justificatif</th>
-                        <th>Valider <input type="checkbox" id="checkall" /></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @Html.HiddenFor(model => Model.Id)
+		<div id="checkboxes">
 
-                    @for (int i = 0; i < nbEL; i++)
-                    {
-                        <tr>
-                            @Html.HiddenFor(model => Model.ExpenseLines[i].Id)
-                            <td>@Model.ExpenseLines[i].Type</td>
-                            <td>@Model.ExpenseLines[i].Description</td>
-                            <td>@Model.ExpenseLines[i].Cost €</td>
-                            <td>@Model.ExpenseLines[i].Mission.Name</td>
-                            @if (!Model.IsAdvance)
-                            {
-                                <td>@Model.ExpenseLines[i].Date.ToString("dd/MM/yyyy")</td>
-                            }
-                            <td>@Model.ExpenseLines[i].Justificatory</td>
-                            <td>@Html.CheckBoxFor(model => Model.ExpenseLines[i].FinalValidation)</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+			<div style="float: right">
+				Tout valider
+				<input type="checkbox" id="checkall" />
+			</div>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Type de frais</th>
+						<th>Description</th>
+						<th>Montant</th>
+						<th>Mission associée</th>
+						@if (!Model.IsAdvance)
+						{
+							<th>Date</th>
+						}
+						<th>Justificatif</th>
+						<th>Valider</th>
+					</tr>
+				</thead>
+				<tbody>
+					@Html.HiddenFor(model => Model.Id)
+
+					@for (int i = 0; i < nbEL; i++)
+					{
+						<tr>
+							@Html.HiddenFor(model => Model.ExpenseLines[i].Id)
+							<td>@Model.ExpenseLines[i].Type</td>
+							<td>@Model.ExpenseLines[i].Description</td>
+							<td>@Model.ExpenseLines[i].Cost €</td>
+							<td>@Model.ExpenseLines[i].Mission.Name</td>
+							@if (!Model.IsAdvance)
+							{
+								<td>@Model.ExpenseLines[i].Date.ToString("dd/MM/yyyy")</td>
+							}
+							<td>@Model.ExpenseLines[i].Justificatory</td>
+							<td>@Html.CheckBoxFor(model => Model.ExpenseLines[i].FinalValidation)</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
     </div>
 
     <button id="save-btn" type="submit" class="btn btn-primary">Terminer la validation</button>
