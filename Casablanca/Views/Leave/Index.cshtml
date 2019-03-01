@@ -21,14 +21,12 @@
 	<div class="col-lg-6">
 
 		<div id="calendar"></div> <!-- FULL CALENDAR -->
-
-
 		@*/* Groups :
 		*  1 : own leaves
 		*  2 : own service's leaves (only accepted)
 		*  3 : own service's leaves (every states)
 		*
-		*  4 : every other leaves. 
+		*  4 : every other leaves.
 
 
 
@@ -43,7 +41,7 @@
 				{
 					<option value="2"> Demandes validées de mon service</option>
 				}
-				
+
 				@if (HelperModel.CheckCDS(currentColl) && !HelperModel.CheckRH(currentColl))
 				{
 					<option value="3">Toutes les demandes de mon service</option>
@@ -51,14 +49,33 @@
 			</select>
 		</div>
 
+		<br />
+		<b>Légende des couleurs :</b>
+		<br />
+		<br />
+		<div>
+			<div style="width:30px;
+					height:15px;
+					display: inline-block;
+					background:#256cbf;"></div>
+			<p style="display: inline-block">Congé approuvé</p>
+		</div>
 
+		<div>
+			<div style="width:30px;
+					height:15px;
+					display: inline-block;
+					background:#c69b00;"></div>
+			<p style="display: inline-block">En cours de validation</p>
+		</div>
 
-
-
-
-		<p style="padding:20px">TODO : légende des couleurs.</p>
-
-
+		<div>
+			<div style="width:30px;
+					height:15px;
+					display: inline-block;
+					background:#bf4425;"></div>
+			<p style="display: inline-block">Refusé</p>
+		</div>
 	</div>
 
 
