@@ -15,13 +15,14 @@ namespace Casablanca.Models.ViewModel {
 
 		public string SubmitValue { get; set; }
 
-        //public string file { get; set; } //by Yao
+        public List<HttpPostedFileBase> file { get; set; } //by Yao
 
         public AddExpenseLineVM(ExpenseReport expenseReport, int selectedMission, IEnumerable<SelectListItem> collaboratorMissions)
 		{
 			ExpenseReport = expenseReport;
 			CollaboratorMissions = collaboratorMissions;
 			SubmitValue = "";
+            file = null;
 		}
 
 		public AddExpenseLineVM()

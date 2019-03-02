@@ -31,7 +31,7 @@
         <button class="btn btn-primary table-add">Ajouter une ligne de frais</button>
     </div>
 
-    @using (Html.BeginForm("UpdateExpenseReport", "ExpenseReport", FormMethod.Post))
+    @using (Html.BeginForm("UpdateExpenseReport", "ExpenseReport", FormMethod.Post, new { enctype = "multipart/form-data" }))
     {
         <div id="table" class="table-editable" data-toggle="table" data-search="true">
             <table class="table">
@@ -170,10 +170,14 @@
 
                             <!-- Justificatif TODO -->
                             <td>
-                                @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Justificatory,
-                                    new { type = "file", @Value = Model.ExpenseReport.ExpenseLines[i].Justificatory, accept = ".pdf" })
-                                @*<input value="@Model.ExpenseReport.ExpenseLines[i].Justificatory" type="file" asp-for="Model.ExpenseReport.ExpenseLines[0].Justificatory">*@
-                            </td>
+                                @if (Model.ExpenseReport.ExpenseLines[i].Justificatory != "")
+                                {
+                                    <a href="~/ExpenseReport/FilePathDownload?fileName=@Model.ExpenseReport.ExpenseLines[i].Justificatory">@Html.DisplayFor(model => Model.ExpenseReport.ExpenseLines[i].Justificatory)</a>
+                                }
+
+                                @Html.TextBoxFor(model => Model.file, new { type = "file", @Value = "", accept = ".pdf" })
+
+                                </td>
 
                             <!-- Statut de la ligne de frais (uniquement quand l'ER a déjà été refusée) -->
                             @if (Model.ExpenseReport.Status == ExpenseReportStatus.REFUSED)
@@ -304,10 +308,11 @@
 				</td>
 			}
 
-			<td>
-				@Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Justificatory, new { type = "file", @Value = "", accept = ".pdf" })
-				<!-- by Yao -->
-			</td>
+                <td>
+                    @*@Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Justificatory, new { type = "file", @Value = "", accept = ".pdf" })*@
+                    @Html.TextBoxFor(model => Model.file, new { type = "file", @Value = "", accept = ".pdf" })
+                    <!-- by Yao -->
+                </td>
 			@if (Model.ExpenseReport.Status == ExpenseReportStatus.REFUSED)
 			{
 				<td>

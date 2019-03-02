@@ -1,8 +1,9 @@
 ﻿using Casablanca.Models.Database;
 using Casablanca.Models.ExpenseReports;
+using Casablanca.Models.ViewModel;
 using Casablanca.Models;
 
-using Casablanca.Models.ViewModel;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -226,7 +227,8 @@ namespace Casablanca.Controllers {
             return View(model);
         }
 
-        [HttpPost] // Backend call of UpdateER page
+        //by Yao
+        [HttpPost] // Backend call of UpdateER page V2.0 (and Justicifatory)
         public ActionResult UpdateExpenseReport(AddExpenseLineVM model) {
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                 return Redirect("/Home/Index");
@@ -253,9 +255,26 @@ namespace Casablanca.Controllers {
 
             // If we received ELs from the view, create a new line from view fields and add it to the current ER
             if (model.ExpenseReport.ExpenseLines != null) {
-                foreach (ExpenseLine el in model.ExpenseReport.ExpenseLines) {
+
+                for (int i = 0; i < model.ExpenseReport.ExpenseLines.Count; i++)
+                {
+
+                    ExpenseLine el = model.ExpenseReport.ExpenseLines[i];
+                    HttpPostedFileBase fl = model.file[i];
+                    string fileName = "";
+                    if (fl != null)
+                    {
+                        string path = Path.Combine(Server.MapPath("~/APP_Data/UploadedFiles"), Path.GetFileName(fl.FileName));
+                        fl.SaveAs(path);
+                        fileName = fl.FileName;
+                    }
+                    else if (current.ExpenseLines.Count >= i)
+                    {
+                        fileName = current.ExpenseLines[i].Justificatory;
+                    }
+
                     // Create a new EL with the informations from the view
-                    ExpenseLine newEL = new ExpenseLine(dal.GetMission(el.Mission.Id), el.Type, el.Description, el.Cost, el.Date, el.Justificatory) {
+                    ExpenseLine newEL = new ExpenseLine(dal.GetMission(el.Mission.Id), el.Type, el.Description, el.Cost, el.Date, fileName) {
                         Validated = false,
                         Treated = Treatment.NOT_TREATED,
                         FinalValidation = false,
@@ -298,6 +317,25 @@ namespace Casablanca.Controllers {
             return Redirect("/ExpenseReport/Index");
         }
 
+        //Download Justificatory
+        //by Yao
+
+        public ActionResult FilePathDownload(string fileName)
+        {
+            try
+            {
+                var path = Path.Combine(Server.MapPath("~/APP_Data/UploadedFiles"), fileName);
+                var name = Path.GetFileName(path);
+                return File(path, "application/x-zip-compressed", Url.Encode(name));
+                //ViewBag.FileStatus = "Justificatory Download successfully.";
+            }
+            catch (Exception)
+            {
+                ViewBag.FileStatus = "Error while Justificatory uploading.";
+                return new EmptyResult();
+            }
+        }
+
         // Visualize an already sent ER
         public ActionResult ViewExpenseReport(int ERId = 1) {
 
@@ -312,6 +350,35 @@ namespace Casablanca.Controllers {
                 return Redirect("/Home/Index");
 
             return View(model);
+        }
+
+        //Upload Justificatory
+        //by Yao
+        [HttpPost]
+        public ActionResult UploadJustificatory(HttpPostedFileBase file)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+
+                    if (file != null)
+                    {
+                        string path = Path.Combine(Server.MapPath("~/APP_Data/UploadedFiles"), Path.GetFileName(file.FileName));
+                        file.SaveAs(path);
+
+                    }
+                    ViewBag.FileStatus = "Justificatory uploaded successfully.";
+                }
+                catch (Exception)
+                {
+
+                    ViewBag.FileStatus = "Error while Justificatory uploading.";
+                }
+
+            }
+            //return View(Index());//TO DO
+            return Index();
         }
 
 

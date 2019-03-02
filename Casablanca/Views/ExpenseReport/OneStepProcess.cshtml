@@ -3,26 +3,22 @@
 @{
     ViewBag.Title = "Traitement spécial";
 }
-
 @model ExpenseReport
-
 @{
     int nbEL = Model.ExpenseLines.Count;
 }
-
 @if (Model.IsAdvance)
 {
     <h2 class="text-left">
-        Demande d'avances du collaborateur @Model.ExpenseReport.Collaborator.FirstName  @Model.ExpenseReport.Collaborator.LastName
+        Demande d'avances du collaborateur @Model.Collaborator.FirstName  @Model.ExpenseReport.Collaborator.LastName
     </h2>
 }
 else
 {
     <h2 class="text-left">
-        Note de frais du collaborateur @Model.ExpenseReport.Collaborator.FirstName  @Model.ExpenseReport.Collaborator.LastName
+        Note de frais du collaborateur @Model.Collaborator.FirstName  @Model.ExpenseReport.Collaborator.LastName
     </h2>
 }
-
 @using (Html.BeginForm("OneStepProcess", "ExpenseReport", FormMethod.Post))
 {
     <div class="table-responsive">
@@ -44,22 +40,21 @@ else
                 </thead>
                 <tbody>
                     @Html.HiddenFor(model => Model.Id)
-
                     @for (int i = 0; i < nbEL; i++)
                     {
-					<tr>
-						@Html.HiddenFor(model => Model.ExpenseLines[i].Id)
-						<td>@Model.ExpenseLines[i].Type</td>
-						<td>@Model.ExpenseLines[i].Description</td>
-						<td>@Model.ExpenseLines[i].Cost €</td>
-						<td>@Model.ExpenseLines[i].Mission.Name</td>
-						@if (!Model.IsAdvance)
-						{
-							<td>@Model.ExpenseLines[i].Date.ToString("dd/MM/yyyy")</td>
-						}
-						<td><a href="~/ExpenseReport/FilePathDownload?fileName=@Model.ExpenseLines[i].Justificatory">@Model.ExpenseLines[i].Justificatory</a></td> 
-						<td>@Html.CheckBoxFor(model => Model.ExpenseLines[i].FinalValidation)</td>
-					</tr>
+                        <tr>
+                            @Html.HiddenFor(model => Model.ExpenseLines[i].Id)
+                            <td>@Model.ExpenseLines[i].Type</td>
+                            <td>@Model.ExpenseLines[i].Description</td>
+                            <td>@Model.ExpenseLines[i].Cost €</td>
+                            <td>@Model.ExpenseLines[i].Mission.Name</td>
+                            @if (!Model.IsAdvance)
+                            {
+                                <td>@Model.ExpenseLines[i].Date.ToString("dd/MM/yyyy")</td>
+                            }
+                            <td><a href="~/ExpenseReport/FilePathDownload?fileName=@Model.ExpenseLines[i].Justificatory">@Model.ExpenseLines[i].Justificatory</a></td>  @*Download Action by Yao*@
+                            <td>@Html.CheckBoxFor(model => Model.ExpenseLines[i].FinalValidation)</td>
+                        </tr>
                     }
                 </tbody>
             </table>
@@ -68,10 +63,8 @@ else
 
     <button id="save-btn" type="submit" class="btn btn-primary">Terminer la validation</button>
 }
-
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-
     <script type="text/javascript">
 
         function toggleChecked(status) {

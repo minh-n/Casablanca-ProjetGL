@@ -63,19 +63,19 @@ else
 
 				@for (int i = 0; i < nbEL; i++)
 				{
-				<tr>
-					@Html.HiddenFor(model => Model.ExpenseLines[i].Id)
-					<td>@Model.ExpenseLines[i].Type</td>
-					<td>@Model.ExpenseLines[i].Description</td>
-					<td>@Model.ExpenseLines[i].Cost €</td>
-					<td>@Model.ExpenseLines[i].Mission.Name</td>
-					@if (!Model.ExpenseReport.IsAdvance)
-					{
-						<td>@Model.ExpenseLines[i].Date.ToString("dd/MM/yyyy")</td>
-					}
-					<td><a href="~/ExpenseReport/FilePathDownload?fileName=@Model.ExpenseLines[i].Justificatory">@Model.ExpenseLines[i].Justificatory</a></td>
-					<td>@Html.CheckBoxFor(model => Model.ExpenseLines[i].Validated)</td>
-				</tr>
+                <tr>
+                    @Html.HiddenFor(model => Model.ExpenseLines[i].Id)
+                    <td>@Model.ExpenseLines[i].Type</td>
+                    <td>@Model.ExpenseLines[i].Description</td>
+                    <td>@Model.ExpenseLines[i].Cost €</td>
+                    <td>@Model.ExpenseLines[i].Mission.Name</td>
+                    @if (!Model.ExpenseReport.IsAdvance)
+                    {
+                        <td>@Model.ExpenseLines[i].Date.ToString("dd/MM/yyyy")</td>
+                    }
+                    <td><a href="~/ExpenseReport/FilePathDownload?fileName=@Model.ExpenseLines[i].Justificatory">@Model.ExpenseLines[i].Justificatory</a></td> @*Download Action by Yao*@
+                    <td>@Html.CheckBoxFor(model => Model.ExpenseLines[i].Validated)</td>
+                </tr>
 				}
 			</tbody>
 		</table>
