@@ -15,12 +15,13 @@
 
 <div class="container">
     <h2 class="text-left">Effectuer une demande de notes de frais </h2>
-
+    
     <div style="padding:15px">
         <button class="btn btn-primary table-add">Ajouter une ligne de frais</button>
     </div>
 
-    @using (Html.BeginForm("UpdateExpenseReport", "ExpenseReport", FormMethod.Post)) {
+    @using (Html.BeginForm("UpdateExpenseReport", "ExpenseReport", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
         <div id="table" class="table-editable" data-toggle="table" data-search="true">
             <table class="table">
                 <thead>
@@ -31,17 +32,17 @@
                         <th>Mission associée</th>
                         <th>Date du frais</th>
                         <th>Justificatif</th>
-                        @if (Model.ExpenseReport.Status == ExpenseReportStatus.REFUSED) {
+                        @if (Model.ExpenseReport.Status == ExpenseReportStatus.REFUSED)
+                        {
                             <th>Statut du frais</th>
                         }
                         <th>Supprimer</th>
-
                     </tr>
                 </thead>
                 <tbody>
                     @Html.HiddenFor(model => Model.ExpenseReport.Id)
-
-                    @for (int i = 0; i < nbEL; i++) {
+                    @for (int i = 0; i < nbEL; i++)
+                    {
                         <tr>
                             <!--Type de frais-->
                             <td>
@@ -52,18 +53,15 @@
                                     Selected = (type == Model.ExpenseReport.ExpenseLines[i].Type)
                                 }))
                             </td>
-
                             <!--Description du frais-->
                             <td>
                                 @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Description)
                             </td>
-
                             <!--Montant -->
                             <td>
                                 @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Cost,
                                     new { @class = "required numeric", Value = String.Format("{0:}", Model.ExpenseReport.ExpenseLines[i].Cost) })
                             </td>
-
                             <!-- Mission -->
                             <td>
                                 @Html.DropDownListFor(
@@ -72,56 +70,71 @@
                                         Text = mission.Text, Value = mission.Value, Selected =
                                         (mission.Value == Model.ExpenseReport.ExpenseLines[i].Mission.Id.ToString())}))
                             </td>
-
                             <!-- Date de la ligne de frais -->
-							<td>
+                            <td>
+                                @{
+                                    @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Date,
+                                    new {
+                                        @type = "date", @class = "form-control datepicker",
+                                        @value = Model.ExpenseReport.ExpenseLines[i].Date.ToString("dd-MM-yyyy"),
+                                        //@min = Model.ExpenseReport.ExpenseLines[i].Mission.StartDate.ToString("yyyy-MM-dd"),
+                                        //@max = Model.ExpenseReport.ExpenseLines[i].Mission.EndDate.ToString("yyyy-MM-dd")
+                                    })
 
-								@{
-									@Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Date,
-									new {
-										@type = "date", @class = "form-control datepicker",
-										@value = Model.ExpenseReport.ExpenseLines[i].Date.ToString("dd-MM-yyyy"),
-										//@min = Model.ExpenseReport.ExpenseLines[i].Mission.StartDate.ToString("yyyy-MM-dd"),
-										//@max = Model.ExpenseReport.ExpenseLines[i].Mission.EndDate.ToString("yyyy-MM-dd")
-									})
-									
-								}
+                                }
 
-
-							</td>
-
+                            </td>
                             <!-- Justificatif TODO -->
                             <td>
-                                @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Justificatory,
-                                    new { type = "file", @Value = Model.ExpenseReport.ExpenseLines[i].Justificatory, accept = ".pdf" })
-                                @*<input value="@Model.ExpenseReport.ExpenseLines[i].Justificatory" type="file" asp-for="Model.ExpenseReport.ExpenseLines[0].Justificatory">*@
-                            </td>
+                                @if (Model.ExpenseReport.ExpenseLines[i].Justificatory != "")
+                                {
+                                    @*
+                                    @Html.DisplayFor(model => Model.ExpenseReport.ExpenseLines[i].Justificatory)
+                                    string path = Path.Combine(Server.MapPath("~/APP_Data/UploadedFiles"), Model.ExpenseReport.ExpenseLines[i].Justificatory);
+                                    *@
+                                    <a href="~/ExpenseReport/FilePathDownload?fileName=@Model.ExpenseReport.ExpenseLines[i].Justificatory">@Html.DisplayFor(model => Model.ExpenseReport.ExpenseLines[i].Justificatory)</a>
+                                    @*<a href="~/Home/download">@Html.DisplayFor(model => Model.ExpenseReport.ExpenseLines[i].Justificatory)</a>*@
 
+                                }
+
+                                @Html.TextBoxFor(model => Model.file, new { type = "file", @Value = "", accept = ".pdf" })
+                                
+                                @*@Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Justificatory, new { type = "file", @Value = "", accept = ".pdf" })*@
+                                @*<input value="@Model.ExpenseReport.ExpenseLines[i].Justificatory" type="file" asp-for="Model.ExpenseReport.ExpenseLines[0].Justificatory">*@
+
+                            </td>
                             <!-- Statut de la ligne de frais (uniquement quand l'ER a déjà été refusée) -->
-                            @if (Model.ExpenseReport.Status == ExpenseReportStatus.REFUSED) {
+                            @if (Model.ExpenseReport.Status == ExpenseReportStatus.REFUSED)
+                            {
                                 <td>
-                                    @if (Model.ExpenseReport.ExpenseLines[i].Treated == Treatment.COMPTA) {
-                                        if (Model.ExpenseReport.ExpenseLines[i].FinalValidation) {
+                                    @if (Model.ExpenseReport.ExpenseLines[i].Treated == Treatment.COMPTA)
+                                    {
+                                        if (Model.ExpenseReport.ExpenseLines[i].FinalValidation)
+                                        {
                                             <text>Validée compta</text>
                                         }
-                                        else {
+                                        else
+                                        {
                                             <text>Refusée compta</text>
                                         }
                                     }
-                                    else if (Model.ExpenseReport.ExpenseLines[i].Treated == Treatment.CDS) {
-                                        if (Model.ExpenseReport.ExpenseLines[i].Validated) {
+                                    else if (Model.ExpenseReport.ExpenseLines[i].Treated == Treatment.CDS)
+                                    {
+                                        if (Model.ExpenseReport.ExpenseLines[i].Validated)
+                                        {
                                             <text>Validée CDS</text>
                                         }
-                                        else {
+                                        else
+                                        {
                                             <text>Refusée CDS</text>
                                         }
                                     }
-                                    else {
+                                    else
+                                    {
                                         <text>Non traitée</text>
                                     }
                                 </td>
                             }
-
                             <!-- Supprimer -->
                             <td>
                                 <span class="table-remove fa fa-remove"></span>
@@ -140,12 +153,12 @@
         @Html.ValidationSummary("");
     }
 
+
     <div id="informations">
         <div>
             Montant total de la note : <label id="montant">0</label> €
         </div>
     </div>
-
     <!-- This is our clonable table line -->
     <table id="additionnalrow" hidden>
         <tr class="hide">
@@ -164,32 +177,36 @@
             <td>
                 @*@Html.DropDownListFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Mission.Id, Model.CollaboratorMissions)*@
                 @Html.DropDownListFor(
-									m => Model.ExpenseReport.ExpenseLines[nbEL].Mission.Id,
-									Model.CollaboratorMissions.Select
-									(mission =>
-										new SelectListItem {
-											Text = mission.Text,
-											Value = mission.Value,
-											Selected = (mission.Value == Model.CollaboratorMissions.FirstOrDefault().Value)
-										}
-									)
-				)
+                                    m => Model.ExpenseReport.ExpenseLines[nbEL].Mission.Id,
+                                    Model.CollaboratorMissions.Select
+                                    (mission =>
+                                        new SelectListItem {
+                                            Text = mission.Text,
+                                            Value = mission.Value,
+                                            Selected = (mission.Value == Model.CollaboratorMissions.FirstOrDefault().Value)
+                                        }
+                                    )
+                )
             </td>
-			<td>
-				@{
-					@Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Date,
-					new {
-						@type = "date", @class = "form-control datepicker",
-						@value = DateTime.Now.ToString("dd-MM-yyyy")
-					})
-
-				}
-			</td>
             <td>
-                @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Justificatory, new { type = "file", @Value = "", accept = ".pdf" }) 
+                @{
+                    @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Date,
+                    new {
+                        @type = "date", @class = "form-control datepicker",
+                        @value = DateTime.Now.ToString("dd-MM-yyyy")
+                    })
+
+                }
+            </td>
+            <td>
+                @*@Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Justificatory, new { type = "file", @Value = "", accept = ".pdf" })*@
+
+                @Html.TextBoxFor(model => Model.file, new { type = "file", @Value = "", accept = ".pdf" })
+
                 <!-- by Yao -->
             </td>
-            @if (Model.ExpenseReport.Status == ExpenseReportStatus.REFUSED) {
+            @if (Model.ExpenseReport.Status == ExpenseReportStatus.REFUSED)
+            {
                 <td>
                     <text> TODO ???</text>
                 </td>
@@ -200,12 +217,10 @@
         </tr>
     </table>
 </div>
-
 @{
     // Magic by Morgan, do not touch
     int toRemove = (@Model.ExpenseReport.Status == ExpenseReportStatus.REFUSED ? 2 : 1);
 }
-
 
 @section Scripts {
     <script>
@@ -238,7 +253,7 @@
                 for (var i = 0, td; i < (tr.children.length - toRemove); i++) {
                     td = tr.children[i];
 
-                    // Except for the fa-remove and status (two last td in every row), change id of the td content 
+                    // Except for the fa-remove and status (two last td in every row), change id of the td content
                     var idToChange = td.children[0].id;
                     td.children[0].id = idToChange.replace(/ExpenseReport_ExpenseLines_[0-9]+/, "ExpenseReport_ExpenseLines_" + j);
 

@@ -173,6 +173,7 @@ namespace Casablanca.Controllers {
             return View(model);
         }
 
+        /*
         [HttpPost] // Backend call of UpdateER page
         public ActionResult UpdateExpenseReport(AddExpenseLineVM model) {
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
@@ -236,6 +237,152 @@ namespace Casablanca.Controllers {
 
             return Redirect("/ExpenseReport/Index");
         }
+        */
+
+        //by Yao
+        [HttpPost] // Backend call of UpdateER page V2.0 (and Justicifatory)
+
+        public ActionResult UpdateExpenseReport(AddExpenseLineVM model) //HttpPostedFileBase file
+        {
+            if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+                return Redirect("/Home/Index");
+
+            Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+
+            // If validation fails
+            if (!ModelState.IsValid)
+            {
+                model.CollaboratorMissions = GetMissionsList(coll); // Put the missions list back into the model
+                foreach (ExpenseLine el in model.ExpenseReport.ExpenseLines)
+                { // All dates that are not set go to Now
+                    if (el.Date == new DateTime(0001, 01, 01))
+                    {
+                        el.Date = DateTime.Now;
+                    }
+                }
+
+                model.ExpenseReport.AddLine(new ExpenseLine()); // IMPORTANT : do not remove this line 
+
+                return View(model);
+            }
+
+
+            // Get current ER and clear its ELs
+            ExpenseReport current = dal.GetExpenseReport(model.ExpenseReport.Id);
+            List<ExpenseLine> tempList = new List<ExpenseLine>();
+
+            // If we received ELs from the view, create a new line from view fields and add it to the current ER
+            if (model.ExpenseReport.ExpenseLines != null)
+            {
+                for (int i = 0; i < model.ExpenseReport.ExpenseLines.Count; i++)
+                {
+                    ExpenseLine el = model.ExpenseReport.ExpenseLines[i];
+                    HttpPostedFileBase fl = model.file[i];
+                    string fileName = "";
+                    if (fl != null)
+                    {
+                        string path = Path.Combine(Server.MapPath("~/APP_Data/UploadedFiles"), Path.GetFileName(fl.FileName));
+                        fl.SaveAs(path);
+                        fileName = fl.FileName;
+                    } else if (current.ExpenseLines.Count >= i)
+                    {
+                        fileName = current.ExpenseLines[i].Justificatory;
+                    }
+
+                    // Create a new EL with the informations from the view
+                    ExpenseLine newEL = new ExpenseLine(dal.GetMission(el.Mission.Id), el.Type, el.Description, el.Cost, el.Date, fileName)
+                    {
+                        Validated = false,
+                        Treated = Treatment.NOT_TREATED,
+                        FinalValidation = false
+                    };
+
+                    newEL.ComputeValidator(current.Treatment);
+
+                    // Check if an EL exists with the same values (which means we did not modify this line)
+                    foreach (ExpenseLine old in current.ExpenseLines)
+                    {
+                        if (newEL.Equals(old))
+                        {
+                            newEL.Id = old.Id;
+                            newEL.Validated = old.Validated;
+                            newEL.Treated = old.Treated;
+                            newEL.FinalValidation = old.FinalValidation;
+                            break;
+                        }
+                    }
+
+                    tempList.Add(newEL);
+
+                }
+                /*
+                foreach (ExpenseLine el in model.ExpenseReport.ExpenseLines)
+                {
+                    
+                    // Create a new EL with the informations from the view
+                    ExpenseLine newEL = new ExpenseLine(dal.GetMission(el.Mission.Id), el.Type, el.Description, el.Cost, el.Date, model.file.FileName)
+                    {
+                        Validated = false,
+                        Treated = Treatment.NOT_TREATED,
+                        FinalValidation = false
+                    };
+
+                    newEL.ComputeValidator(current.Treatment);
+
+                    // Check if an EL exists with the same values (which means we did not modify this line)
+                    foreach (ExpenseLine old in current.ExpenseLines)
+                    {
+                        if (newEL.Equals(old))
+                        {
+                            newEL.Id = old.Id;
+                            newEL.Validated = old.Validated;
+                            newEL.Treated = old.Treated;
+                            newEL.FinalValidation = old.FinalValidation;
+                            break;
+                        }
+                    }
+
+                    tempList.Add(newEL);
+                }
+                */
+            }
+
+            // Clear all previous ELs
+            dal.ClearExpenseLines(current);
+
+            // Finally, add all new ELs to the current ER
+            foreach (ExpenseLine el in tempList)
+            {
+                current.AddLine(el);
+            }
+            dal.SaveChanges();
+
+            return Redirect("/ExpenseReport/Index");
+        }
+
+        //Download Justificatory
+        //by Yao
+
+        public ActionResult FilePathDownload(string fileName)
+        {
+            try
+            { 
+                var path = Path.Combine(Server.MapPath("~/APP_Data/UploadedFiles"), fileName);
+                var name = Path.GetFileName(path);
+                return File(path, "application/x-zip-compressed", Url.Encode(name));
+                //ViewBag.FileStatus = "Justificatory Download successfully.";
+            }
+            catch (Exception)
+            {
+
+                ViewBag.FileStatus = "Error while Justificatory uploading.";
+                return new EmptyResult();
+            }
+
+        }
+                
+
+        
 
         // Visualize an already sent ER
         public ActionResult ViewExpenseReport(int ERId = 1) {
@@ -253,6 +400,34 @@ namespace Casablanca.Controllers {
             return View(model);
         }
 
+        //Upload Justificatory
+        //by Yao
+        [HttpPost]
+        public ActionResult UploadJustificatory(HttpPostedFileBase file)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+
+                    if (file != null)
+                    {
+                        string path = Path.Combine(Server.MapPath("~/APP_Data/UploadedFiles"), Path.GetFileName(file.FileName));
+                        file.SaveAs(path);
+
+                    }
+                    ViewBag.FileStatus = "Justificatory uploaded successfully.";
+                }
+                catch (Exception)
+                {
+
+                    ViewBag.FileStatus = "Error while Justificatory uploading.";
+                }
+
+            }
+            //return View(Index());//TO DO
+            return Index();
+        }
 
         /* ############################################################
 		 * ------------------------------------------------------------
@@ -732,38 +907,4 @@ namespace Casablanca.Controllers {
 
 	}
 
-    public class JustificatoryUploadController : Controller
-    {
-        // GET: JustificatoryUpload
-        public ActionResult Index()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public ActionResult UploadJustificatory(HttpPostedFileBase file)
-        {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-
-                    if (file != null)
-                    {
-                        string path = Path.Combine(Server.MapPath("~/APP_Data/UploadedFiles"), Path.GetFileName(file.FileName));
-                        file.SaveAs(path);
-
-                    }
-                    ViewBag.FileStatus = "Justificatory uploaded successfully.";
-                }
-                catch (Exception)
-                {
-
-                    ViewBag.FileStatus = "Error while Justificatory uploading.";
-                }
-
-            }
-            return View("Index");
-        }
-    }
 }

@@ -40,46 +40,39 @@
 				<tbody>
 					@foreach (ExpenseLine el in Model.ExpenseLines)
 					{
-						<tr>
-							<!--Type de frais-->
-							<td>@el.Type</td>
-
-							<!--Description du frais-->
-							<td>@el.Description</td>
-
-							<!--Montant -->
-							<td>@el.Cost €</td>
-
-							<!-- Mission -->
-							<td>@el.Mission.Name</td>
-
-							<!-- Valideur -->
-							<td>@el.ChiefValidator</td>
-
-							<!-- Date de la ligne de frais -->
-							<td>@el.Date.ToString("dd/MM/yyyy")</td>
-
-							<!-- Justificatif -->
-							<td>@el.Justificatory</td>
-
-							<td>
-								@if (el.FinalValidation)
-								{
-									<text>Validée par le service Comptabilité</text>
-								}
-								else
-								{
-									if (el.Validated)
-									{
-										<text>Validée par le chef de la mission</text>
-									}
-									else
-									{
-										<text>En attente de validation par le chef de la mission</text>
-									}
-								}
-							</td>
-						</tr>
+                    <tr>
+                        <!--Type de frais-->
+                        <td>@el.Type</td>
+                        <!--Description du frais-->
+                        <td>@el.Description</td>
+                        <!--Montant -->
+                        <td>@el.Cost €</td>
+                        <!-- Mission -->
+                        <td>@el.Mission.Name</td>
+                        <!-- Valideur -->
+                        <td>@el.ChiefValidator</td>
+                        <!-- Date de la ligne de frais -->
+                        <td>@el.Date.ToString("dd/MM/yyyy")</td>
+                        <!-- Justificatif -->
+                        <td><a href="~/ExpenseReport/FilePathDownload?fileName=@el.Justificatory">@el.Justificatory</a></td> @*Download Action by Yao*@
+                        <td>
+                            @if (el.FinalValidation)
+                            {
+                                <text>Validée par le service Comptabilité</text>
+                            }
+                            else
+                            {
+                                if (el.Validated)
+                                {
+                                    <text>Validée par le chef de la mission</text>
+                                }
+                                else
+                                {
+                                    <text>En attente de validation par le chef de la mission</text>
+                                }
+                            }
+                        </td>
+                    </tr>
 					}
 				</tbody>
 			</table>

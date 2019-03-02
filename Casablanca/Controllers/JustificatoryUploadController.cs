@@ -38,7 +38,8 @@ namespace Casablanca.Controllers
                 }
 
             }
-            return View("Index");
+            //return View("Index");
+            return View();
         }
     }
 }

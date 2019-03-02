@@ -42,92 +42,98 @@
                     @Html.HiddenFor(model => Model.ExpenseReport.Id)
 
                     @for (int i = 0; i < nbEL; i++) {
-                        <tr>
-                            <!--Type de frais-->
-                            <td>
-                                @Html.DropDownListFor(model => Model.ExpenseReport.ExpenseLines[i].Type,
-                                (LineType.GetValues(typeof(LineType))).Cast<LineType>().ToList().Select(type => new SelectListItem {
-                                    Text = type.ToString(),
-                                    Value = type.ToString(),
-                                    Selected = (type == Model.ExpenseReport.ExpenseLines[i].Type)
-                                }))
-                                @*<select asp-for="Model.ExpenseReport.ExpenseLines[i].Type">
-                                        <optgroup label="Type de frais">
-                                            @foreach (LineType type in LineType.GetValues(typeof(LineType))) {
-                                                if (type == Model.ExpenseReport.ExpenseLines[i].Type) {
-                                                    <option value="@type" selected>@type</option>
-                                                }
-                                                else {
-                                                    <option value="@type">@type</option>
-                                                }
-                                            }
-                                        </optgroup>
-                                    </select>*@
-                            </td>
-
-                            <!--Description du frais-->
-                            <td>
-                                @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Description)
-                            </td>
-
-                            <!--Montant -->
-                            <td>
-                                @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Cost,
-                                    new { @class = "required numeric", Value = String.Format("{0:}", Model.ExpenseReport.ExpenseLines[i].Cost) })
-                            </td>
-
-                            <!-- Mission -->
-                            <td>
-                                @Html.DropDownListFor(
-                                   model => Model.ExpenseReport.ExpenseLines[i].Mission.Id,
-                                   Model.CollaboratorMissions.Select(mission => new SelectListItem {
-                                        Text = mission.Text, Value = mission.Value, Selected =
-                                        (mission.Value == Model.ExpenseReport.ExpenseLines[i].Mission.Id.ToString())}))
-                            </td>
-
-                            <!-- Date de la ligne de frais -->
-                            <td>
-                                @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Date,
-                                    new { @type = "date", @class = "form-control datepicker", @Value = Model.ExpenseReport.ExpenseLines[i].Date.ToString("yyyy-MM-dd") })
-                            </td>
-
-                            <!-- Justificatif TODO -->
-                            <td>
-                                @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Justificatory,
-                                    new { type = "file", @Value = Model.ExpenseReport.ExpenseLines[i].Justificatory, accept = ".pdf" })
-                                @*<input value="@Model.ExpenseReport.ExpenseLines[i].Justificatory" type="file" asp-for="Model.ExpenseReport.ExpenseLines[0].Justificatory">*@
-                            </td>
-
-                            <!-- Statut de la ligne de frais (uniquement quand l'ER a déjà été refusée) -->
-                            @if (Model.ExpenseReport.Status == ExpenseReportStatus.REFUSED) {
-                                <td>
-                                    @if (Model.ExpenseReport.ExpenseLines[i].Treated == Treatment.COMPTA) {
-                                        if (Model.ExpenseReport.ExpenseLines[i].FinalValidation) {
-                                            <text>Validée compta</text>
-                                        }
-                                        else {
-                                            <text>Refusée compta</text>
-                                        }
-                                    }
-                                    else if (Model.ExpenseReport.ExpenseLines[i].Treated == Treatment.CDS) {
-                                        if (Model.ExpenseReport.ExpenseLines[i].Validated) {
-                                            <text>Validée CDS</text>
-                                        }
-                                        else {
-                                            <text>Refusée CDS</text>
-                                        }
-                                    }
-                                    else {
-                                        <text>Non traitée</text>
-                                    }
-                                </td>
+                    <tr>
+                        <!--Type de frais-->
+                        <td>
+                            @Html.DropDownListFor(model => Model.ExpenseReport.ExpenseLines[i].Type,
+                            (LineType.GetValues(typeof(LineType))).Cast<LineType>().ToList().Select(type => new SelectListItem {
+                                Text = type.ToString(),
+                                Value = type.ToString(),
+                                Selected = (type == Model.ExpenseReport.ExpenseLines[i].Type)
+                            }))
+                            @*<select asp-for="Model.ExpenseReport.ExpenseLines[i].Type">
+                <optgroup label="Type de frais">
+                    @foreach (LineType type in LineType.GetValues(typeof(LineType))) {
+                        if (type == Model.ExpenseReport.ExpenseLines[i].Type) {
+                            <option value="@type" selected>@type</option>
+                        }
+                        else {
+                            <option value="@type">@type</option>
+                        }
+                    }
+                </optgroup>
+            </select>*@
+                        </td>
+                        <!--Description du frais-->
+                        <td>
+                            @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Description)
+                        </td>
+                        <!--Montant -->
+                        <td>
+                            @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Cost,
+                                new { @class = "required numeric", Value = String.Format("{0:}", Model.ExpenseReport.ExpenseLines[i].Cost) })
+                        </td>
+                        <!-- Mission -->
+                        <td>
+                            @Html.DropDownListFor(
+                               model => Model.ExpenseReport.ExpenseLines[i].Mission.Id,
+                               Model.CollaboratorMissions.Select(mission => new SelectListItem {
+                                    Text = mission.Text, Value = mission.Value, Selected =
+                                    (mission.Value == Model.ExpenseReport.ExpenseLines[i].Mission.Id.ToString())}))
+                        </td>
+                        <!-- Date de la ligne de frais -->
+                        <td>
+                            @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[i].Date,
+                                new { @type = "date", @class = "form-control datepicker", @Value = Model.ExpenseReport.ExpenseLines[i].Date.ToString("yyyy-MM-dd") })
+                        </td>
+                        <!-- Justificatif TODO -->
+                        <td>
+                            @if (Model.ExpenseReport.ExpenseLines[i].Justificatory != "")
+                            {
+                                <a href="~/ExpenseReport/FilePathDownload?fileName=@Model.ExpenseReport.ExpenseLines[i].Justificatory">@Html.DisplayFor(model => Model.ExpenseReport.ExpenseLines[i].Justificatory)</a>
                             }
+                            @Html.TextBoxFor(model => Model.file, new { type = "file", @Value = "", accept = ".pdf" })
+                        </td>
+                        <!-- by Yao -->
 
-                            <!-- Supprimer -->
+
+                        <!-- Statut de la ligne de frais (uniquement quand l'ER a déjà été refusée) -->
+                        @if (Model.ExpenseReport.Status == ExpenseReportStatus.REFUSED)
+                        {
                             <td>
-                                <span class="table-remove fa fa-remove"></span>
+                                @if (Model.ExpenseReport.ExpenseLines[i].Treated == Treatment.COMPTA)
+                                {
+                                    if (Model.ExpenseReport.ExpenseLines[i].FinalValidation)
+                                    {
+                                        <text>Validée compta</text>
+                                    }
+                                    else
+                                    {
+                                        <text>Refusée compta</text>
+                                    }
+                                }
+                                else if (Model.ExpenseReport.ExpenseLines[i].Treated == Treatment.CDS)
+                                {
+                                    if (Model.ExpenseReport.ExpenseLines[i].Validated)
+                                    {
+                                        <text>Validée CDS</text>
+                                    }
+                                    else
+                                    {
+                                        <text>Refusée CDS</text>
+                                    }
+                                }
+                                else
+                                {
+                                    <text>Non traitée</text>
+                                }
                             </td>
-                        </tr>
+                        }
+                        <!-- Supprimer -->
+                        <td>
+                            <span class="table-remove fa fa-remove"></span>
+                        </td>
+                    </tr>
 
                     }
                 </tbody>
@@ -175,7 +181,8 @@
                     new { @type = "date", @class = "form-control datepicker", @Value = "" })
             </td>
             <td>
-                @Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Justificatory, new { type = "file", @Value = "", accept = ".pdf" })
+                @Html.TextBoxFor(model => Model.file, new { type = "file", @Value = "", accept = ".pdf" })
+                <!-- by Yao -->
             </td>
             @if (Model.ExpenseReport.Status == ExpenseReportStatus.REFUSED) {
                 <td>

@@ -233,7 +233,7 @@ namespace Casablanca.Models.Database
 
             // Yao TO-DO
             ExpenseLines = new List<ExpenseLine>() {
-                new ExpenseLine(GetMission("Mission A"), LineType.HOTEL, "Minh NGUYEN", "T Tower", 1000.0f, new DateTime(2019, 3, 4), "trumptower.pdf"), // by Yao, "trumptower.pdf"
+                new ExpenseLine(GetMission("Mission A"), LineType.HOTEL, "Minh NGUYEN", "T Tower", 1000.0f, new DateTime(2019, 3, 4), "ProjetGL-recueil des besoins.pdf"), // by Yao, "trumptower.pdf"
                 new ExpenseLine(GetMission("Mission B"), LineType.RESTAURANT, "Jeffrey GONCALVES", "Tower restaurant", 8000.0f, new DateTime(2019, 1, 2), "restau1.pdf"), // by Yao, "restau1.pdf"
                 new ExpenseLine(GetMission("Mission C"), LineType.TAXI, "Jeffrey GONCALVES", "Jafar Taxi", 15.98f, new DateTime(2019, 3, 4), "taxig7.pdf"), //by Yao, "taxig7.pdf"
                 new ExpenseLine(GetMission("Mission E"), LineType.OTHER, "Jeffrey GONCALVES", "Jafar Other", 80010.0f, new DateTime(2019, 1, 2), "russia.pdf") //by Yao, "russia.pdf"

@@ -15,6 +15,10 @@ namespace Casablanca.Models.ViewModel {
 
 		public string SubmitValue { get; set; }
 
+        //[DataType(DataType.Upload)]
+        //[Display(Name = "Upload Justificatory")]
+        //[Required(ErrorMessage = "Please choose file to upload.")]
+        public List<HttpPostedFileBase> file { get; set; }
         //public string file { get; set; } //by Yao
 
         public AddExpenseLineVM(ExpenseReport expenseReport, int selectedMission, IEnumerable<SelectListItem> collaboratorMissions)
@@ -22,6 +26,7 @@ namespace Casablanca.Models.ViewModel {
 			ExpenseReport = expenseReport;
 			CollaboratorMissions = collaboratorMissions;
 			SubmitValue = "";
+            file = null;
 		}
 
 		public AddExpenseLineVM()
@@ -44,6 +49,7 @@ namespace Casablanca.Models.ViewModel {
         //	CollaboratorMissions = new List<Mission>();
         //}
 
+
         //by Yao
         /*
         public class JustificatoryUploadModel
@@ -54,6 +60,7 @@ namespace Casablanca.Models.ViewModel {
             public string file { get; set; }
         }
         */
+        
 
     }
 
