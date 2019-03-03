@@ -268,7 +268,7 @@ namespace Casablanca.Controllers {
                         fl.SaveAs(path);
                         fileName = fl.FileName;
                     }
-                    else if (current.ExpenseLines.Count >= i)
+                    else if (current.ExpenseLines.Count > i)
                     {
                         fileName = current.ExpenseLines[i].Justificatory;
                     }

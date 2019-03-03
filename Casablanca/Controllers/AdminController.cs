@@ -15,25 +15,25 @@ namespace Casablanca.Controllers
 {
     public class AdminController : Controller
     {
-		private IDal dal;
-		public AdminController() : this(new Dal()){}
-		private AdminController(IDal dal){this.dal = dal;}
+        private IDal dal;
+        public AdminController() : this(new Dal()) { }
+        private AdminController(IDal dal) { this.dal = dal; }
 
-		// GET: Admin
-		public ActionResult Index()
+        // GET: Admin
+        public ActionResult Index()
         {
-			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
-				return Redirect("/Home/Index");
-			//TODO check if user roleis Admin
-			//Collaborator model = new Collaborator();
-			return View(/*model*/);
-		}
+            if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+                return Redirect("/Home/Index");
+            //TODO check if user roleis Admin
+            //Collaborator model = new Collaborator();
+            return View(/*model*/);
+        }
 
-		// Get: account creation
-		public ActionResult CreateAccount()
-		{
-			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
-				return Redirect("/Home/Index");
+        // Get: account creation
+        public ActionResult CreateAccount()
+        {
+            if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+                return Redirect("/Home/Index");
 
             // Check admin privilege
             Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
@@ -41,14 +41,14 @@ namespace Casablanca.Controllers
                 return Redirect("/Home/Index");
 
             return View();
-		}
+        }
 
-		//POST : account register
-		[HttpPost]
-		public ActionResult CreateAccount(Collaborator model /*, int collId*/)
-		{
-			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
-				return Redirect("/Home/Index");
+        //POST : account register
+        [HttpPost]
+        public ActionResult CreateAccount(Collaborator model /*, int collId*/)
+        {
+            if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+                return Redirect("/Home/Index");
 
             // Check admin privilege
             Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
@@ -57,94 +57,95 @@ namespace Casablanca.Controllers
 
             // Validation
             if (ModelState.IsValid && ValidationLogin(model))
-			{
+            {
                 dal.CreateCollaborator(model.FirstName, model.LastName, model.Login, dal.EncodeMD5(model.Password));
-				return Redirect("/Admin/Index"); 
-			}
-            else {
+                return Redirect("/Admin/Index");
+            }
+            else
+            {
                 ModelState.AddModelError("", "Le champ nom de compte doit être unique !");
             }
-			return View(model);
-		}
+            return View(model);
+        }
 
-		public ActionResult ServicesList()
-		{
-			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
-				return Redirect("/Home/Index");
-			//TODO check if user roleis Admin
-			List<Service> model = dal.GetServices();
-			return View(model);
-		}
-
-
-		/*--------------------------------------------------------------------*/
-
-		// Get: account deletion
-		public ActionResult DeleteUser(int collId)
-		{
-			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
-				return Redirect("/Home/Index");
-
-			// Check admin privilege
-			Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
-			if (!HelperModel.CheckAdmin(coll))
-				return Redirect("/Home/Index");
+        public ActionResult ServicesList()
+        {
+            if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+                return Redirect("/Home/Index");
+            //TODO check if user roleis Admin
+            List<Service> model = dal.GetServices();
+            return View(model);
+        }
 
 
+        /*--------------------------------------------------------------------*/
 
-			dal.RemoveCollaborator(collId);
+        // Get: account deletion
+        public ActionResult DeleteUser(int collId)
+        {
+            if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+                return Redirect("/Home/Index");
 
-
-			return Redirect("/Home/Index");
-		}
+            // Check admin privilege
+            Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+            if (!HelperModel.CheckAdmin(coll))
+                return Redirect("/Home/Index");
 
 
 
-		public ActionResult ChangeService(int collId)
-		{
-			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
-				return Redirect("/Home/Index");
+            dal.RemoveCollaborator(collId);
 
-			// Check admin privilege
-			Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
-			if (!HelperModel.CheckAdmin(coll))
-				return Redirect("/Home/Index");
+
+            return Redirect("/Home/Index");
+        }
 
 
 
-			//HelperModel.ChangeService(collId);
+        public ActionResult ChangeService(int collId)
+        {
+            if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+                return Redirect("/Home/Index");
 
-			//coll->coll
-
-			//Demande de congés : mettre à jour le responsable de la validation de la demande 
-			//(remplacer l’ancien CDS par le nouveau). Notifier le nouveau CDS qu’il possède 
-			//une nouvelle demande à valider si celle-ci était en attente de validation par l’ancien CDS,
-			//notifier le service RH du changement sinon.
-
-			//il faut une fct pour faire ça. S'applique à quasiment tous les cas. Voir document "fonctionnalités décembre"
-
-
-
-			//compta → coll simple
-
-			//Notes de frais: les notes de frais des collaborateurs du service comptabilité étant validées
-			//en seconde partie par le directeur financier, les validateurs doivent être mis à jour.
-			//Les notes de frais sont désormais à valider par le service comptabilité. 
+            // Check admin privilege
+            Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+            if (!HelperModel.CheckAdmin(coll))
+                return Redirect("/Home/Index");
 
 
 
-			//-------------------------------
-			//coll simple → coll du service compta
-			//pareil que en haut, mais dans le sens inverse
+            //HelperModel.ChangeService(collId);
 
-			//Notes de frais: les notes de frais des collaborateurs simple étant validées
-			//en seconde partie par le service comptabilité, les validateurs doivent être mis à jour.
-			//Les notes de frais sont désormais à valider par le directeur financier. 
+            //coll->coll
+
+            //Demande de congés : mettre à jour le responsable de la validation de la demande 
+            //(remplacer l’ancien CDS par le nouveau). Notifier le nouveau CDS qu’il possède 
+            //une nouvelle demande à valider si celle-ci était en attente de validation par l’ancien CDS,
+            //notifier le service RH du changement sinon.
+
+            //il faut une fct pour faire ça. S'applique à quasiment tous les cas. Voir document "fonctionnalités décembre"
 
 
 
-			//----------------------
-			/*
+            //compta → coll simple
+
+            //Notes de frais: les notes de frais des collaborateurs du service comptabilité étant validées
+            //en seconde partie par le directeur financier, les validateurs doivent être mis à jour.
+            //Les notes de frais sont désormais à valider par le service comptabilité. 
+
+
+
+            //-------------------------------
+            //coll simple → coll du service compta
+            //pareil que en haut, mais dans le sens inverse
+
+            //Notes de frais: les notes de frais des collaborateurs simple étant validées
+            //en seconde partie par le service comptabilité, les validateurs doivent être mis à jour.
+            //Les notes de frais sont désormais à valider par le directeur financier. 
+
+
+
+            //----------------------
+            /*
 			service RH → coll simple
 
 			Demande de congés: les notes de frais des collaborateurs du service RH étant validées
@@ -158,7 +159,7 @@ namespace Casablanca.Controllers
 
 
 
-			/*
+            /*
 				* 
 				* 
 				* 
@@ -304,35 +305,37 @@ namespace Casablanca.Controllers
 
 
 
-			return Redirect("/Home/Index");
+            return Redirect("/Home/Index");
+        }
+
+
+
+
+
+        // Coll List
+        public ActionResult CollaboratorsList()
+        {
+            if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+                return Redirect("/Home/Index");
+
+            List<Collaborator> model = dal.GetCollaborators();
+
+            return View(model);
+        }
+
+        private bool ValidationLogin(Collaborator unique_coll)
+        {
+            string unique_field = unique_coll.Login;
+            List<Collaborator> colls = dal.GetCollaborators();
+
+            foreach (Collaborator c in colls)
+            {
+                if (c.Login == unique_field)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
 }
-
-
-
-
-
-// Coll List
-public ActionResult CollaboratorsList()
-{
-if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
-	return Redirect("/Home/Index");
-
-List<Collaborator> model = dal.GetCollaborators();
-
-return View(model);
-}
-
-private bool ValidationLogin(Collaborator unique_coll) {
-string unique_field = unique_coll.Login;
-List<Collaborator> colls = dal.GetCollaborators();
-
-foreach (Collaborator c in colls) {
-	if (c.Login == unique_field) {
-		return false;
-	}
-}
-return true;
-}
-}
-}
- 
