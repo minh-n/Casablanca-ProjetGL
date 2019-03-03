@@ -44,7 +44,6 @@ namespace Casablanca.Models {
 
 		public Roles Role { get; set; }
 
-		// TODO : Autres attributs ? Jour de congés restants par exemple
 		public int NbRTT { get; set; }
 		public int NbPaid { get; set; }
 

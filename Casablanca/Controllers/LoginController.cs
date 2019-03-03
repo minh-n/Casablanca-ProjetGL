@@ -49,27 +49,5 @@ namespace Casablanca.Controllers {
             return Redirect("/Home/Index");
         }
 
-        /*
-         * 
-         * TODO : Admin controller ptet
-
-
-        public ActionResult CreerCompte()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public ActionResult CreerCompte(Collaborateur utilisateur)
-        {
-            if (ModelState.IsValid)
-            {
-                int id = dal.AjoutCollaborateur(utilisateur.Nom, utilisateur.Prenom, utilisateur.Mail, utilisateur.MotDePasse).Id;
-                FormsAuthentication.SetAuthCookie(id.ToString(), false);
-                return Redirect("/");
-            }
-            return View(utilisateur);
-        }*/
-
     }
 }

@@ -24,7 +24,7 @@ namespace Casablanca.Controllers
         {
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                 return Redirect("/Home/Index");
-            //TODO check if user roleis Admin
+            //TODO check if user role is Admin
             //Collaborator model = new Collaborator();
             return View(/*model*/);
         }
@@ -72,7 +72,7 @@ namespace Casablanca.Controllers
         {
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                 return Redirect("/Home/Index");
-            //TODO check if user roleis Admin
+            //TODO check if user role is Admin
             List<Service> model = dal.GetServices();
             return View(model);
         }

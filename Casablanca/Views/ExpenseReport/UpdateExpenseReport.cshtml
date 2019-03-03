@@ -168,7 +168,7 @@
                             }
 
 
-                            <!-- Justificatif TODO -->
+                            <!-- Justificatif -->
                             <td>
                                 @if (Model.ExpenseReport.ExpenseLines[i].Justificatory != "")
                                 {
@@ -311,12 +311,12 @@
                 <td>
                     @*@Html.TextBoxFor(model => Model.ExpenseReport.ExpenseLines[nbEL].Justificatory, new { type = "file", @Value = "", accept = ".pdf" })*@
                     @Html.TextBoxFor(model => Model.file, new { type = "file", @Value = "", accept = ".pdf" })
-                    <!-- by Yao -->
+                
                 </td>
 			@if (Model.ExpenseReport.Status == ExpenseReportStatus.REFUSED)
 			{
 				<td>
-					<text> TODO ???</text>
+					<text> Refusée</text>
 				</td>
 			}
 			<td>

@@ -52,9 +52,6 @@ namespace Casablanca.Controllers
         {
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                 return Redirect("/Home/Index");
-
-            ViewBag.Message = "TODOContactez l'administrationTODO";
-
             return View();
         }
 
@@ -69,18 +66,5 @@ namespace Casablanca.Controllers
 			return View(model);
         }
 
-
-		//Obsolete ?
-        public ActionResult CollaboratorView(int id = 0)
-        {
-            if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
-                return Redirect("/Home/Index");
-
-            // TODO : check if it is the right user
-
-            Collaborator model = dal.GetCollaborators()[id];
-			
-            return View(model);
-        }
     }
 }
