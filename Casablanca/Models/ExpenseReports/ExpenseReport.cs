@@ -63,7 +63,7 @@ namespace Casablanca.Models.ExpenseReports {
             coll.ExpenseReports.Add(this);
         }
 
-		public ExpenseReport(Collaborator coll, Month month, int year, ExpenseReportStatus stat)
+		public ExpenseReport(Collaborator coll, Month month, int year, ExpenseReportStatus stat, bool isAdvance)
 		{
 			this.Month = month;
 			this.Year = year;
@@ -71,7 +71,7 @@ namespace Casablanca.Models.ExpenseReports {
 			this.NbLines = 0;
 			this.Status = stat;
 			this.ExpenseLines = new List<ExpenseLine>();
-            this.IsAdvance = false;
+            this.IsAdvance = isAdvance;
 			this.Collaborator = coll;
             ComputeTreatment();
 

@@ -224,9 +224,10 @@ namespace Casablanca.Models.Database
 			#region Create expense reports 
 
 			ExpenseReports = new List<ExpenseReport>() {
-                new ExpenseReport(GetCollaborator("Arthur", "BINELLI"), Month.DECEMBER, 2018, ExpenseReportStatus.PENDING_APPROVAL_2),
-				new ExpenseReport(GetCollaborator("Floriab", "LE PALLEC"), Month.DECEMBER, 2018, ExpenseReportStatus.PENDING_APPROVAL_1),
-				new ExpenseReport(GetCollaborator("Oubar", "MAYAKI"), Month.JANUARY, 2019, ExpenseReportStatus.UNSENT),
+                new ExpenseReport(GetCollaborator("Arthur", "BINELLI"), Month.DECEMBER, 2018, ExpenseReportStatus.PENDING_APPROVAL_2, false),
+                new ExpenseReport(GetCollaborator("Arthur", "BINELLI"), Month.NONE, 1990, ExpenseReportStatus.APPROVED, true),
+				new ExpenseReport(GetCollaborator("Floriab", "LE PALLEC"), Month.DECEMBER, 2018, ExpenseReportStatus.PENDING_APPROVAL_1, false),
+				new ExpenseReport(GetCollaborator("Oubar", "MAYAKI"), Month.JANUARY, 2019, ExpenseReportStatus.UNSENT, false),
             };
 
 			Db.SaveChanges();
@@ -242,10 +243,22 @@ namespace Casablanca.Models.Database
 			// Lignes de l'ER 1 (arthur)
 			foreach (ExpenseLine el in ExpenseLines) {ExpenseReports[0].AddLine(el);}
 
-			// Ligne de l'ER 2 (flo) 
-			ExpenseReports[1].AddLine(new ExpenseLine(GetMission(6), LineType.RESTAURANT, "Pepperoni Pizza", 10.0f, new DateTime(2019, 1, 7), "pizza.pdf")); // by Yao, "pizza.pdf"
-			ExpenseReports[1].AddLine(new ExpenseLine(GetMission(2), LineType.HOTEL, "Pepperoni Florian", 10.0f, new DateTime(2019, 1, 8), "hotelflo.pdf")); // by Yao, "hotelflo.pdf"
+            //Avance pour Arthur
+            ExpenseLine el1 = new ExpenseLine(GetMission(6), LineType.RESTAURANT, "Pepperoni Pizza", 10.0f, new DateTime(2019, 1, 7), "pizza.pdf");
+            el1.IsAdvance = true;
+            el1.Validated = true;
+            el1.FinalValidation = true;
+            ExpenseLine el2 = new ExpenseLine(GetMission(2), LineType.HOTEL, "Pepperoni Arthur", 10.0f, new DateTime(2019, 1, 8), "hotelflo.pdf");
+            el2.IsAdvance = true;
+            el2.Validated = true;
+            el2.FinalValidation = true;
 
+            ExpenseReports[1].AddLine(el1); // by Yao, "pizza.pdf"
+			ExpenseReports[1].AddLine(el2); // by Yao, "hotelflo.pdf"
+
+            // Ligne de l'ER 2 (flo) 
+            ExpenseReports[2].AddLine(new ExpenseLine(GetMission(6), LineType.RESTAURANT, "Pepperoni Pizza", 10.0f, new DateTime(2019, 1, 7), "pizza.pdf"));
+            ExpenseReports[2].AddLine(new ExpenseLine(GetMission(2), LineType.HOTEL, "Pepperoni Florian", 10.0f, new DateTime(2019, 1, 8), "hotelflo.pdf"));
 			// Lignes de l'ER 4 (jeffrey). Jeffrey n'a aucune mission à effectuer actuellement
 			//ExpenseReports[3].AddLine(new ExpenseLine(GetMission(1), LineType.RESTAURANT, "Jeffrey GONCALVES", "Simon Burger", 10.0f, new DateTime(2019, 1, 5), "trumpburger.pdf"));
 			//ExpenseReports[3].AddLine(new ExpenseLine(GetMission(3), LineType.HOTEL, "Minh NGUYEN", "Jafar Hotel", 10.0f, new DateTime(2019, 1, 5), "hotel.pdf"));
