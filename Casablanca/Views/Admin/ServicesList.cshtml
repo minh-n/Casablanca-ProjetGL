@@ -1,7 +1,14 @@
-﻿
+﻿@*@model Casablanca.Models.ViewModel.ServiceVM*@
+
+@model List<Casablanca.Models.Service>
+
 @{
     ViewBag.Title = "Admin - Liste des services";
 }
 
 <h2>ViewServices</h2>
-
+@for (int i = 0; i < Model.Count(); i++)
+{
+    @Html.DisplayFor(model => Model[i].Name);
+    <br />
+}

@@ -98,9 +98,7 @@ namespace Casablanca.Controllers
             return Redirect("/Home/Index");
         }
 
-
-
-        public ActionResult ChangeService(int collId)
+        public ActionResult SelectService(int collId)
         {
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                 return Redirect("/Home/Index");
@@ -110,7 +108,44 @@ namespace Casablanca.Controllers
             if (!HelperModel.CheckAdmin(coll))
                 return Redirect("/Home/Index");
 
+            // Check whether changeable
+            Collaborator collaborator = dal.GetCollaborator(collId);
 
+            List<Service> services = new List<Service> { };
+            if (HelperModel.CheckManagement(collaborator))
+            {
+                ViewBag.SelectStatus = "Unchangeable.";
+            }
+            else
+            {
+                foreach (Service s in dal.GetServices())
+                {
+                    if (!(s.Name.Contains("Compta") || s.Name.Contains("RH")))
+                        services.Add(s);
+                }
+            }
+
+            ChangeServiceVM model = new ChangeServiceVM(collaborator, services);
+
+            return View(model);
+        }
+
+        public ActionResult ChangeService(int collId, int serviceId)
+        {
+            if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+                return Redirect("/Home/Index");
+
+            // Check admin privilege
+            Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
+            if (!HelperModel.CheckAdmin(coll))
+                return Redirect("/Home/Index");
+
+            // Check whether changeable
+            Collaborator collaborator = dal.GetCollaborator(collId);
+            collaborator.Service = dal.GetService(serviceId);
+            dal.SaveChanges();
+            ViewBag.ChangeStatus = "Successful.";
+            return Redirect("/Admin/CollaboratorsList");
 
             //HelperModel.ChangeService(collId);
 

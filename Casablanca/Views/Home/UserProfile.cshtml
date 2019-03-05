@@ -1,153 +1,127 @@
 ﻿@using Casablanca.Models.Database
 @using Casablanca.Models
 
-
 @model Collaborator
-
 @{
-	ViewBag.Title = "Profil de l'utilisateur";
-	Dal dal = new Dal();
+    ViewBag.Title = "Profil de l'utilisateur";
+    Dal dal = new Dal();
 
-	Collaborator coll = dal.GetCollaborator(User.Identity.Name);
-	bool canManage = false;
-	if ((coll.Id != Model.Id) && (HelperModel.CheckCDS(coll) | HelperModel.CheckAdmin(coll)))
-	{
-		canManage = true;
-	}
+    Collaborator coll = dal.GetCollaborator(User.Identity.Name);
+    bool canManage = false;
+    if ((coll.Id != Model.Id) && (HelperModel.CheckCDS(coll) | HelperModel.CheckAdmin(coll)))
+    {
+        canManage = true;
+    }
 }
-
 
 <h1>Profil de @Model.FirstName @Model.LastName </h1>
-
-@if(canManage)
+@if (canManage)
 {
-<div>
+    <div>
+        @Html.ActionLink("Supprimer l'utilisateur", "DeleteUser", "Admin", new { id = Model.Id }, new { @class = "btn" })
 
-	@Html.ActionLink("Supprimer l'utilisateur", "DeleteUser", "Admin", new { id = Model.Id }, new { @class = "btn" })
-
-	@Html.ActionLink("Changer l'utilisateur de service", "ChangeService", "Admin", new { id = Model.Id }, new { @class = "btn" })
-
-	@Html.ActionLink("Changer info user", "EditUser", "Admin", new { id = Model.Id }, new { @class = "btn" })
-
-</div>
+        @*@Html.ActionLink("Changer l'utilisateur de service", "ChangeService", "Admin", new { id = Model.Id }, new { @class = "btn" })*@
+        <a href="~/Admin/SelectService?collId=@Model.Id">Changer l'utilisateur de service</a>
+           @Html.ActionLink("Changer info user", "EditUser", "Admin", new { id = Model.Id }, new { @class = "btn" })
+    </div>
 }
 
-
 <div class="container">
-
-	<div class="row">
-
-		<div class="col-sm-5">
-
-			<div style="padding:10px">
-				<h3>Informations de base</h3>
-				<div> Prénom : @Model.FirstName </div>
-				<div> Nom : @Model.LastName</div>
-				@if (Model.Service != null)
-				{
-					<div> Service : @Model.Service.Name</div>
-				}
-				else
-				{
-					<div> Service : Pas de service</div>
-				}
-
-				@if (@Model.Role == Casablanca.Models.Roles.USER)
-				{
-					<div> Rôle : Utilisateur</div>
-				}
-				else if (@Model.Role == Casablanca.Models.Roles.CHIEF)
-				{
-					<div> Rôle : Chef de service</div>
-				}
-				else if (@Model.Role == Casablanca.Models.Roles.ADMIN)
-				{
-					<div> Rôle : Admin</div>
-				}
-
+    <div class="row">
+        <div class="col-sm-5">
+            <div style="padding:10px">
+                <h3>Informations de base</h3>
+                <div> Prénom : @Model.FirstName </div>
+                <div> Nom : @Model.LastName</div>
+                @if (Model.Service != null)
+                {
+                    <div> Service : @Model.Service.Name</div>
+                }
+                else
+                {
+                    <div> Service : Pas de service</div>
+                }
+                @if (@Model.Role == Casablanca.Models.Roles.USER)
+                {
+                    <div> Rôle : Utilisateur</div>
+                }
+                else if (@Model.Role == Casablanca.Models.Roles.CHIEF)
+                {
+                    <div> Rôle : Chef de service</div>
+                }
+                else if (@Model.Role == Casablanca.Models.Roles.ADMIN)
+                {
+                    <div> Rôle : Admin</div>
+                }
                 <div> Solde : @Model.Balance.ToString() €</div>
+            </div>
 
-			</div>
+        </div>
 
+        <div class="col-sm-5">
+            <div style="padding:10px">
+                <h3>Missions</h3>
 
-
-		</div>
-
-
-		<div class="col-sm-5">
-			<div style="padding:10px">
-				<h3>Missions</h3>
-
-
-				<!-- MISSION TABLEAU-->
-				<div>
-					<div class="table-responsive">
-						<table id="table"
-							   class="table"
-							   data-toggle="table"
-							   data-search="true">
-
-							@if (Model.Missions.Count() == 0)
-							{
-								<tr>
-									<td colspan="7">Aucune mission trouvée.</td>
-								</tr>
-							}
-							else
-							{
-								<thead>
-									<tr>
-										<th scope="col" data-field="name" data-sortable="true">Nom</th>
-										<th scope="col" data-field="cds" data-sortable="true">Responsable</th>
-										<th scope="col" data-field="begin" data-sortable="true">Date de début</th>
-										<th scope="col" data-field="end" data-sortable="true">Date de fin</th>
-										<th scope="col" data-field="status" data-sortable="true">Statut</th>
-
-										<th scope="col" data-field="traiter" data-sortable="false">Voir</th>
-									</tr>
-								</thead>
-								<tbody>
-									@foreach (Mission item in Model.Missions)
-									{
-										<tr>
-											<td>
-												@item.Name
-											</td>
-											<td>
-												@dal.GetCollaborator(@item.ChiefId).FirstName @dal.GetCollaborator(@item.ChiefId).LastName
-											</td>
-											<td>
-												@item.StartDate.ToString("dd/MM/yyyy")
-											</td>
-											<td>
-												@if (@item.EndDate.Year > 1980)
-												{
-													@item.EndDate.ToString("dd/MM/yyyy")
-												}
-											</td>
-
-											<td>
-												@HelperModel.ToString(@item.Status)
-											</td>
-
-											<!--traiter-->
-											<td>
-
-												@Html.ActionLink("Voir", "ViewMission", "Mission", new { id = item.Id }, null)
-
-											</td>
-										</tr>
-									}
-								</tbody>
-							}
-						</table>
-					</div>
-
-				</div>
-			</div>
-		</div>
-
-	</div>
-
+                <!-- MISSION TABLEAU-->
+                <div>
+                    <div class="table-responsive">
+                        <table id="table"
+                               class="table"
+                               data-toggle="table"
+                               data-search="true">
+                            @if (Model.Missions.Count() == 0)
+                            {
+                                <tr>
+                                    <td colspan="7">Aucune mission trouvée.</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <thead>
+                                    <tr>
+                                        <th scope="col" data-field="name" data-sortable="true">Nom</th>
+                                        <th scope="col" data-field="cds" data-sortable="true">Responsable</th>
+                                        <th scope="col" data-field="begin" data-sortable="true">Date de début</th>
+                                        <th scope="col" data-field="end" data-sortable="true">Date de fin</th>
+                                        <th scope="col" data-field="status" data-sortable="true">Statut</th>
+                                        <th scope="col" data-field="traiter" data-sortable="false">Voir</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (Mission item in Model.Missions)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @item.Name
+                                            </td>
+                                            <td>
+                                                @dal.GetCollaborator(@item.ChiefId).FirstName @dal.GetCollaborator(@item.ChiefId).LastName
+                                            </td>
+                                            <td>
+                                                @item.StartDate.ToString("dd/MM/yyyy")
+                                            </td>
+                                            <td>
+                                                @if (@item.EndDate.Year > 1980)
+                                                {
+                                                    @item.EndDate.ToString("dd/MM/yyyy")
+                                                }
+                                            </td>
+                                            <td>
+                                                @HelperModel.ToString(@item.Status)
+                                            </td>
+                                            <!--traiter-->
+                                            <td>
+                                                @Html.ActionLink("Voir", "ViewMission", "Mission", new { id = item.Id }, null)
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </div>

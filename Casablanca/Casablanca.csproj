@@ -104,9 +104,6 @@
     <Reference Include="Microsoft.AspNet.TelemetryCorrelation, Version=1.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.TelemetryCorrelation.1.0.5\lib\net45\Microsoft.AspNet.TelemetryCorrelation.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=2.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Owin, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Owin.2.1.0\lib\net45\Microsoft.Owin.dll</HintPath>
@@ -227,6 +224,7 @@
     <Compile Include="Models\Service.cs" />
     <Compile Include="Models\ViewModel\AddExpenseLineVM.cs" />
     <Compile Include="Models\ViewModel\CalendarVM.cs" />
+    <Compile Include="Models\ViewModel\ChangeServiceVM.cs" />
     <Compile Include="Models\ViewModel\NotificationSelectionVM.cs" />
     <Compile Include="Models\ViewModel\ProcessExpenseLineVM.cs" />
     <Compile Include="Models\ViewModel\ProcessMissionVM.cs" />
@@ -439,6 +437,7 @@
     <Content Include="Views\Notification\EditorTemplates\SelectNotificationEditorVM.cshtml" />
     <Content Include="Views\ExpenseReport\AdvanceHistoryList.cshtml" />
     <Content Include="Views\ExpenseReport\AdvanceProcessList.cshtml" />
+    <Content Include="Views\Admin\SelectService.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\UploadedFiles\" />
