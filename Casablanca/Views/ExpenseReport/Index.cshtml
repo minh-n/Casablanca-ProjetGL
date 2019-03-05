@@ -32,17 +32,17 @@
                 if (item.Status != ExpenseReportStatus.APPROVED)
                 {
                     <tr>
-                        <td>
-                            @if(!item.IsAdvance)
-                            {
-                                @HelperModel.FirstCharToUpper(DateTime.ParseExact(item.Month.ToString(), "MMMM", new CultureInfo("en-US")).ToString("MMMM"))
-                                 @item.Year
-                            }
-                            else
-                            {
-                                <text> Avance </text>
-                            }
-                        </td>
+						<td>
+							@if (!item.IsAdvance)
+							{
+								@HelperModel.FirstCharToUpper(DateTime.ParseExact(item.Month.ToString(), "MMMM", new CultureInfo("en-US")).ToString("MMMM"))
+								<text> </text> @item.Year
+							}
+							else
+							{
+								<text> Avance </text>
+							}
+						</td>
                         <td>@item.TotalCost</td>
                         <td>@item.NbLines</td>
                         <td>
@@ -176,17 +176,17 @@ else if (months.Count != 0)
                 if (item.Status == ExpenseReportStatus.APPROVED)
                 {
                     <tr>
-                        <td>
-                            @if (!item.IsAdvance)
-                            {
-                                @HelperModel.FirstCharToUpper(DateTime.ParseExact(item.Month.ToString(), "MMMM", new CultureInfo("en-US")).ToString("MMMM"))
-                                @item.Year
-                            }
-                            else
-                            {
-                                <text> Avance </text>
-                            }
-                        </td>
+						<td>
+							@if (!item.IsAdvance)
+							{
+								@HelperModel.FirstCharToUpper(DateTime.ParseExact(item.Month.ToString(), "MMMM", new CultureInfo("en-US")).ToString("MMMM"))
+								<text> </text> @item.Year
+							}
+							else
+							{
+								<text> Avance </text>
+							}
+						</td>
                         <td>@item.TotalCost</td>
                         <td>@item.NbLines</td>
                         <td>

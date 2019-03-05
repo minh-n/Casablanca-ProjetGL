@@ -253,8 +253,8 @@ namespace Casablanca.Models.Database
             el2.Validated = true;
             el2.FinalValidation = true;
 
-            ExpenseReports[1].AddLine(el1); // by Yao, "pizza.pdf"
-			ExpenseReports[1].AddLine(el2); // by Yao, "hotelflo.pdf"
+            ExpenseReports[1].AddLine(el1); 
+			ExpenseReports[1].AddLine(el2); 
 
             // Ligne de l'ER 2 (flo) 
             ExpenseReports[2].AddLine(new ExpenseLine(GetMission(6), LineType.RESTAURANT, "Pepperoni Pizza", 10.0f, new DateTime(2019, 1, 7), "pizza.pdf"));
@@ -569,21 +569,25 @@ namespace Casablanca.Models.Database
 
             foreach (ExpenseReport er in advances)
             {
-                foreach (ExpenseLine el in er.ExpenseLines.ToList())
-                {
-                    if (el.Validated /*&& el.Mission.Status == MissionStatus.COMPLETED*/) //To check
-                    {
-                        expenseReport.Collaborator.AdvanceCost += el.Cost;
-                        expenseReport.AddLine(el);
-                        er.RemoveLine(el);
-                    }
-                }
 
-                if (er.ExpenseLines.Count == 0)
-                {
-                    Db.ExpenseReports.Remove(er);
-                    Db.SaveChanges();
-                }
+				if(er.Collaborator == expenseReport.Collaborator)
+				{
+					foreach (ExpenseLine el in er.ExpenseLines.ToList())
+					{
+						if (el.Validated /*&& el.Mission.Status == MissionStatus.COMPLETED*/) //To check
+						{
+							expenseReport.Collaborator.AdvanceCost += el.Cost;
+							expenseReport.AddLine(el);
+							er.RemoveLine(el);
+						}
+					}
+
+					if (er.ExpenseLines.Count == 0)
+					{
+						Db.ExpenseReports.Remove(er);
+						Db.SaveChanges();
+					}
+				}
             }
 
         }
