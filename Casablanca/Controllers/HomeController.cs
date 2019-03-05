@@ -43,7 +43,7 @@ namespace Casablanca.Controllers
             if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                 return Redirect("/Home/Index");
 
-            ViewBag.Message = "Description TODO.";
+            ViewBag.Message = "Description.";
 
             return View();
         }

@@ -122,14 +122,12 @@ namespace Casablanca.Models.ExpenseReports {
                     }
                     else {
                         // Cas classique
-                        //Debug.WriteLine("OMG");
                         Treatment = Processing.CLASSIC;
                     }
                     break;
                 case Roles.CHIEF:
                     if(s.Name.Contains("Compta")) {
                         // CDS compta => double val PDG
-                        //Debug.WriteLine("OOOOOOOOOOH");
                         Treatment = Processing.CEO;
                     }
                     else if (s.Name.Contains("RH")) {

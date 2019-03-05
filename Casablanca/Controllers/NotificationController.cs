@@ -65,16 +65,12 @@ namespace Casablanca.Controllers
             // get the ids of the items selected:
             var selectedIds = model.GetSelectedIds();
 
-            System.Diagnostics.Debug.WriteLine("taille list id: " + selectedIds.Count().ToString());
-
             // Use the ids to retrieve the records for the selected notification
             // from the database:
             Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
             var selectedNotification = from x in dal.GetNotifications(coll)
                                  where selectedIds.Contains(x.Id)
                                  select x;
-
-            System.Diagnostics.Debug.WriteLine("taille list: " + selectedNotification.Count().ToString());
 
             // Process
             foreach (Notification notif in selectedNotification)
@@ -98,16 +94,12 @@ namespace Casablanca.Controllers
             // get the ids of the items selected:
             var selectedIds = model.GetSelectedIds();
 
-            System.Diagnostics.Debug.WriteLine("taille list id: " + selectedIds.Count().ToString());
-
             // Use the ids to retrieve the records for the selected notification
             // from the database:
             Collaborator coll = dal.GetCollaborator(System.Web.HttpContext.Current.User.Identity.Name);
             var selectedNotification = from x in dal.GetNotifications(coll)
                                        where selectedIds.Contains(x.Id)
                                        select x;
-
-            System.Diagnostics.Debug.WriteLine("taille list: " + selectedNotification.Count().ToString());
 
             // Process
             foreach (Notification notif in selectedNotification)
@@ -181,8 +173,6 @@ namespace Casablanca.Controllers
             var selectedNotification = from x in dal.GetNotifications(coll)
                                        where selectedIds.Contains(x.Id)
                                        select x;
-
-            System.Diagnostics.Debug.WriteLine(selectedNotification.Count().ToString());
 
             // Process
             foreach (Notification notif in selectedNotification)

@@ -100,7 +100,6 @@ namespace Casablanca.Models
                 }
                 else
                 {
-                    //TODO
                     NotifContent = "rappel";
                 }
             }
