@@ -558,7 +558,7 @@ namespace Casablanca.Models.Database
             {
                 foreach (ExpenseLine el in er.ExpenseLines.ToList())
                 {
-                    if (el.Validated && el.Mission.Status == MissionStatus.COMPLETED) //To check
+                    if (el.Validated && /*el.Mission.Status == MissionStatus.COMPLETED*/) //To check
                     {
                         expenseReport.Collaborator.AdvanceCost += el.Cost;
                         expenseReport.AddLine(el);
