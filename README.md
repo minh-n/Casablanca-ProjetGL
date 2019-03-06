@@ -33,7 +33,7 @@ Il est nécessaire d'installer des extensions de Visual Studio pour lancer le pr
 
 ### Utilisation du site web
 
-Pour en savoir plus sur l’utilisation du logiciel, veuillez vous référer au [manuel utilisateur](https://github.com/minh-n/Casablanca-ProjetGL) (TODO).
+Pour en savoir plus sur l’utilisation du logiciel, veuillez vous référer au [manuel utilisateur](https://github.com/minh-n/Casablanca-ProjetGL/blob/master/Documents/Documents%20du%20rendu/%5BET5-GL%5D%20Manuel%20utilisateur.pdf). D'autres documents complémentaires peuvent être trouvés dans le dossier Document de ce répertoire.
 
 Au commencement, le logiciel ne contient ni de collaborateurs, ni de service, sauf pour les services Direction, RH et Comptabilité.
 
